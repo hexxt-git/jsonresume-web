@@ -32,8 +32,10 @@ export function formatDate(iso: string | undefined): string {
 export function dateRange(startDate?: string, endDate?: string): string {
   if (!startDate && !endDate) return '';
   const start = formatDate(startDate);
-  const end = endDate ? formatDate(endDate) : 'Present';
-  return `${start} - ${end}`;
+  const end = formatDate(endDate);
+  if (start && end) return `${start} - ${end}`;
+  if (start) return start;
+  return end;
 }
 
 export function section(title: string, content: string): string {

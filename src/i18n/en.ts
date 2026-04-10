@@ -17,7 +17,7 @@ export default {
   // Editor tabs
   'editor.form': 'Form',
   'editor.json': 'JSON',
-  'editor.themes': 'Themes',
+  'editor.themes': 'Styles',
 
   // Section names
   'section.basics': 'Basics',
@@ -155,7 +155,7 @@ export default {
   'slots.delete': 'Delete',
 
   // Theme customizer
-  'customize.title': 'Customize',
+  'customize.title': 'Override',
   'customize.reset': 'Reset to defaults',
   'customize.accentColor': 'Accent Color',
   'customize.fontFamily': 'Font Family',
