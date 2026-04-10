@@ -59,7 +59,7 @@ export function ThemeCustomizer() {
         label={t('customize.fontSize')}
         value={custom.fontSizeMultiplier}
         onChange={(v) => setCustom('fontSizeMultiplier', v)}
-        min={0.7}
+        min={0.5}
         max={1.5}
         step={0.01}
         defaultValue={1}
@@ -71,7 +71,7 @@ export function ThemeCustomizer() {
         value={custom.lineHeightMultiplier}
         onChange={(v) => setCustom('lineHeightMultiplier', v)}
         min={0.5}
-        max={1.6}
+        max={1.5}
         step={0.01}
         defaultValue={1}
         formatValue={(v) => `${Math.round(v * 100)}%`}
@@ -82,7 +82,7 @@ export function ThemeCustomizer() {
         value={custom.paddingMultiplier}
         onChange={(v) => setCustom('paddingMultiplier', v)}
         min={0.25}
-        max={2}
+        max={1.75}
         step={0.01}
         defaultValue={1}
         formatValue={(v) => `${Math.round(v * 100)}%`}

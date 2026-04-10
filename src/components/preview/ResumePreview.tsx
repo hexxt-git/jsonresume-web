@@ -41,13 +41,16 @@ export function ResumePreview() {
     return () => iframe.removeEventListener('load', onLoad);
   }, [html]);
 
+  const fitZoom = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return 1;
+    return Math.round(Math.min((container.clientWidth - 32) / A4_WIDTH, 1) * 100) / 100;
+  }, []);
+
   // Auto-fit zoom to container width on mount
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    const fit = Math.min((container.clientWidth - 32) / A4_WIDTH, 1);
-    setZoom(Math.round(fit * 100) / 100);
-  }, []);
+    setZoom(fitZoom());
+  }, [fitZoom]);
 
   const handlePrint = useCallback(() => {
     iframeRef.current?.contentWindow?.print();
@@ -95,11 +98,18 @@ export function ResumePreview() {
             &minus;
           </button>
           <button
-            onClick={() => setZoom(1)}
+            onClick={() => setZoom(fitZoom())}
             className="px-1.5 py-0.5 text-[10px] text-text-muted hover:text-text-secondary hover:bg-bg-hover rounded cursor-pointer tabular-nums min-w-[3rem] text-center"
-            title="Reset zoom"
+            title="Fit to width"
           >
             {Math.round(zoom * 100)}%
+          </button>
+          <button
+            onClick={() => setZoom(1)}
+            className={`px-1.5 py-0.5 text-[10px] rounded cursor-pointer ${zoom === 1 ? 'text-accent-text bg-bg-accent' : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'}`}
+            title="Actual size"
+          >
+            1:1
           </button>
           <button
             onClick={zoomIn}
@@ -145,7 +155,7 @@ export function ResumePreview() {
             <div
               key={i}
               className="absolute left-0 right-0 pointer-events-none"
-              style={{ top: (i + 1) * A4_HEIGHT * zoom }}
+              style={{ top: (i + 1) * A4_HEIGHT * zoom + 15 }}
             >
               <div className="border-t border-dashed border-text-muted opacity-40" />
               <span className="absolute right-2 -top-4 text-[11px] text-text-muted opacity-40 select-none">
