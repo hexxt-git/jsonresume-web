@@ -1,12 +1,19 @@
 import { useState, useCallback, useRef } from 'react';
 import Editor, { type OnMount } from '@monaco-editor/react';
 import { useResumeStore } from '../../store/resumeStore';
+import { useDarkModeStore } from '../../store/darkModeStore';
 import { useT } from '../../i18n';
 import resumeSchema from '../../utils/resumeSchema.json';
 import { saveAs } from 'file-saver';
 
 export function JsonEditor() {
   const t = useT();
+  const darkMode = useDarkModeStore((s) => s.mode);
+  const isDark =
+    darkMode === 'dark' ||
+    (darkMode === 'system' &&
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches);
   const resume = useResumeStore((s) => s.resume);
   const setResume = useResumeStore((s) => s.setResume);
   const [error, setError] = useState<string | null>(null);
@@ -32,6 +39,44 @@ export function JsonEditor() {
 
   const handleMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
+
+    // Define custom dark theme matching app colors
+    monaco.editor.defineTheme('app-dark', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [
+        { token: '', foreground: 'c3c3cb' },
+        { token: 'string.key.json', foreground: 'cfbefc' },
+        { token: 'string.value.json', foreground: 'a09efc' },
+        { token: 'number', foreground: 'f98080' },
+        { token: 'keyword', foreground: 'cfbefc' },
+        { token: 'comment', foreground: '6e6e77' },
+      ],
+      colors: {
+        'editor.background': '#18181c',
+        'editor.foreground': '#c3c3cb',
+        'editor.lineHighlightBackground': '#202025',
+        'editor.selectionBackground': '#393944',
+        'editor.inactiveSelectionBackground': '#28282e',
+        'editorCursor.foreground': '#a09efc',
+        'editorLineNumber.foreground': '#3b3b40',
+        'editorLineNumber.activeForeground': '#6e6e77',
+        'editorIndentGuide.background': '#2a2a2f',
+        'editorIndentGuide.activeBackground': '#393944',
+        'editorBracketMatch.background': '#28282e',
+        'editorBracketMatch.border': '#393944',
+        'editorWidget.background': '#202025',
+        'editorWidget.border': '#2a2a2f',
+        'input.background': '#202025',
+        'input.border': '#393944',
+        'dropdown.background': '#202025',
+        'dropdown.border': '#2a2a2f',
+        'list.hoverBackground': '#28282e',
+        'list.activeSelectionBackground': '#222228',
+        'scrollbarSlider.background': '#2a2a2f80',
+        'scrollbarSlider.hoverBackground': '#39394480',
+      },
+    });
 
     // Configure JSON language defaults
     monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
@@ -85,7 +130,7 @@ export function JsonEditor() {
           defaultValue={JSON.stringify(resume, null, 2)}
           onChange={handleChange}
           onMount={handleMount}
-          theme="vs-light"
+          theme={isDark ? 'app-dark' : 'vs-light'}
           options={{
             minimap: { enabled: false },
             fontSize: 13,

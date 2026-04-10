@@ -1,18 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSlotsStore } from '../../store/slotsStore';
 import { useResumeStore } from '../../store/resumeStore';
 import { useT } from '../../i18n';
 
-function timeAgo(ts: number): string {
-  const sec = Math.floor((Date.now() - ts) / 1000);
-  if (sec < 60) return 'just now';
-  const min = Math.floor(sec / 60);
-  if (min < 60) return `${min}m ago`;
-  const hr = Math.floor(min / 60);
-  if (hr < 24) return `${hr}h ago`;
-  const days = Math.floor(hr / 24);
-  if (days < 30) return `${days}d ago`;
-  return new Date(ts).toLocaleDateString();
+function formatDate(ts: number): string {
+  const d = new Date(ts);
+  const now = new Date();
+  const isToday = d.toDateString() === now.toDateString();
+  if (isToday) {
+    return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+  }
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
 export function SlotsPicker() {
@@ -35,13 +33,6 @@ export function SlotsPicker() {
   const [open, setOpen] = useState(false);
   const [renaming, setRenaming] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
-  const [, setTick] = useState(0);
-
-  // Re-render every 30s so relative timestamps stay fresh
-  useEffect(() => {
-    const id = setInterval(() => setTick((t) => t + 1), 30_000);
-    return () => clearInterval(id);
-  }, []);
 
   const handleNew = () => {
     // Save current slot before switching
@@ -122,7 +113,7 @@ export function SlotsPicker() {
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="text-xs px-3 py-1.5 border border-border rounded-md hover:bg-bg-hover transition-colors cursor-pointer max-w-[160px] truncate"
+        className="text-xs px-3 py-1.5 border border-border rounded-md hover:bg-bg-hover transition-colors cursor-pointer max-w-[160px] truncate text-text"
       >
         {activeSlot ? activeSlot.name : t('slots.resumes')}
         <span className="text-text-muted ml-1">({slots.length})</span>
@@ -179,7 +170,7 @@ export function SlotsPicker() {
                           >
                             {slot.name}
                           </span>
-                          <span className="text-text-muted ml-2">{timeAgo(slot.updatedAt)}</span>
+                          <span className="text-text-muted ml-2">{formatDate(slot.updatedAt)}</span>
                         </button>
                       )}
                       <button

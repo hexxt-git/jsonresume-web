@@ -8,17 +8,16 @@ const THEME_DEFAULT = '__default__';
 
 const FONT_OPTIONS = [
   { value: THEME_DEFAULT, label: 'Theme Default' },
-  {
-    value: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-    label: 'System Sans',
-  },
-  { value: "'Inter', sans-serif", label: 'Inter' },
+  { value: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", label: 'System' },
+  { value: "'Inter', system-ui, sans-serif", label: 'Inter' },
+  { value: "'Helvetica Neue', Helvetica, Arial, sans-serif", label: 'Helvetica' },
   { value: "Georgia, 'Times New Roman', serif", label: 'Georgia' },
+  { value: "'Palatino Linotype', Palatino, 'Book Antiqua', serif", label: 'Palatino' },
   { value: "'EB Garamond', Garamond, serif", label: 'Garamond' },
-  {
-    value: "ui-monospace, 'SF Mono', Consolas, monospace",
-    label: 'Monospace',
-  },
+  { value: "'Charter', 'Bitstream Charter', serif", label: 'Charter' },
+  { value: "'Verdana', Geneva, sans-serif", label: 'Verdana' },
+  { value: "'Trebuchet MS', 'Lucida Sans', sans-serif", label: 'Trebuchet' },
+  { value: "ui-monospace, 'SF Mono', Consolas, 'Liberation Mono', monospace", label: 'Monospace' },
 ];
 
 export function ThemeCustomizer() {
@@ -29,10 +28,7 @@ export function ThemeCustomizer() {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <h3 className="text-xs font-semibold text-text uppercase tracking-wide">
-          {t('customize.title')}
-        </h3>
+      <div className="flex justify-end">
         <button
           onClick={resetCustom}
           className="text-xs text-text-muted hover:text-text-secondary cursor-pointer"
@@ -74,7 +70,7 @@ export function ThemeCustomizer() {
         label={t('customize.lineHeight')}
         value={custom.lineHeightMultiplier}
         onChange={(v) => setCustom('lineHeightMultiplier', v)}
-        min={0.8}
+        min={0.5}
         max={1.6}
         step={0.01}
         defaultValue={1}
