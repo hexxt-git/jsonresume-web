@@ -1,6 +1,5 @@
 import { useState, useCallback, useRef, useMemo } from 'react';
 import { ResumeEditor } from './components/editor/ResumeEditor';
-import { ThemePicker } from './components/themes/ThemePicker';
 import { ImportDialog } from './components/import-export/ImportDialog';
 import { ExportDialog } from './components/import-export/ExportDialog';
 import { useResumeStore } from './store/resumeStore';
@@ -9,14 +8,12 @@ import { getThemeById } from './themes';
 function App() {
   const [importOpen, setImportOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
-  const [themesOpen, setThemesOpen] = useState(false);
   const [mobileView, setMobileView] = useState<'editor' | 'preview'>('editor');
   const previewRef = useRef<HTMLIFrameElement>(null);
 
   const resume = useResumeStore((s) => s.resume);
   const themeId = useResumeStore((s) => s.selectedThemeId);
   const reset = useResumeStore((s) => s.reset);
-  const themeName = getThemeById(themeId).name;
 
   const handlePrint = useCallback(() => {
     previewRef.current?.contentWindow?.print();
@@ -35,12 +32,6 @@ function App() {
           <span className="hidden sm:inline text-xs text-gray-400">JSON Resume</span>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setThemesOpen(!themesOpen)}
-            className="text-xs px-3 py-1.5 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors cursor-pointer"
-          >
-            Theme: <span className="font-medium">{themeName}</span>
-          </button>
           <button
             onClick={reset}
             className="text-xs px-3 py-1.5 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors cursor-pointer text-red-500"
@@ -61,13 +52,6 @@ function App() {
           </button>
         </div>
       </header>
-
-      {/* Theme picker */}
-      {themesOpen && (
-        <div className="border-b border-gray-200 bg-gray-50 shrink-0">
-          <ThemePicker />
-        </div>
-      )}
 
       {/* Mobile tab bar */}
       <div className="sm:hidden flex border-b border-gray-200 shrink-0">

@@ -4,7 +4,7 @@ import { esc, dateRange, section, link } from './helpers';
 
 function render(resume: ResumeSchema): string {
   const b = resume.basics;
-  return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(b?.name)} - Resume</title>
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(b?.name)} - ${esc(b?.label || 'Resume')}</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#333;line-height:1.6;max-width:800px;margin:0 auto;padding:48px 40px;font-size:14px}
@@ -31,6 +31,7 @@ li{margin-bottom:4px;color:#555}
 .lang{font-size:13px;color:#555}
 @media print{body{padding:20px 24px;font-size:12px}h1{font-size:22px}.section{margin-bottom:16px}.entry{margin-bottom:12px}}
 </style></head><body>
+${b?.image ? `<img src="${esc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px">` : ''}
 ${b?.name ? `<h1>${esc(b.name)}</h1>` : ''}
 ${b?.label ? `<p class="label">${esc(b.label)}</p>` : ''}
 <div class="contact">
@@ -48,6 +49,7 @@ ${section(
       (w) => `<div class="entry">
 <div class="entry-header"><h3>${esc(w.position)}</h3><span class="entry-meta">${dateRange(w.startDate, w.endDate)}</span></div>
 <div class="entry-org">${link(w.url, w.name || '')}${w.location ? ` - ${esc(w.location)}` : ''}</div>
+${w.description ? `<div style="font-size:12px;color:#888;font-style:italic">${esc(w.description)}</div>` : ''}
 ${w.summary ? `<p style="margin-top:6px;color:#555">${esc(w.summary)}</p>` : ''}
 ${w.highlights?.length ? `<ul>${w.highlights.map((h) => `<li>${esc(h)}</li>`).join('')}</ul>` : ''}
 </div>`,
@@ -59,9 +61,11 @@ ${section(
   (resume.projects || [])
     .map(
       (p) => `<div class="entry">
-<div class="entry-header"><h3>${link(p.url, p.name || '')}</h3>${p.startDate ? `<span class="entry-meta">${dateRange(p.startDate, p.endDate)}</span>` : ''}</div>
+<div class="entry-header"><h3>${link(p.url, p.name || '')}${p.entity ? `<span style="color:#888;font-size:13px"> - ${esc(p.entity)}</span>` : ''}${p.type ? `<span style="color:#999;font-size:12px"> (${esc(p.type)})</span>` : ''}</h3>${p.startDate ? `<span class="entry-meta">${dateRange(p.startDate, p.endDate)}</span>` : ''}</div>
+${p.roles?.length ? `<div style="font-size:12px;color:#888">Role: ${p.roles.map((r) => esc(r)).join(', ')}</div>` : ''}
 ${p.description ? `<p style="margin-top:4px;color:#555">${esc(p.description)}</p>` : ''}
 ${p.highlights?.length ? `<ul>${p.highlights.map((h) => `<li>${esc(h)}</li>`).join('')}</ul>` : ''}
+${p.keywords?.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${p.keywords.map((k) => `<span class="skill-tag">${esc(k)}</span>`).join('')}</div>` : ''}
 </div>`,
     )
     .join(''),
@@ -71,8 +75,9 @@ ${section(
   (resume.education || [])
     .map(
       (e) => `<div class="entry">
-<div class="entry-header"><h3>${esc(e.institution)}</h3><span class="entry-meta">${dateRange(e.startDate, e.endDate)}</span></div>
+<div class="entry-header"><h3>${link(e.url, e.institution || '')}</h3><span class="entry-meta">${dateRange(e.startDate, e.endDate)}</span></div>
 ${e.studyType || e.area ? `<div class="entry-org">${esc(e.studyType)}${e.area ? ` in ${esc(e.area)}` : ''}${e.score ? ` (${esc(e.score)})` : ''}</div>` : ''}
+${e.courses?.length ? `<div style="margin-top:4px;font-size:12px;color:#666">Courses: ${e.courses.map((c) => esc(c)).join(', ')}</div>` : ''}
 </div>`,
     )
     .join(''),
@@ -83,7 +88,7 @@ ${section(
     ? `<div class="skills-grid">${(resume.skills || [])
         .map(
           (s) => `<div class="skill-group">
-<h3>${esc(s.name)}</h3>
+<h3>${esc(s.name)}${s.level ? ` <span style="font-weight:normal;color:#999;font-size:smaller">- ${esc(s.level)}</span>` : ''}</h3>
 <div class="skill-keywords">${(s.keywords || []).map((k) => `<span class="skill-tag">${esc(k)}</span>`).join('')}</div>
 </div>`,
         )
@@ -98,6 +103,7 @@ ${section(
       (v) => `<div class="entry">
 <div class="entry-header"><h3>${esc(v.position)}</h3><span class="entry-meta">${dateRange(v.startDate, v.endDate)}</span></div>
 <div class="entry-org">${link(v.url, v.organization || '')}</div>
+${v.summary ? `<p style="margin-top:6px;color:#555">${esc(v.summary)}</p>` : ''}
 ${v.highlights?.length ? `<ul>${v.highlights.map((h) => `<li>${esc(h)}</li>`).join('')}</ul>` : ''}
 </div>`,
     )
