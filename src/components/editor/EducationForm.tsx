@@ -1,15 +1,17 @@
 import { useResumeStore } from '../../store/resumeStore';
+import { useT } from '../../i18n';
 import { FormField } from './FormField';
 import { ChipInput } from './ChipInput';
 import { RepeatableSection } from './RepeatableSection';
 
 export function EducationForm() {
+  const t = useT();
   const education = useResumeStore((s) => s.resume.education) || [];
   const updateArraySection = useResumeStore((s) => s.updateArraySection);
 
   return (
     <RepeatableSection
-      title="Education"
+      title={t('edu.title')}
       items={education}
       onChange={(items) => updateArraySection('education', items)}
       defaultItem={{
@@ -24,50 +26,50 @@ export function EducationForm() {
       renderItem={(item, index, update) => (
         <div className="space-y-2">
           <FormField
-            label="Institution"
+            label={t('edu.institution')}
             value={item.institution || ''}
             onChange={(v) => update(index, { ...item, institution: v })}
-            placeholder="MIT"
+            placeholder={t('ph.institution')}
           />
           <div className="grid grid-cols-2 gap-2">
             <FormField
-              label="Degree"
+              label={t('edu.degree')}
               value={item.studyType || ''}
               onChange={(v) => update(index, { ...item, studyType: v })}
-              placeholder="Bachelor's"
+              placeholder={t('ph.degree')}
             />
             <FormField
-              label="Field of Study"
+              label={t('edu.area')}
               value={item.area || ''}
               onChange={(v) => update(index, { ...item, area: v })}
-              placeholder="Computer Science"
+              placeholder={t('ph.area')}
             />
           </div>
           <div className="grid grid-cols-3 gap-2">
             <FormField
-              label="Start Date"
+              label={t('edu.startDate')}
               value={item.startDate || ''}
               onChange={(v) => update(index, { ...item, startDate: v })}
-              placeholder="2018-09"
+              placeholder={t('ph.startDate')}
             />
             <FormField
-              label="End Date"
+              label={t('edu.endDate')}
               value={item.endDate || ''}
               onChange={(v) => update(index, { ...item, endDate: v })}
-              placeholder="2022-06"
+              placeholder={t('ph.endDate')}
             />
             <FormField
-              label="Score/GPA"
+              label={t('edu.score')}
               value={item.score || ''}
               onChange={(v) => update(index, { ...item, score: v })}
-              placeholder="3.8/4.0"
+              placeholder={t('ph.score')}
             />
           </div>
           <ChipInput
-            label="Courses"
+            label={t('edu.courses')}
             items={item.courses || []}
             onChange={(v) => update(index, { ...item, courses: v })}
-            placeholder="Add a course"
+            placeholder={t('ph.course')}
           />
         </div>
       )}

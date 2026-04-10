@@ -1,1 +1,63 @@
 @import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f3f4f6;
+  --bg-input: #ffffff;
+  --bg-hover: #f9fafb;
+  --bg-card: #ffffff;
+  --bg-accent: #eff6ff;
+  --text: #1f2937;
+  --text-secondary: #4b5563;
+  --text-tertiary: #6b7280;
+  --text-muted: #9ca3af;
+  --text-faint: #d1d5db;
+  --border: #e5e7eb;
+  --border-input: #d1d5db;
+  --accent: #2563eb;
+  --accent-text: #2563eb;
+  --danger: #ef4444;
+}
+
+.dark {
+  --bg: #18181c;
+  --bg-secondary: #202025;
+  --bg-tertiary: #232329;
+  --bg-input: #202025;
+  --bg-hover: #28282e;
+  --bg-card: #212127;
+  --bg-accent: #222228;
+  --text: #f4f4f7;
+  --text-secondary: #c3c3cb;
+  --text-tertiary: #a5a5ad;
+  --text-muted: #6e6e77;
+  --text-faint: #3b3b40;
+  --border: #2a2a2f;
+  --border-input: #393944;
+  --accent: #a09efc;
+  --accent-text: #cfbefc;
+  --danger: #f98080;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-tertiary: var(--bg-tertiary);
+  --color-bg-input: var(--bg-input);
+  --color-bg-hover: var(--bg-hover);
+  --color-bg-card: var(--bg-card);
+  --color-bg-accent: var(--bg-accent);
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-muted: var(--text-muted);
+  --color-text-faint: var(--text-faint);
+  --color-border: var(--border);
+  --color-border-input: var(--border-input);
+  --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-danger: var(--danger);
+}

@@ -45,3 +45,16 @@ export function link(url: string | undefined, text: string): string {
   if (!url) return esc(text);
   return `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(text)}</a>`;
 }
+
+/** Render inline markdown: **bold**, *italic*, `code`, [text](url) */
+export function md(str: string | undefined | null): string {
+  if (!str) return '';
+  return esc(str)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(
+      /`(.+?)`/g,
+      '<code style="font-size:0.9em;background:rgba(0,0,0,0.05);padding:1px 4px;border-radius:2px">$1</code>',
+    )
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+}

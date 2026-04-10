@@ -1,14 +1,16 @@
 import { useResumeStore } from '../../store/resumeStore';
+import { useT } from '../../i18n';
 import { FormField } from './FormField';
 import { ChipInput } from './ChipInput';
 import { RepeatableSection } from './RepeatableSection';
 
 export function VolunteerForm() {
+  const t = useT();
   const items = useResumeStore((s) => s.resume.volunteer) || [];
   const update = useResumeStore((s) => s.updateArraySection);
   return (
     <RepeatableSection
-      title="Volunteer"
+      title={t('volunteer.title')}
       items={items}
       onChange={(v) => update('volunteer', v)}
       defaultItem={{ organization: '', position: '', startDate: '', endDate: '', highlights: [] }}
@@ -16,46 +18,46 @@ export function VolunteerForm() {
         <div className="space-y-2">
           <div className="grid grid-cols-2 gap-2">
             <FormField
-              label="Organization"
+              label={t('volunteer.organization')}
               value={item.organization || ''}
               onChange={(v) => upd(i, { ...item, organization: v })}
-              placeholder="Red Cross"
+              placeholder={t('ph.organization')}
             />
             <FormField
-              label="Position"
+              label={t('volunteer.position')}
               value={item.position || ''}
               onChange={(v) => upd(i, { ...item, position: v })}
-              placeholder="Volunteer"
+              placeholder={t('ph.volunteer')}
             />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <FormField
-              label="Start Date"
+              label={t('work.startDate')}
               value={item.startDate || ''}
               onChange={(v) => upd(i, { ...item, startDate: v })}
-              placeholder="2024-01"
+              placeholder={t('ph.startDate')}
             />
             <FormField
-              label="End Date"
+              label={t('work.endDate')}
               value={item.endDate || ''}
               onChange={(v) => upd(i, { ...item, endDate: v })}
-              placeholder="2024-06"
+              placeholder={t('ph.endDate')}
             />
           </div>
           <FormField
-            label="URL"
+            label={t('work.url')}
             value={item.url || ''}
             onChange={(v) => upd(i, { ...item, url: v })}
-            placeholder="https://org.com"
+            placeholder={t('ph.url')}
           />
           <FormField
-            label="Summary"
+            label={t('work.summary')}
             value={item.summary || ''}
             onChange={(v) => upd(i, { ...item, summary: v })}
             multiline
           />
           <ChipInput
-            label="Highlights"
+            label={t('work.highlights')}
             items={item.highlights || []}
             onChange={(v) => upd(i, { ...item, highlights: v })}
           />
@@ -66,11 +68,12 @@ export function VolunteerForm() {
 }
 
 export function AwardsForm() {
+  const t = useT();
   const items = useResumeStore((s) => s.resume.awards) || [];
   const update = useResumeStore((s) => s.updateArraySection);
   return (
     <RepeatableSection
-      title="Awards"
+      title={t('awards.title')}
       items={items}
       onChange={(v) => update('awards', v)}
       defaultItem={{ title: '', awarder: '', date: '', summary: '' }}
@@ -78,26 +81,26 @@ export function AwardsForm() {
         <div className="space-y-2">
           <div className="grid grid-cols-2 gap-2">
             <FormField
-              label="Title"
+              label={t('awards.name')}
               value={item.title || ''}
               onChange={(v) => upd(i, { ...item, title: v })}
-              placeholder="Best Paper Award"
+              placeholder={t('ph.awardTitle')}
             />
             <FormField
-              label="Awarder"
+              label={t('awards.awarder')}
               value={item.awarder || ''}
               onChange={(v) => upd(i, { ...item, awarder: v })}
-              placeholder="IEEE"
+              placeholder={t('ph.awarder')}
             />
           </div>
           <FormField
-            label="Date"
+            label={t('awards.date')}
             value={item.date || ''}
             onChange={(v) => upd(i, { ...item, date: v })}
-            placeholder="2024-06"
+            placeholder={t('ph.date')}
           />
           <FormField
-            label="Summary"
+            label={t('awards.summary')}
             value={item.summary || ''}
             onChange={(v) => upd(i, { ...item, summary: v })}
             multiline
@@ -109,11 +112,12 @@ export function AwardsForm() {
 }
 
 export function CertificatesForm() {
+  const t = useT();
   const items = useResumeStore((s) => s.resume.certificates) || [];
   const update = useResumeStore((s) => s.updateArraySection);
   return (
     <RepeatableSection
-      title="Certificates"
+      title={t('certs.title')}
       items={items}
       onChange={(v) => update('certificates', v)}
       defaultItem={{ name: '', issuer: '', date: '', url: '' }}
@@ -121,30 +125,30 @@ export function CertificatesForm() {
         <div className="space-y-2">
           <div className="grid grid-cols-2 gap-2">
             <FormField
-              label="Name"
+              label={t('certs.name')}
               value={item.name || ''}
               onChange={(v) => upd(i, { ...item, name: v })}
-              placeholder="AWS Certified"
+              placeholder={t('ph.certName')}
             />
             <FormField
-              label="Issuer"
+              label={t('certs.issuer')}
               value={item.issuer || ''}
               onChange={(v) => upd(i, { ...item, issuer: v })}
-              placeholder="Amazon"
+              placeholder={t('ph.certIssuer')}
             />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <FormField
-              label="Date"
+              label={t('certs.date')}
               value={item.date || ''}
               onChange={(v) => upd(i, { ...item, date: v })}
-              placeholder="2024-03"
+              placeholder={t('ph.date')}
             />
             <FormField
-              label="URL"
+              label={t('certs.url')}
               value={item.url || ''}
               onChange={(v) => upd(i, { ...item, url: v })}
-              placeholder="https://cert.url"
+              placeholder={t('ph.certUrl')}
             />
           </div>
         </div>
@@ -154,11 +158,12 @@ export function CertificatesForm() {
 }
 
 export function PublicationsForm() {
+  const t = useT();
   const items = useResumeStore((s) => s.resume.publications) || [];
   const update = useResumeStore((s) => s.updateArraySection);
   return (
     <RepeatableSection
-      title="Publications"
+      title={t('pubs.title')}
       items={items}
       onChange={(v) => update('publications', v)}
       defaultItem={{ name: '', publisher: '', releaseDate: '', url: '', summary: '' }}
@@ -166,33 +171,33 @@ export function PublicationsForm() {
         <div className="space-y-2">
           <div className="grid grid-cols-2 gap-2">
             <FormField
-              label="Title"
+              label={t('pubs.name')}
               value={item.name || ''}
               onChange={(v) => upd(i, { ...item, name: v })}
-              placeholder="Paper Title"
+              placeholder={t('ph.pubTitle')}
             />
             <FormField
-              label="Publisher"
+              label={t('pubs.publisher')}
               value={item.publisher || ''}
               onChange={(v) => upd(i, { ...item, publisher: v })}
-              placeholder="IEEE"
+              placeholder={t('ph.publisher')}
             />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <FormField
-              label="Release Date"
+              label={t('pubs.releaseDate')}
               value={item.releaseDate || ''}
               onChange={(v) => upd(i, { ...item, releaseDate: v })}
-              placeholder="2024-06"
+              placeholder={t('ph.date')}
             />
             <FormField
-              label="URL"
+              label={t('pubs.url')}
               value={item.url || ''}
               onChange={(v) => upd(i, { ...item, url: v })}
             />
           </div>
           <FormField
-            label="Summary"
+            label={t('pubs.summary')}
             value={item.summary || ''}
             onChange={(v) => upd(i, { ...item, summary: v })}
             multiline
@@ -204,27 +209,28 @@ export function PublicationsForm() {
 }
 
 export function LanguagesForm() {
+  const t = useT();
   const items = useResumeStore((s) => s.resume.languages) || [];
   const update = useResumeStore((s) => s.updateArraySection);
   return (
     <RepeatableSection
-      title="Languages"
+      title={t('langs.title')}
       items={items}
       onChange={(v) => update('languages', v)}
       defaultItem={{ language: '', fluency: '' }}
       renderItem={(item, i, upd) => (
         <div className="grid grid-cols-2 gap-2">
           <FormField
-            label="Language"
+            label={t('langs.language')}
             value={item.language || ''}
             onChange={(v) => upd(i, { ...item, language: v })}
-            placeholder="English"
+            placeholder={t('ph.language')}
           />
           <FormField
-            label="Fluency"
+            label={t('langs.fluency')}
             value={item.fluency || ''}
             onChange={(v) => upd(i, { ...item, fluency: v })}
-            placeholder="Native"
+            placeholder={t('ph.fluency')}
           />
         </div>
       )}
@@ -233,24 +239,25 @@ export function LanguagesForm() {
 }
 
 export function InterestsForm() {
+  const t = useT();
   const items = useResumeStore((s) => s.resume.interests) || [];
   const update = useResumeStore((s) => s.updateArraySection);
   return (
     <RepeatableSection
-      title="Interests"
+      title={t('interests.title')}
       items={items}
       onChange={(v) => update('interests', v)}
       defaultItem={{ name: '', keywords: [] }}
       renderItem={(item, i, upd) => (
         <div className="space-y-2">
           <FormField
-            label="Name"
+            label={t('interests.name')}
             value={item.name || ''}
             onChange={(v) => upd(i, { ...item, name: v })}
-            placeholder="Open Source"
+            placeholder={t('ph.interestName')}
           />
           <ChipInput
-            label="Keywords"
+            label={t('interests.keywords')}
             items={item.keywords || []}
             onChange={(v) => upd(i, { ...item, keywords: v })}
           />
@@ -261,28 +268,29 @@ export function InterestsForm() {
 }
 
 export function ReferencesForm() {
+  const t = useT();
   const items = useResumeStore((s) => s.resume.references) || [];
   const update = useResumeStore((s) => s.updateArraySection);
   return (
     <RepeatableSection
-      title="References"
+      title={t('refs.title')}
       items={items}
       onChange={(v) => update('references', v)}
       defaultItem={{ name: '', reference: '' }}
       renderItem={(item, i, upd) => (
         <div className="space-y-2">
           <FormField
-            label="Name"
+            label={t('refs.name')}
             value={item.name || ''}
             onChange={(v) => upd(i, { ...item, name: v })}
-            placeholder="Jane Smith"
+            placeholder={t('ph.refName')}
           />
           <FormField
-            label="Reference"
+            label={t('refs.reference')}
             value={item.reference || ''}
             onChange={(v) => upd(i, { ...item, reference: v })}
             multiline
-            placeholder="What they said about you"
+            placeholder={t('ph.refText')}
           />
         </div>
       )}

@@ -1,6 +1,6 @@
 import type { ResumeSchema } from '../types/resume';
 import type { ThemeDefinition } from './types';
-import { esc, dateRange, section, link } from './helpers';
+import { esc, md, dateRange, section, link } from './helpers';
 
 function render(resume: ResumeSchema): string {
   const b = resume.basics;
@@ -28,7 +28,7 @@ ${b?.image ? `<img src="${esc(b.image)}" alt="${esc(b.name)}" style="width:80px;
 ${b?.name ? `<h1>${esc(b.name)}</h1>` : ''}
 ${b?.label ? `<div class="meta">${esc(b.label)}</div>` : ''}
 <div class="contact">${[b?.email, b?.phone, b?.location?.city ? `${b.location.city}${b.location.region ? ', ' + b.location.region : ''}` : '', b?.url ? link(b.url, b.url.replace(/^https?:\/\//, '')) : '', ...(b?.profiles || []).map((p) => (p.url ? `<a href="${esc(p.url)}">${esc(p.network || p.username || '')}</a>` : ''))].filter(Boolean).join(' / ')}</div>
-${b?.summary ? `<p class="summary">${esc(b.summary)}</p>` : ''}
+${b?.summary ? `<p class="summary">${md(b.summary)}</p>` : ''}
 ${section(
   'Experience',
   (resume.work || [])
@@ -36,9 +36,9 @@ ${section(
       (w) => `<div class="entry">
 <div class="entry-row"><h3>${esc(w.position)}${w.name ? `, ${link(w.url, w.name)}` : ''}</h3><span class="meta">${dateRange(w.startDate, w.endDate)}</span></div>
 ${w.location ? `<div class="sub">${esc(w.location)}</div>` : ''}
-${w.description ? `<div style="font-size:12px;color:#999;font-style:italic">${esc(w.description)}</div>` : ''}
-${w.summary ? `<p style="color:#444;margin-top:4px">${esc(w.summary)}</p>` : ''}
-${w.highlights?.length ? `<ul>${w.highlights.map((h) => `<li>${esc(h)}</li>`).join('')}</ul>` : ''}
+${w.description ? `<div style="font-size:12px;color:#999;font-style:italic">${md(w.description)}</div>` : ''}
+${w.summary ? `<p style="color:#444;margin-top:4px">${md(w.summary)}</p>` : ''}
+${w.highlights?.length ? `<ul>${w.highlights.map((h) => `<li>${md(h)}</li>`).join('')}</ul>` : ''}
 </div>`,
     )
     .join(''),
@@ -50,8 +50,8 @@ ${section(
       (p) => `<div class="entry">
 <div class="entry-row"><h3>${link(p.url, p.name || '')}${p.entity ? `<span style="color:#777;font-size:13px"> - ${esc(p.entity)}</span>` : ''}${p.type ? `<span style="color:#999;font-size:12px"> (${esc(p.type)})</span>` : ''}</h3>${p.startDate ? `<span class="meta">${dateRange(p.startDate, p.endDate)}</span>` : ''}</div>
 ${p.roles?.length ? `<div style="font-size:12px;color:#777">Role: ${p.roles.map((r) => esc(r)).join(', ')}</div>` : ''}
-${p.description ? `<div class="sub">${esc(p.description)}</div>` : ''}
-${p.highlights?.length ? `<ul>${p.highlights.map((h) => `<li>${esc(h)}</li>`).join('')}</ul>` : ''}
+${p.description ? `<div class="sub">${md(p.description)}</div>` : ''}
+${p.highlights?.length ? `<ul>${p.highlights.map((h) => `<li>${md(h)}</li>`).join('')}</ul>` : ''}
 ${p.keywords?.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">${p.keywords.map((k) => `<span style="background:#f0f0f0;padding:2px 8px;border-radius:3px;font-size:11px;color:#555">${esc(k)}</span>`).join('')}</div>` : ''}
 </div>`,
     )
@@ -71,12 +71,12 @@ ${e.courses?.length ? `<div style="margin-top:4px;font-size:12px;color:#777">Cou
 )}
 ${section('Skills', resume.skills?.length ? (resume.skills || []).map((s) => `<p class="skills-inline"><strong>${esc(s.name)}${s.level ? ` <span style="font-weight:normal;color:#999;font-size:smaller">- ${esc(s.level)}</span>` : ''}:</strong> ${(s.keywords || []).map((k) => esc(k)).join(', ')}</p>`).join('') : '')}
 ${section('Languages', resume.languages?.length ? `<p class="skills-inline">${(resume.languages || []).map((l) => `${esc(l.language)}${l.fluency ? ` (${esc(l.fluency)})` : ''}`).join(', ')}</p>` : '')}
-${section('Volunteer', (resume.volunteer || []).map((v) => `<div class="entry"><div class="entry-row"><h3>${esc(v.position)}, ${link(v.url, v.organization || '')}</h3><span class="meta">${dateRange(v.startDate, v.endDate)}</span></div>${v.summary ? `<div class="sub">${esc(v.summary)}</div>` : ''}${v.highlights?.length ? `<ul>${v.highlights.map((h) => `<li>${esc(h)}</li>`).join('')}</ul>` : ''}</div>`).join(''))}
-${section('Awards', (resume.awards || []).map((a) => `<div class="entry"><div class="entry-row"><h3>${esc(a.title)}</h3><span class="meta">${esc(a.awarder)}${a.date ? `, ${a.date}` : ''}</span></div>${a.summary ? `<div class="sub">${esc(a.summary)}</div>` : ''}</div>`).join(''))}
+${section('Volunteer', (resume.volunteer || []).map((v) => `<div class="entry"><div class="entry-row"><h3>${esc(v.position)}, ${link(v.url, v.organization || '')}</h3><span class="meta">${dateRange(v.startDate, v.endDate)}</span></div>${v.summary ? `<div class="sub">${md(v.summary)}</div>` : ''}${v.highlights?.length ? `<ul>${v.highlights.map((h) => `<li>${md(h)}</li>`).join('')}</ul>` : ''}</div>`).join(''))}
+${section('Awards', (resume.awards || []).map((a) => `<div class="entry"><div class="entry-row"><h3>${esc(a.title)}</h3><span class="meta">${esc(a.awarder)}${a.date ? `, ${a.date}` : ''}</span></div>${a.summary ? `<div class="sub">${md(a.summary)}</div>` : ''}</div>`).join(''))}
 ${section('Certificates', (resume.certificates || []).map((c) => `<div class="entry"><div class="entry-row"><h3>${link(c.url, c.name || '')}</h3><span class="meta">${c.issuer || ''}${c.date ? `, ${c.date}` : ''}</span></div></div>`).join(''))}
-${section('Publications', (resume.publications || []).map((p) => `<div class="entry"><div class="entry-row"><h3>${link(p.url, p.name || '')}</h3><span class="meta">${p.releaseDate || ''}</span></div>${p.publisher ? `<div class="sub">${esc(p.publisher)}</div>` : ''}${p.summary ? `<div class="sub">${esc(p.summary)}</div>` : ''}</div>`).join(''))}
+${section('Publications', (resume.publications || []).map((p) => `<div class="entry"><div class="entry-row"><h3>${link(p.url, p.name || '')}</h3><span class="meta">${p.releaseDate || ''}</span></div>${p.publisher ? `<div class="sub">${esc(p.publisher)}</div>` : ''}${p.summary ? `<div class="sub">${md(p.summary)}</div>` : ''}</div>`).join(''))}
 ${section('Interests', (resume.interests || []).map((i) => `<p class="skills-inline"><strong>${esc(i.name)}:</strong> ${(i.keywords || []).map((k) => esc(k)).join(', ')}</p>`).join(''))}
-${section('References', (resume.references || []).map((r) => `<div class="entry"><h3>${esc(r.name)}</h3>${r.reference ? `<p class="sub" style="font-style:italic;margin-top:2px">"${esc(r.reference)}"</p>` : ''}</div>`).join(''))}
+${section('References', (resume.references || []).map((r) => `<div class="entry"><h3>${esc(r.name)}</h3>${r.reference ? `<p class="sub" style="font-style:italic;margin-top:2px">"${md(r.reference)}"</p>` : ''}</div>`).join(''))}
 </body></html>`;
 }
 

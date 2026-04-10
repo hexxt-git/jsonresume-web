@@ -1,4 +1,5 @@
 import { useState, type KeyboardEvent } from 'react';
+import { useT } from '../../i18n';
 
 interface ChipInputProps {
   label: string;
@@ -7,12 +8,9 @@ interface ChipInputProps {
   placeholder?: string;
 }
 
-export function ChipInput({
-  label,
-  items,
-  onChange,
-  placeholder = 'Type and press Enter',
-}: ChipInputProps) {
+export function ChipInput({ label, items, onChange, placeholder }: ChipInputProps) {
+  const t = useT();
+  const resolvedPlaceholder = placeholder || t('chip.placeholder');
   const [input, setInput] = useState('');
 
   const addItem = () => {
@@ -34,18 +32,18 @@ export function ChipInput({
 
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
-      <div className="flex flex-wrap gap-1.5 p-2 border border-gray-300 rounded-md focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500 min-h-[36px]">
+      <label className="block text-xs font-medium text-text-secondary mb-1">{label}</label>
+      <div className="flex flex-wrap gap-1.5 p-2 border border-border-input bg-bg-input rounded-md focus-within:ring-1 focus-within:ring-accent focus-within:border-accent min-h-[36px]">
         {items.map((item, i) => (
           <span
             key={i}
-            className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 text-xs px-2 py-0.5 rounded"
+            className="inline-flex items-center gap-1 bg-bg-tertiary text-text text-xs px-2 py-0.5 rounded"
           >
             {item}
             <button
               type="button"
               onClick={() => onChange(items.filter((_, j) => j !== i))}
-              className="text-gray-400 hover:text-gray-600 cursor-pointer"
+              className="text-text-muted hover:text-text-secondary cursor-pointer"
             >
               &times;
             </button>
@@ -56,8 +54,8 @@ export function ChipInput({
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKey}
           onBlur={addItem}
-          placeholder={items.length === 0 ? placeholder : ''}
-          className="flex-1 min-w-[80px] text-sm outline-none bg-transparent"
+          placeholder={items.length === 0 ? resolvedPlaceholder : ''}
+          className="flex-1 min-w-[80px] text-sm outline-none bg-transparent text-text"
         />
       </div>
     </div>

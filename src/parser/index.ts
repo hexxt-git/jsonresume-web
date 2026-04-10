@@ -18,6 +18,7 @@ import {
 } from './extractors';
 import { extractTextFromDocx } from './docxParser';
 import { textToResume } from './textToResume';
+import YAML from 'yaml';
 
 /** Full pipeline for PDFs: preserves position/font data for accurate parsing */
 async function parseResumeFromPdf(file: File): Promise<ResumeSchema> {
@@ -47,6 +48,11 @@ export async function parseResumeFile(file: File): Promise<ResumeSchema> {
   if (ext === 'json') {
     const text = await file.text();
     return JSON.parse(text) as ResumeSchema;
+  }
+
+  if (ext === 'yaml' || ext === 'yml') {
+    const text = await file.text();
+    return YAML.parse(text) as ResumeSchema;
   }
 
   if (ext === 'pdf') {

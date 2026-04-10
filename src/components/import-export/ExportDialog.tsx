@@ -1,6 +1,9 @@
 import { useResumeStore } from '../../store/resumeStore';
+import { buildCustomCss } from '../../store/themeCustomStore';
+import { useT } from '../../i18n';
 import { getThemeById } from '../../themes';
 import { saveAs } from 'file-saver';
+import YAML from 'yaml';
 
 interface ExportDialogProps {
   open: boolean;
@@ -8,74 +11,93 @@ interface ExportDialogProps {
   onPrint: () => void;
 }
 
+const EXT_ICONS: Record<string, string> = {
+  JSON: '{ }',
+  YAML: '---',
+  HTML: '</>',
+  PDF: 'pdf',
+};
+
 export function ExportDialog({ open, onClose, onPrint }: ExportDialogProps) {
+  const t = useT();
   const resume = useResumeStore((s) => s.resume);
   const themeId = useResumeStore((s) => s.selectedThemeId);
+  const custom = useResumeStore((s) => s.customization);
 
   if (!open) return null;
 
-  const name = resume.basics?.name?.replace(/\s+/g, '_') || 'resume';
+  const fname = resume.basics?.name?.replace(/\s+/g, '_') || 'resume';
 
-  const exportJson = () => {
-    const blob = new Blob([JSON.stringify(resume, null, 2)], { type: 'application/json' });
-    saveAs(blob, `${name}.json`);
-    onClose();
-  };
-
-  const exportHtml = () => {
-    const theme = getThemeById(themeId);
-    const html = theme.render(resume);
-    const blob = new Blob([html], { type: 'text/html' });
-    saveAs(blob, `${name}.html`);
-    onClose();
-  };
-
-  const exportPdf = () => {
-    onPrint();
-    onClose();
+  const renderHtml = () => {
+    const base = getThemeById(themeId).render(resume);
+    const overrides = buildCustomCss(custom);
+    return overrides ? base.replace('</head>', `${overrides}</head>`) : base;
   };
 
   const options = [
-    { label: 'JSON', desc: 'Machine-readable JSON Resume format', action: exportJson },
     {
-      label: 'HTML',
-      desc: `Rendered with ${getThemeById(themeId).name} theme`,
-      action: exportHtml,
+      ext: 'JSON',
+      label: t('export.json'),
+      sub: t('export.jsonDesc'),
+      action: () => {
+        saveAs(
+          new Blob([JSON.stringify(resume, null, 2)], { type: 'application/json' }),
+          `${fname}.json`,
+        );
+        onClose();
+      },
     },
-    { label: 'PDF', desc: 'Opens browser print dialog (Save as PDF)', action: exportPdf },
+    {
+      ext: 'YAML',
+      label: t('export.yaml'),
+      sub: t('export.yamlDesc'),
+      action: () => {
+        saveAs(new Blob([YAML.stringify(resume)], { type: 'text/yaml' }), `${fname}.yaml`);
+        onClose();
+      },
+    },
+    {
+      ext: 'HTML',
+      label: t('export.html'),
+      sub: `.html - ${getThemeById(themeId).name}`,
+      action: () => {
+        saveAs(new Blob([renderHtml()], { type: 'text/html' }), `${fname}.html`);
+        onClose();
+      },
+    },
+    {
+      ext: 'PDF',
+      label: t('export.pdf'),
+      sub: t('export.pdfDesc'),
+      action: () => {
+        onPrint();
+        onClose();
+      },
+    },
   ];
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">Export Resume</h2>
+    <>
+      <div className="fixed inset-0 z-40" onClick={onClose} />
+      <div className="absolute right-0 top-full mt-1 z-50 w-48 bg-bg border border-border rounded-lg shadow-lg overflow-hidden">
+        {options.map((opt, i) => (
           <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-xl cursor-pointer"
+            key={opt.ext}
+            onClick={opt.action}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-bg-hover transition-colors cursor-pointer ${
+              i > 0 ? 'border-t border-border' : ''
+            }`}
           >
-            &times;
+            <span className="w-8 h-8 rounded bg-bg-tertiary flex items-center justify-center text-xs font-mono text-text-tertiary shrink-0">
+              {EXT_ICONS[opt.ext]}
+            </span>
+            <div className="min-w-0">
+              <div className="text-sm font-medium text-text">{opt.label}</div>
+              <div className="text-xs text-text-muted truncate">{opt.sub}</div>
+            </div>
           </button>
-        </div>
-        <div className="space-y-2">
-          {options.map((opt) => (
-            <button
-              key={opt.label}
-              onClick={opt.action}
-              className="w-full text-left p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors cursor-pointer"
-            >
-              <div className="text-sm font-semibold text-gray-800">{opt.label}</div>
-              <div className="text-xs text-gray-500">{opt.desc}</div>
-            </button>
-          ))}
-        </div>
+        ))}
       </div>
-    </div>
+    </>
   );
 }

@@ -1,10 +1,12 @@
 import { useState, useCallback, useRef } from 'react';
 import Editor, { type OnMount } from '@monaco-editor/react';
 import { useResumeStore } from '../../store/resumeStore';
+import { useT } from '../../i18n';
 import resumeSchema from '../../utils/resumeSchema.json';
 import { saveAs } from 'file-saver';
 
 export function JsonEditor() {
+  const t = useT();
   const resume = useResumeStore((s) => s.resume);
   const setResume = useResumeStore((s) => s.setResume);
   const [error, setError] = useState<string | null>(null);
@@ -66,15 +68,15 @@ export function JsonEditor() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between px-3 py-1.5 bg-gray-50 border-b border-gray-200 shrink-0">
-        <span className="text-xs text-gray-400">
-          {error ? <span className="text-red-500">{error}</span> : 'JSON Resume v1.0.0'}
+      <div className="flex items-center justify-between px-3 py-1.5 bg-bg-secondary border-b border-border shrink-0">
+        <span className="text-xs text-text-muted">
+          {error ? <span className="text-danger">{error}</span> : t('jsonEditor.schema')}
         </span>
         <button
           onClick={handleFormat}
-          className="text-xs px-2 py-0.5 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded cursor-pointer"
+          className="text-xs px-2 py-0.5 text-text-tertiary hover:text-text hover:bg-bg-tertiary rounded cursor-pointer"
         >
-          Format
+          {t('jsonEditor.format')}
         </button>
       </div>
       <div className="flex-1">

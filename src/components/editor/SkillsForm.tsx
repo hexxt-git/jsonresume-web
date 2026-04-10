@@ -1,15 +1,17 @@
 import { useResumeStore } from '../../store/resumeStore';
+import { useT } from '../../i18n';
 import { FormField } from './FormField';
 import { ChipInput } from './ChipInput';
 import { RepeatableSection } from './RepeatableSection';
 
 export function SkillsForm() {
+  const t = useT();
   const skills = useResumeStore((s) => s.resume.skills) || [];
   const updateArraySection = useResumeStore((s) => s.updateArraySection);
 
   return (
     <RepeatableSection
-      title="Skills"
+      title={t('skills.title')}
       items={skills}
       onChange={(items) => updateArraySection('skills', items)}
       defaultItem={{ name: '', level: '', keywords: [] }}
@@ -17,23 +19,23 @@ export function SkillsForm() {
         <div className="space-y-2">
           <div className="grid grid-cols-2 gap-2">
             <FormField
-              label="Category"
+              label={t('skills.category')}
               value={item.name || ''}
               onChange={(v) => update(index, { ...item, name: v })}
-              placeholder="Frontend"
+              placeholder={t('ph.skillCategory')}
             />
             <FormField
-              label="Level"
+              label={t('skills.level')}
               value={item.level || ''}
               onChange={(v) => update(index, { ...item, level: v })}
-              placeholder="Advanced"
+              placeholder={t('ph.skillLevel')}
             />
           </div>
           <ChipInput
-            label="Keywords"
+            label={t('skills.keywords')}
             items={item.keywords || []}
             onChange={(v) => update(index, { ...item, keywords: v })}
-            placeholder="Add a skill"
+            placeholder={t('ph.skill')}
           />
         </div>
       )}

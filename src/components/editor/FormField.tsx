@@ -17,10 +17,10 @@ export function FormField({
 }: FormFieldProps) {
   const id = label.toLowerCase().replace(/\s+/g, '-');
   const cls =
-    'w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500';
+    'w-full px-3 py-1.5 text-sm border border-border-input bg-bg-input text-text rounded-md focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent';
   return (
     <div>
-      <label htmlFor={id} className="block text-xs font-medium text-gray-600 mb-1">
+      <label htmlFor={id} className="block text-xs font-medium text-text-secondary mb-1">
         {label}
       </label>
       {multiline ? (

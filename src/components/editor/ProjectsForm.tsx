@@ -1,15 +1,17 @@
 import { useResumeStore } from '../../store/resumeStore';
+import { useT } from '../../i18n';
 import { FormField } from './FormField';
 import { ChipInput } from './ChipInput';
 import { RepeatableSection } from './RepeatableSection';
 
 export function ProjectsForm() {
+  const t = useT();
   const projects = useResumeStore((s) => s.resume.projects) || [];
   const updateArraySection = useResumeStore((s) => s.updateArraySection);
 
   return (
     <RepeatableSection
-      title="Projects"
+      title={t('projects.title')}
       items={projects}
       onChange={(items) => updateArraySection('projects', items)}
       defaultItem={{ name: '', url: '', description: '', highlights: [], keywords: [] }}
@@ -17,50 +19,50 @@ export function ProjectsForm() {
         <div className="space-y-2">
           <div className="grid grid-cols-2 gap-2">
             <FormField
-              label="Name"
+              label={t('projects.name')}
               value={item.name || ''}
               onChange={(v) => update(index, { ...item, name: v })}
-              placeholder="My Project"
+              placeholder={t('ph.projectName')}
             />
             <FormField
-              label="URL"
+              label={t('projects.url')}
               value={item.url || ''}
               onChange={(v) => update(index, { ...item, url: v })}
-              placeholder="https://github.com/..."
+              placeholder={t('ph.projectUrl')}
             />
           </div>
           <FormField
-            label="Description"
+            label={t('projects.description')}
             value={item.description || ''}
             onChange={(v) => update(index, { ...item, description: v })}
             multiline
-            placeholder="What the project does"
+            placeholder={t('ph.projectDesc')}
           />
           <div className="grid grid-cols-2 gap-2">
             <FormField
-              label="Start Date"
+              label={t('projects.startDate')}
               value={item.startDate || ''}
               onChange={(v) => update(index, { ...item, startDate: v })}
-              placeholder="2024-01"
+              placeholder={t('ph.startDate')}
             />
             <FormField
-              label="End Date"
+              label={t('projects.endDate')}
               value={item.endDate || ''}
               onChange={(v) => update(index, { ...item, endDate: v })}
-              placeholder="2024-06"
+              placeholder={t('ph.endDate')}
             />
           </div>
           <ChipInput
-            label="Highlights"
+            label={t('projects.highlights')}
             items={item.highlights || []}
             onChange={(v) => update(index, { ...item, highlights: v })}
-            placeholder="Add a highlight"
+            placeholder={t('ph.projectHighlight')}
           />
           <ChipInput
-            label="Keywords"
+            label={t('projects.keywords')}
             items={item.keywords || []}
             onChange={(v) => update(index, { ...item, keywords: v })}
-            placeholder="Add a technology"
+            placeholder={t('ph.projectKeyword')}
           />
         </div>
       )}

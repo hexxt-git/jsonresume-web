@@ -1,8 +1,10 @@
 import { useResumeStore } from '../../store/resumeStore';
+import { useT } from '../../i18n';
 import { FormField } from './FormField';
 import { RepeatableSection } from './RepeatableSection';
 
 export function BasicsForm() {
+  const t = useT();
   const basics = useResumeStore((s) => s.resume.basics) || {};
   const updateBasics = useResumeStore((s) => s.updateBasics);
   const updateBasicsLocation = useResumeStore((s) => s.updateBasicsLocation);
@@ -10,113 +12,113 @@ export function BasicsForm() {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-semibold text-gray-700">Basic Information</h3>
+      <h3 className="text-sm font-semibold text-text">{t('basics.title')}</h3>
       <div className="grid grid-cols-2 gap-3">
         <FormField
-          label="Full Name"
+          label={t('basics.name')}
           value={basics.name || ''}
           onChange={(v) => updateBasics('name', v)}
-          placeholder="John Doe"
+          placeholder={t('ph.name')}
         />
         <FormField
-          label="Job Title"
+          label={t('basics.label')}
           value={basics.label || ''}
           onChange={(v) => updateBasics('label', v)}
-          placeholder="Web Developer"
+          placeholder={t('ph.label')}
         />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <FormField
-          label="Email"
+          label={t('basics.email')}
           value={basics.email || ''}
           onChange={(v) => updateBasics('email', v)}
           type="email"
-          placeholder="john@example.com"
+          placeholder={t('ph.email')}
         />
         <FormField
-          label="Phone"
+          label={t('basics.phone')}
           value={basics.phone || ''}
           onChange={(v) => updateBasics('phone', v)}
           type="tel"
-          placeholder="+1 234 567 890"
+          placeholder={t('ph.phone')}
         />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <FormField
-          label="Website"
+          label={t('basics.url')}
           value={basics.url || ''}
           onChange={(v) => updateBasics('url', v)}
-          placeholder="https://example.com"
+          placeholder={t('ph.url')}
         />
         <FormField
-          label="Image URL"
+          label={t('basics.image')}
           value={basics.image || ''}
           onChange={(v) => updateBasics('image', v)}
-          placeholder="https://example.com/photo.jpg"
+          placeholder={t('ph.imageUrl')}
         />
       </div>
       <FormField
-        label="Summary"
+        label={t('basics.summary')}
         value={basics.summary || ''}
         onChange={(v) => updateBasics('summary', v)}
         multiline
-        placeholder="A short bio about yourself"
+        placeholder={t('ph.summary')}
       />
 
-      <h3 className="text-sm font-semibold text-gray-700 pt-2">Location</h3>
+      <h3 className="text-sm font-semibold text-text pt-2">{t('basics.location')}</h3>
       <div className="grid grid-cols-2 gap-3">
         <FormField
-          label="City"
+          label={t('basics.city')}
           value={basics.location?.city || ''}
           onChange={(v) => updateBasicsLocation('city', v)}
-          placeholder="San Francisco"
+          placeholder={t('ph.city')}
         />
         <FormField
-          label="Region"
+          label={t('basics.region')}
           value={basics.location?.region || ''}
           onChange={(v) => updateBasicsLocation('region', v)}
-          placeholder="California"
+          placeholder={t('ph.region')}
         />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <FormField
-          label="Country Code"
+          label={t('basics.countryCode')}
           value={basics.location?.countryCode || ''}
           onChange={(v) => updateBasicsLocation('countryCode', v)}
-          placeholder="US"
+          placeholder={t('ph.countryCode')}
         />
         <FormField
-          label="Postal Code"
+          label={t('basics.postalCode')}
           value={basics.location?.postalCode || ''}
           onChange={(v) => updateBasicsLocation('postalCode', v)}
-          placeholder="94107"
+          placeholder={t('ph.postalCode')}
         />
       </div>
 
       <RepeatableSection
-        title="Profiles"
+        title={t('basics.profiles')}
         items={profiles}
         onChange={(items) => updateBasics('profiles', items)}
         defaultItem={{ network: '', username: '', url: '' }}
         renderItem={(item, index, update) => (
           <div className="grid grid-cols-3 gap-2">
             <FormField
-              label="Network"
+              label={t('basics.network')}
               value={item.network || ''}
               onChange={(v) => update(index, { ...item, network: v })}
-              placeholder="LinkedIn"
+              placeholder={t('ph.network')}
             />
             <FormField
-              label="Username"
+              label={t('basics.username')}
               value={item.username || ''}
               onChange={(v) => update(index, { ...item, username: v })}
-              placeholder="johndoe"
+              placeholder={t('ph.username')}
             />
             <FormField
               label="URL"
               value={item.url || ''}
               onChange={(v) => update(index, { ...item, url: v })}
-              placeholder="https://linkedin.com/in/johndoe"
+              placeholder={t('ph.profileUrl')}
             />
           </div>
         )}

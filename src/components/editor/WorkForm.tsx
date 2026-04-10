@@ -1,15 +1,17 @@
 import { useResumeStore } from '../../store/resumeStore';
+import { useT } from '../../i18n';
 import { FormField } from './FormField';
 import { ChipInput } from './ChipInput';
 import { RepeatableSection } from './RepeatableSection';
 
 export function WorkForm() {
+  const t = useT();
   const work = useResumeStore((s) => s.resume.work) || [];
   const updateArraySection = useResumeStore((s) => s.updateArraySection);
 
   return (
     <RepeatableSection
-      title="Work Experience"
+      title={t('work.title')}
       items={work}
       onChange={(items) => updateArraySection('work', items)}
       defaultItem={{
@@ -24,56 +26,56 @@ export function WorkForm() {
         <div className="space-y-2">
           <div className="grid grid-cols-2 gap-2">
             <FormField
-              label="Position"
+              label={t('work.position')}
               value={item.position || ''}
               onChange={(v) => update(index, { ...item, position: v })}
-              placeholder="Software Engineer"
+              placeholder={t('ph.position')}
             />
             <FormField
-              label="Company"
+              label={t('work.company')}
               value={item.name || ''}
               onChange={(v) => update(index, { ...item, name: v })}
-              placeholder="Acme Corp"
+              placeholder={t('ph.company')}
             />
           </div>
           <div className="grid grid-cols-3 gap-2">
             <FormField
-              label="Start Date"
+              label={t('work.startDate')}
               value={item.startDate || ''}
               onChange={(v) => update(index, { ...item, startDate: v })}
-              placeholder="2024-01"
+              placeholder={t('ph.startDate')}
             />
             <FormField
-              label="End Date"
+              label={t('work.endDate')}
               value={item.endDate || ''}
               onChange={(v) => update(index, { ...item, endDate: v })}
-              placeholder="2025-06 or empty for Present"
+              placeholder={t('ph.endDateHint')}
             />
             <FormField
-              label="Location"
+              label={t('work.location')}
               value={item.location || ''}
               onChange={(v) => update(index, { ...item, location: v })}
-              placeholder="San Francisco, CA"
+              placeholder={t('ph.location')}
             />
           </div>
           <FormField
-            label="URL"
+            label={t('work.url')}
             value={item.url || ''}
             onChange={(v) => update(index, { ...item, url: v })}
-            placeholder="https://company.com"
+            placeholder={t('ph.companyUrl')}
           />
           <FormField
-            label="Summary"
+            label={t('work.summary')}
             value={item.summary || ''}
             onChange={(v) => update(index, { ...item, summary: v })}
             multiline
-            placeholder="Brief description of role"
+            placeholder={t('ph.roleSummary')}
           />
           <ChipInput
-            label="Highlights"
+            label={t('work.highlights')}
             items={item.highlights || []}
             onChange={(v) => update(index, { ...item, highlights: v })}
-            placeholder="Add an accomplishment"
+            placeholder={t('ph.highlight')}
           />
         </div>
       )}
