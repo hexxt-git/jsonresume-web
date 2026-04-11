@@ -290,7 +290,7 @@ export function AiWritingTools(props: Props) {
             <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
             <div className="absolute top-7 right-0 z-50 w-52 bg-bg border border-border rounded-lg shadow-lg p-2">
               <h3 className="text-xs font-medium text-text-secondary mt-1 mb-2 text-center">
-                Use Ai Assistance for
+                AI Writing Tools
               </h3>
               <div className="grid grid-cols-2 gap-1.5">
                 {tools.map((tool) => {

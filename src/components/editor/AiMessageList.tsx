@@ -89,7 +89,7 @@ function CopyButton({ text }: { text: string }) {
 function ToolResultBadge({ msg }: { msg: ToolResultMessage }) {
   const t = useT();
   const toggleUndo = useResumeStore((s) => s.toggleToolUndo);
-  const [showDiff, setShowDiff] = useState(false);
+  const [showDiff, setShowDiff] = useState(true);
 
   const handleToggle = () => {
     if (!msg.path.length) return;
@@ -130,7 +130,7 @@ function ToolResultBadge({ msg }: { msg: ToolResultMessage }) {
   const afterStr = currentValue != null ? sortedStringify(currentValue) : '';
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-1 w-full">
       <div className="flex items-center gap-2 text-xs">
         <span
           className={`inline-flex items-center gap-1 px-2 py-0.5 rounded ${
@@ -165,7 +165,7 @@ function ToolResultBadge({ msg }: { msg: ToolResultMessage }) {
         )}
       </div>
       {showDiff && hasDiff && beforeStr !== afterStr && (
-        <div className="ml-2">
+        <div className="mt-1">
           <BlockDiffView oldText={beforeStr} newText={afterStr} />
         </div>
       )}

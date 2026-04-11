@@ -5,6 +5,8 @@
  * Similar to Cursor / GitHub's diff rendering.
  */
 
+import { useState } from 'react';
+
 /* ── Tokenizer ───────────────────────────────────────── */
 
 function tokenize(text: string): string[] {
@@ -191,14 +193,90 @@ function WordTokens({ tokens }: { tokens: WordToken[] }) {
   );
 }
 
+/* ── Collapsible unchanged lines ────────────────────── */
+
+type DisplayItem =
+  | { kind: 'line'; line: LineDiff; index: number }
+  | { kind: 'collapsed'; lines: LineDiff[]; groupId: number };
+
+function groupLines(lines: LineDiff[]): DisplayItem[] {
+  const result: DisplayItem[] = [];
+  let equalRun: LineDiff[] = [];
+  let equalStartIndex = 0;
+  let groupId = 0;
+
+  const flushEquals = () => {
+    if (equalRun.length >= 3) {
+      result.push({ kind: 'collapsed', lines: equalRun, groupId: groupId++ });
+    } else {
+      for (let k = 0; k < equalRun.length; k++) {
+        result.push({ kind: 'line', line: equalRun[k], index: equalStartIndex + k });
+      }
+    }
+    equalRun = [];
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].type === 'equal') {
+      if (equalRun.length === 0) equalStartIndex = i;
+      equalRun.push(lines[i]);
+    } else {
+      flushEquals();
+      result.push({ kind: 'line', line: lines[i], index: i });
+    }
+  }
+  flushEquals();
+
+  return result;
+}
+
 /* ── Render: inline diff (for writing tools review) ──── */
 
 export function InlineDiffView({ oldText, newText }: { oldText: string; newText: string }) {
   ensureStyles();
   const lines = lineDiff(oldText, newText);
+  const groups = groupLines(lines);
+  const [expanded, setExpanded] = useState<Set<number>>(new Set());
+
+  const toggle = (groupId: number) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(groupId)) next.delete(groupId);
+      else next.add(groupId);
+      return next;
+    });
+  };
+
   return (
-    <div className="text-sm leading-relaxed text-text whitespace-pre-wrap">
-      {lines.map((line, i) => {
+    <div className="w-full text-sm leading-relaxed text-text whitespace-pre-wrap">
+      {groups.map((item, i) => {
+        if (item.kind === 'collapsed') {
+          if (expanded.has(item.groupId)) {
+            return (
+              <div key={i}>
+                <div
+                  className="text-xs text-text-tertiary hover:text-text-secondary cursor-pointer py-0.5 select-none"
+                  onClick={() => toggle(item.groupId)}
+                >
+                  ··· collapse {item.lines.length} unchanged lines
+                </div>
+                {item.lines.map((line, j) => (
+                  <div key={j}>{line.oldLine}</div>
+                ))}
+              </div>
+            );
+          }
+          return (
+            <div
+              key={i}
+              className="text-xs text-text-tertiary hover:text-text-secondary cursor-pointer py-0.5 select-none"
+              onClick={() => toggle(item.groupId)}
+            >
+              ··· {item.lines.length} unchanged lines — click to expand
+            </div>
+          );
+        }
+        const { line } = item;
         if (line.type === 'equal') return <div key={i}>{line.oldLine}</div>;
         if (line.type === 'remove')
           return (
@@ -228,9 +306,50 @@ export function InlineDiffView({ oldText, newText }: { oldText: string; newText:
 export function BlockDiffView({ oldText, newText }: { oldText: string; newText: string }) {
   ensureStyles();
   const lines = lineDiff(oldText, newText);
+  const groups = groupLines(lines);
+  const [expanded, setExpanded] = useState<Set<number>>(new Set());
+
+  const toggle = (groupId: number) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(groupId)) next.delete(groupId);
+      else next.add(groupId);
+      return next;
+    });
+  };
+
   return (
-    <div className="text-xs font-mono rounded-md overflow-hidden border border-border whitespace-pre-wrap">
-      {lines.map((line, i) => {
+    <div className="w-full text-xs font-mono rounded-md overflow-hidden border border-border whitespace-pre-wrap">
+      {groups.map((item, i) => {
+        if (item.kind === 'collapsed') {
+          if (expanded.has(item.groupId)) {
+            return (
+              <div key={i}>
+                <div
+                  className="px-2 py-0.5 text-text-tertiary hover:text-text-secondary hover:bg-bg-secondary cursor-pointer select-none"
+                  onClick={() => toggle(item.groupId)}
+                >
+                  ··· collapse {item.lines.length} unchanged lines
+                </div>
+                {item.lines.map((line, j) => (
+                  <div key={j} className="px-2 py-0.5 text-text-secondary">
+                    {line.oldLine || '\u00A0'}
+                  </div>
+                ))}
+              </div>
+            );
+          }
+          return (
+            <div
+              key={i}
+              className="px-2 py-0.5 text-text-tertiary hover:text-text-secondary hover:bg-bg-secondary cursor-pointer select-none"
+              onClick={() => toggle(item.groupId)}
+            >
+              ··· {item.lines.length} unchanged lines — click to expand
+            </div>
+          );
+        }
+        const { line } = item;
         if (line.type === 'equal')
           return (
             <div key={i} className="px-2 py-0.5 text-text-secondary">
