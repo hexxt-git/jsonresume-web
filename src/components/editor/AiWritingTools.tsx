@@ -33,6 +33,13 @@ const TEXT_TOOLS: Tool[] = [
       'Summarize this text concisely, keeping all key points. Return only the result. you must make the content at least 30% shorter.',
   },
   {
+    id: 'quantify',
+    label: 'Quantify',
+    icon: Chart,
+    prompt:
+      'Quantify the items. You can either add metrics to the items, or add more tangible details to the items.',
+  },
+  {
     id: 'professional',
     label: 'Professional',
     icon: Briefcase,
@@ -40,31 +47,11 @@ const TEXT_TOOLS: Tool[] = [
       'Rewrite this text in a professional, polished tone suitable for a resume. Return only the result.',
   },
   {
-    id: 'casual',
-    label: 'Casual',
-    icon: MessageCircle,
-    prompt: 'Rewrite this text in a natural, conversational tone. Return only the result.',
-  },
-  {
-    id: 'grammar',
-    label: 'Fix Grammar',
-    icon: Task,
-    prompt:
-      'Fix all grammar, spelling, and punctuation errors in this text. Return only the corrected text.',
-  },
-  {
     id: 'bullets',
     label: 'Bullets',
     icon: TextalignJustifycenter,
     prompt:
       'Convert this text into concise bullet points, one per line starting with "- ". Return only the bullet points.',
-  },
-  {
-    id: 'quantify',
-    label: 'Quantify',
-    icon: Chart,
-    prompt:
-      'Quantify the items. You can either add metrics to the items, or add more tangible details to the items.',
   },
 ];
 
@@ -77,10 +64,11 @@ const LIST_TOOLS: Tool[] = [
       'Rewrite each item with a professional tone. Correct any spelling, capitalization, or grammar errors.',
   },
   {
-    id: 'grammar',
-    label: 'Fix Grammar',
-    icon: Task,
-    prompt: 'Fix grammar, spelling, and punctuation in each item.',
+    id: 'quantify',
+    label: 'Quantify',
+    icon: Chart,
+    prompt:
+      'Quantify the items. You can either add metrics to the items, or add more tangible details to the items.',
   },
   {
     id: 'expand',
@@ -95,13 +83,6 @@ const LIST_TOOLS: Tool[] = [
     icon: TextalignJustifycenter,
     prompt:
       'Make each item shorter and more impactful. Remove filler words. You must make the content at least 30% shorter.',
-  },
-  {
-    id: 'quantify',
-    label: 'Quantify',
-    icon: Chart,
-    prompt:
-      'Quantify the items. You can either add metrics to the items, or add more tangible details to the items.',
   },
 ];
 
@@ -311,7 +292,7 @@ export function AiWritingTools(props: Props) {
             <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
             <div className="absolute top-7 right-0 z-50 w-52 bg-bg border border-border rounded-lg shadow-lg p-2">
               <h3 className="text-xs font-medium text-text-secondary mt-1 mb-2 text-center">
-                AI Writing Tools
+                Use Ai Assistance for
               </h3>
               <div className="grid grid-cols-2 gap-1.5">
                 {tools.map((tool) => {
@@ -321,7 +302,7 @@ export function AiWritingTools(props: Props) {
                       key={tool.id}
                       type="button"
                       onClick={() => run(tool.prompt)}
-                      className="flex flex-col items-center gap-1 px-2 py-2.5 rounded-lg text-text-secondary hover:bg-bg-hover hover:text-text cursor-pointer transition-colors"
+                      className="flex flex-col items-center gap-1 px-2 py-2.5 rounded-lg text-text-secondary bg-bg-hover/20 hover:bg-bg-hover hover:text-text cursor-pointer transition-colors"
                     >
                       <Icon size={18} variant="Bold" color="currentColor" />
                       <span className="text-[10px] leading-tight text-center">{tool.label}</span>
@@ -334,7 +315,7 @@ export function AiWritingTools(props: Props) {
                     setOpen(false);
                     goToAi();
                   }}
-                  className="flex flex-col items-center gap-1 px-2 py-2.5 rounded-lg text-accent hover:bg-bg-hover cursor-pointer transition-colors"
+                  className="flex flex-col items-center gap-1 px-2 py-2.5 rounded-lg text-accent bg-bg-hover/30 hover:bg-bg-hover cursor-pointer transition-colors col-span-full"
                 >
                   <MessageSquare size={15} variant="Bold" color="currentColor" />
                   <span className="text-[10px] leading-tight text-center">AI Chat</span>

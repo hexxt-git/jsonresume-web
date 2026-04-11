@@ -7,62 +7,54 @@ import { useT } from '../../i18n';
 import { Copy, TickCircle } from 'iconsax-react';
 import { BlockDiffView } from './DiffView';
 
-/* ── Lightweight Markdown renderer ────────────────────── */
+/* ── Markdown renderer (marked + DOMPurify) ──────────── */
+
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
+
+// Configure marked: no mangle, GFM tables/strikethrough, breaks
+marked.setOptions({ gfm: true, breaks: true });
+
+function renderMarkdown(text: string): string {
+  const raw = marked.parse(text, { async: false }) as string;
+  return DOMPurify.sanitize(raw, {
+    ALLOWED_TAGS: [
+      'p',
+      'br',
+      'strong',
+      'em',
+      'del',
+      'code',
+      'pre',
+      'blockquote',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'ul',
+      'ol',
+      'li',
+      'table',
+      'thead',
+      'tbody',
+      'tr',
+      'th',
+      'td',
+      'a',
+      'span',
+      'div',
+      'hr',
+    ],
+    ALLOWED_ATTR: ['href', 'target', 'rel', 'class'],
+    ADD_ATTR: ['target'],
+  });
+}
 
 function Markdown({ text }: { text: string }) {
   const html = renderMarkdown(text);
   return <div className="markdown-content" dangerouslySetInnerHTML={{ __html: html }} />;
-}
-
-function renderMarkdown(text: string): string {
-  // Split into code blocks vs. normal text
-  const parts = text.split(/(```[\s\S]*?```)/g);
-  return parts
-    .map((part) => {
-      if (part.startsWith('```') && part.endsWith('```')) {
-        const inner = part.slice(3, -3);
-        const newlineIdx = inner.indexOf('\n');
-        const code = newlineIdx >= 0 ? inner.slice(newlineIdx + 1) : inner;
-        return `<pre class="md-code-block"><code>${escHtml(code)}</code></pre>`;
-      }
-      return renderInline(part);
-    })
-    .join('');
-}
-
-function renderInline(text: string): string {
-  return text
-    .split('\n')
-    .map((line) => {
-      // Headers
-      if (/^### /.test(line)) return `<h4 class="md-h">${inlineFormat(line.slice(4))}</h4>`;
-      if (/^## /.test(line)) return `<h3 class="md-h">${inlineFormat(line.slice(3))}</h3>`;
-      if (/^# /.test(line)) return `<h3 class="md-h">${inlineFormat(line.slice(2))}</h3>`;
-      // Bullet lists
-      if (/^[-*] /.test(line)) return `<div class="md-li">${inlineFormat(line.slice(2))}</div>`;
-      // Numbered lists
-      if (/^\d+\. /.test(line))
-        return `<div class="md-li">${inlineFormat(line.replace(/^\d+\. /, ''))}</div>`;
-      // Empty line
-      if (!line.trim()) return '<div class="md-br"></div>';
-      return `<div>${inlineFormat(line)}</div>`;
-    })
-    .join('');
-}
-
-function inlineFormat(text: string): string {
-  return escHtml(text)
-    .replace(/`([^`]+)`/g, '<code class="md-inline-code">$1</code>')
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*([^*]+)\*/g, '<em>$1</em>');
-}
-
-function escHtml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
 }
 
 /* ── Copy button ──────────────────────────────────────── */
@@ -121,29 +113,37 @@ function ToolResultBadge({ msg }: { msg: ToolResultMessage }) {
       })()
     : null;
 
-  const beforeStr = hasDiff
-    ? typeof msg.before === 'string'
-      ? msg.before
-      : JSON.stringify(msg.before, null, 2)
-    : '';
-  const afterStr =
-    currentValue != null
-      ? typeof currentValue === 'string'
-        ? currentValue
-        : JSON.stringify(currentValue, null, 2)
-      : '';
+  const deepSort = (v: unknown): unknown => {
+    if (Array.isArray(v)) return v.map(deepSort);
+    if (v && typeof v === 'object') {
+      const sorted: Record<string, unknown> = {};
+      for (const k of Object.keys(v as Record<string, unknown>).sort())
+        sorted[k] = deepSort((v as Record<string, unknown>)[k]);
+      return sorted;
+    }
+    return v;
+  };
+  const sortedStringify = (v: unknown) =>
+    typeof v === 'string' ? v : JSON.stringify(deepSort(v), null, 2);
+
+  const beforeStr = hasDiff ? sortedStringify(msg.before) : '';
+  const afterStr = currentValue != null ? sortedStringify(currentValue) : '';
 
   return (
     <div className="space-y-1">
       <div className="flex items-center gap-2 text-xs">
         <span
           className={`inline-flex items-center gap-1 px-2 py-0.5 rounded ${
-            msg.success
-              ? msg.undone
-                ? 'bg-yellow-500/10 text-yellow-400 line-through'
-                : 'bg-green-500/10 text-green-400'
-              : 'bg-danger/10 text-danger'
+            msg.success ? (msg.undone ? 'line-through' : '') : 'bg-danger/10 text-danger'
           }`}
+          style={
+            msg.success
+              ? {
+                  background: msg.undone ? 'var(--diff-rm-line)' : 'var(--diff-add-line)',
+                  color: msg.undone ? 'var(--diff-rm-text)' : 'var(--diff-add-text)',
+                }
+              : undefined
+          }
         >
           {msg.success ? (msg.undone ? '\u21A9' : '\u2713') : '\u2717'} {msg.result}
         </span>
@@ -175,7 +175,23 @@ function ToolResultBadge({ msg }: { msg: ToolResultMessage }) {
 
 /* ── Message list ─────────────────────────────────────── */
 
-export function AiMessageList() {
+const PRESETS = [
+  {
+    label: 'Improve my summary',
+    prompt: 'Improve my professional summary to be more compelling and concise.',
+  },
+  { label: 'Review my resume', prompt: 'Review my entire resume and suggest improvements.' },
+  {
+    label: 'Fix grammar everywhere',
+    prompt: 'Fix all grammar and spelling errors across my entire resume.',
+  },
+  {
+    label: 'Tailor for a job',
+    prompt: 'I want to tailor my resume for a specific job. Ask me for the job description.',
+  },
+];
+
+export function AiMessageList({ onSend }: { onSend?: (text: string) => void }) {
   const t = useT();
   const messages = useResumeStore((s) => activeSlot(s).chatHistory);
   const error = useAiStore((s) => s.error);
@@ -186,8 +202,36 @@ export function AiMessageList() {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  const name = useResumeStore((s) => activeSlot(s).resume.basics?.name);
+
+  if (messages.length === 0 && !error) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center px-4 gap-4">
+        <div className="text-center max-w-xs">
+          <p className="text-sm font-medium text-text">
+            {name ? `Let's work on ${name}'s resume` : `Let's work on your resume`}
+          </p>
+          <p className="text-xs text-text-muted mt-1">
+            Ask me to rewrite, translate, review, or tailor your resume for a specific role.
+          </p>
+        </div>
+        <div className="flex flex-wrap justify-center gap-2 max-w-xs">
+          {PRESETS.map((p) => (
+            <button
+              key={p.label}
+              onClick={() => onSend?.(p.prompt)}
+              className="text-[11px] px-3 py-1.5 border border-border rounded-lg text-text-secondary hover:bg-bg-hover hover:text-text cursor-pointer transition-colors"
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-3">
+    <div className="flex-1 overflow-y-auto px-4 space-y-3">
       {messages.map((m) => (
         <MessageRow key={m.id} message={m} />
       ))}
@@ -224,26 +268,40 @@ function MessageRow({ message: m }: { message: AnyMessage }) {
   // Don't render empty assistant messages that only have tool calls (tool results show below)
   if (!hasContent && m.role === 'assistant' && m.toolCalls?.length) return null;
 
+  const timestamp = new Date(m.timestamp).toLocaleTimeString();
+
   return (
-    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} group`}>
-      <div
-        className={`max-w-[85%] rounded-lg px-3 py-2 text-sm ${
-          isUser ? 'bg-accent text-white' : 'bg-bg-secondary text-text'
-        }`}
-      >
-        {hasContent ? (
-          isUser ? (
-            <span className="whitespace-pre-wrap">{m.content}</span>
+    <>
+      {isUser ? (
+        <div className="text-xs text-text-muted text-right mb-px!">
+          user <span className="text-[0.6rem]">{timestamp}</span>
+        </div>
+      ) : (
+        <div className="text-xs text-text-muted mb-px!">
+          assistant <span className="text-[0.6rem]">{timestamp}</span>
+        </div>
+      )}
+      <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} group`}>
+        {isUser && hasContent && <CopyButton text={m.content} />}
+        <div
+          className={`max-w-[85%] rounded-lg px-3 py-2 text-sm ${
+            isUser ? 'bg-accent text-white' : 'bg-bg-secondary text-text'
+          }`}
+        >
+          {hasContent ? (
+            isUser ? (
+              <span className="whitespace-pre-wrap">{m.content}</span>
+            ) : (
+              <Markdown text={m.content} />
+            )
           ) : (
-            <Markdown text={m.content} />
-          )
-        ) : (
-          showSpinner && (
-            <span className="inline-block w-4 h-4 border-2 border-text-muted border-t-transparent rounded-full animate-spin" />
-          )
-        )}
+            showSpinner && (
+              <span className="inline-block w-4 h-4 border-2 border-text-muted border-t-transparent rounded-full animate-spin" />
+            )
+          )}
+        </div>
+        {!isUser && hasContent && <CopyButton text={m.content} />}
       </div>
-      {hasContent && <CopyButton text={m.content} />}
-    </div>
+    </>
   );
 }

@@ -34,7 +34,7 @@ function toGeminiContents(messages: AnyMessage[]) {
           {
             functionResponse: {
               name: m.toolName,
-              response: { result: m.result, success: m.success },
+              response: { result: m.result, success: m.success, previous_value: m.before },
             },
           },
         ],

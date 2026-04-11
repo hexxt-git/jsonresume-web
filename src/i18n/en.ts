@@ -184,6 +184,7 @@ export default {
   'editor.auto': 'Automation',
   'auto.placeholder': 'Automation features coming soon.',
   'ai.settings': 'AI Settings',
+  'ai.changeModel': 'Change Model',
   'ai.backToChat': 'Back to chat',
   'ai.back': 'Back',
   'ai.providersTitle': 'AI Providers',

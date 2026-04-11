@@ -266,10 +266,11 @@ export function AiSettingsButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="text-text-muted hover:text-text-secondary transition-colors cursor-pointer p-1 rounded hover:bg-bg-hover"
+      className="flex items-center gap-1 text-xs text-text-secondary hover:text-text transition-colors cursor-pointer p-1 rounded bg-bg-hover/30 hover:bg-bg-hover"
       title={t('ai.settings')}
     >
       <Setting size={14} variant="Bold" color="currentColor" />
+      {t('ai.settings')}
     </button>
   );
 }

@@ -4,6 +4,7 @@ import { FormField } from './FormField';
 import { ChipInput } from './ChipInput';
 import { RepeatableSection } from './RepeatableSection';
 import { ComboField, DEGREE_OPTIONS } from './ComboField';
+import { UrlField } from './UrlField';
 
 export function EducationForm() {
   const t = useT();
@@ -70,6 +71,11 @@ export function EducationForm() {
               placeholder={t('ph.score')}
             />
           </div>
+          <UrlField
+            label="URL"
+            value={item.url || ''}
+            onChange={(v) => update(index, { ...item, url: v })}
+          />
           <ChipInput
             label={t('edu.courses')}
             items={item.courses || []}

@@ -9,6 +9,81 @@ import { useT } from '../../i18n';
 import { AiSetupPrompt, AiSettingsButton, AiProviderSettings } from './AiKeyGate';
 import { AiMessageList } from './AiMessageList';
 import { PROVIDERS } from '../../lib/ai';
+import { LampOn, Send2, StopCircle, Trash } from 'iconsax-react';
+
+/* ── Header buttons ──────────────────────────────────── */
+
+function ClearChatButton() {
+  const t = useT();
+  const clearMessages = useResumeStore((s) => s.clearMessages);
+  return (
+    <button
+      onClick={clearMessages}
+      className="flex items-center gap-1 text-xs text-text-secondary hover:text-text transition-colors cursor-pointer p-1 rounded bg-bg-hover/30 hover:bg-bg-hover"
+      title={t('ai.clearChat')}
+    >
+      <Trash size={14} variant="Bold" color="currentColor" />
+      {t('ai.clearChat')}
+    </button>
+  );
+}
+
+function ModelPickerButton() {
+  const t = useT();
+  const provider = useAiStore((s) => s.provider);
+  const model = useAiStore((s) => s.model);
+  const providerObj = getProvider(provider);
+  const providerMeta = PROVIDERS.find((p) => p.id === provider);
+  const [open, setOpen] = useState(false);
+  const currentLabel = providerObj.models.find((m) => m.id === model)?.label || model;
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-1 text-xs text-text-secondary hover:text-text transition-colors cursor-pointer p-1 rounded bg-bg-hover/30 hover:bg-bg-hover"
+        title={t('ai.changeModel')}
+      >
+        <LampOn size={14} variant="Bold" color="currentColor" />
+        {currentLabel}
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute left-0 top-full mt-1 z-50 w-52 bg-bg border border-border rounded-lg shadow-lg overflow-hidden">
+            {providerMeta && (
+              <div className="px-3 py-1.5 border-b border-border">
+                <span className="text-[10px] font-medium text-text-muted uppercase tracking-wide">
+                  {providerMeta.name}
+                </span>
+              </div>
+            )}
+            <div className="max-h-[240px] overflow-y-auto p-1">
+              {providerObj.models.map((m) => (
+                <button
+                  key={m.id}
+                  onClick={() => {
+                    useAiStore.getState().setModel(m.id);
+                    setOpen(false);
+                  }}
+                  className={`w-full text-left text-xs px-2.5 py-1.5 rounded-md cursor-pointer transition-colors ${
+                    m.id === model
+                      ? 'bg-bg-accent text-accent-text font-medium'
+                      : 'text-text-secondary hover:bg-bg-hover'
+                  }`}
+                >
+                  {m.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+/* ── Main component ──────────────────────────────────── */
 
 function buildSystemPrompt(resume: unknown): string {
   return `You are an advanced AI resume assistant. You are a full LLM — you can generate, rewrite, translate, and transform any text yourself. You also have tools to directly write changes into the user's resume.
@@ -30,7 +105,11 @@ ${JSON.stringify(resume, null, 2)}
 - When a task affects multiple sections, handle ALL of them in one go — do not stop partway and wait for the user to say "continue".
 - Never fabricate experience. Preserve the user's voice.
 - Respond in the user's language.
-- Current date: ${new Date().toISOString().split('T')[0]}`;
+- Tool results include \`previous_value\` — this is what the field contained BEFORE your tool call modified it. The "Current Resume" above reflects the LATEST state. Use \`previous_value\` to understand what changed.
+- To REVERT a change, use the tool again with the \`previous_value\` from the original tool result. Do NOT claim nothing changed when \`previous_value\` differs from the current state.
+- Current date: ${new Date().toISOString().split('T')[0]}
+- The Year is ${new Date().getFullYear()}
+`;
 }
 
 export default function AiChat() {
@@ -39,7 +118,6 @@ export default function AiChat() {
   const provider = useAiStore((s) => s.provider);
   const model = useAiStore((s) => s.model);
   const isStreaming = useAiStore((s) => s.isStreaming);
-  const clearMessages = useResumeStore((s) => s.clearMessages);
   const providerObj = getProvider(provider);
   const apiKey = apiKeys[provider] || '';
   const [showSettings, setShowSettings] = useState(false);
@@ -47,6 +125,11 @@ export default function AiChat() {
   const [input, setInput] = useState('');
   const abortRef = useRef<AbortController | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Focus textarea on mount (tab switch)
+  useEffect(() => {
+    textareaRef.current?.focus();
+  }, []);
 
   // Auto-grow textarea
   useEffect(() => {
@@ -149,8 +232,8 @@ export default function AiChat() {
   if (showSettings) {
     return (
       <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between px-4 py-2 border-b border-border shrink-0">
-          <span className="text-xs font-medium text-text">{t('ai.settings')}</span>
+        <div className="flex items-center justify-between px-4 py-2 shrink-0">
+          <span className="font-medium text-text">{t('ai.settings')}</span>
           <button
             onClick={() => setShowSettings(false)}
             className="text-xs text-accent hover:underline cursor-pointer"
@@ -163,40 +246,21 @@ export default function AiChat() {
     );
   }
 
-  const providerMeta = PROVIDERS.find((p) => p.id === provider);
-
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-border shrink-0">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={clearMessages}
-            className="text-xs text-text-muted hover:text-text transition-colors cursor-pointer"
-          >
-            {t('ai.clearChat')}
-          </button>
-          <select
-            value={model}
-            onChange={(e) => useAiStore.getState().setModel(e.target.value)}
-            className="text-xs bg-bg-input border border-border-input rounded px-1.5 py-0.5 text-text-secondary focus:outline-none focus:ring-1 focus:ring-accent cursor-pointer"
-          >
-            {providerObj.models.map((m) => (
-              <option key={m.id} value={m.id}>
-                {providerMeta ? `${providerMeta.name} — ` : ''}
-                {m.label}
-              </option>
-            ))}
-          </select>
-        </div>
+      <div className="flex items-center gap-1.5 px-2 py-2 shrink-0">
+        <ClearChatButton />
+        <ModelPickerButton />
+        <div className="flex-1" />
         <AiSettingsButton onClick={() => setShowSettings(true)} />
       </div>
 
-      <AiMessageList />
+      <AiMessageList onSend={handleSend} />
 
-      {/* Input bar */}
-      <div className="px-4 py-3 border-t border-border shrink-0">
-        <div className="flex gap-2 items-end">
+      {/* Input */}
+      <div className="px-3 lg:px-12 lg:pb-8 pb-3 pt-1 lg:pt-2 shrink-0">
+        <div className="flex items-end gap-1.5 border border-border-input bg-bg-input rounded-lg px-3 py-1.5 focus-within:ring-1 focus-within:ring-accent focus-within:border-accent">
           <textarea
             ref={textareaRef}
             value={input}
@@ -204,23 +268,25 @@ export default function AiChat() {
             onKeyDown={handleKeyDown}
             placeholder={t('ai.placeholder')}
             rows={1}
-            className="flex-1 px-3 py-1.5 text-sm border border-border-input bg-bg-input text-text rounded-md focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent resize-none overflow-y-auto"
+            className="flex-1 text-sm bg-transparent text-text resize-none overflow-y-auto outline-none py-1"
             style={{ maxHeight: 96 }}
           />
           {isStreaming ? (
             <button
               onClick={handleStop}
-              className="shrink-0 text-xs px-4 h-8 bg-danger text-white rounded-md hover:opacity-90 transition-colors cursor-pointer"
+              className="shrink-0 p-1 text-danger hover:opacity-80 cursor-pointer transition-colors"
+              title={t('ai.stop')}
             >
-              {t('ai.stop')}
+              <StopCircle size={18} variant="Bold" color="currentColor" />
             </button>
           ) : (
             <button
               onClick={() => handleSend(input)}
               disabled={!input.trim()}
-              className="shrink-0 text-xs px-4 h-8 bg-accent text-white rounded-md hover:opacity-90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="shrink-0 p-1 text-accent hover:opacity-80 cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              title={t('ai.send')}
             >
-              {t('ai.send')}
+              <Send2 size={18} variant="Bold" color="currentColor" />
             </button>
           )}
         </div>

@@ -1,77 +1,129 @@
 /**
- * Word-level diff view. Shows removed words in red, added in green.
- * Used in AI writing tools review state and AI chat tool results.
+ * Two-level diff: line-level background + word-level highlight.
+ * Unchanged lines render plain. Changed lines get a subtle bg,
+ * with the specific changed words getting a stronger highlight.
+ * Similar to Cursor / GitHub's diff rendering.
  */
 
-/* ── Simple word-level LCS diff ──────────────────────── */
-
-interface DiffToken {
-  type: 'equal' | 'remove' | 'add';
-  text: string;
-}
+/* ── Tokenizer ───────────────────────────────────────── */
 
 function tokenize(text: string): string[] {
   return text.match(/\S+|\s+/g) || [];
 }
 
-function lcs(a: string[], b: string[]): boolean[][] {
-  const m = a.length;
-  const n = b.length;
+/* ── LCS for word-level diff ─────────────────────────── */
+
+interface WordToken {
+  type: 'equal' | 'remove' | 'add';
+  text: string;
+}
+
+function wordDiff(a: string, b: string): WordToken[] {
+  const at = tokenize(a);
+  const bt = tokenize(b);
+  const m = at.length,
+    n = bt.length;
   const dp: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
-  for (let i = 1; i <= m; i++) {
-    for (let j = 1; j <= n; j++) {
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
       dp[i][j] =
-        a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] + 1 : Math.max(dp[i - 1][j], dp[i][j - 1]);
-    }
-  }
-  const inLcs: boolean[][] = [Array(m).fill(false), Array(n).fill(false)];
+        at[i - 1] === bt[j - 1] ? dp[i - 1][j - 1] + 1 : Math.max(dp[i - 1][j], dp[i][j - 1]);
+
+  const inA = Array(m).fill(false);
+  const inB = Array(n).fill(false);
   let i = m,
     j = n;
   while (i > 0 && j > 0) {
-    if (a[i - 1] === b[j - 1]) {
-      inLcs[0][i - 1] = true;
-      inLcs[1][j - 1] = true;
-      i--;
-      j--;
-    } else if (dp[i - 1][j] >= dp[i][j - 1]) {
-      i--;
-    } else {
-      j--;
-    }
+    if (at[i - 1] === bt[j - 1]) {
+      inA[--i] = true;
+      inB[--j] = true;
+    } else if (dp[i - 1][j] >= dp[i][j - 1]) i--;
+    else j--;
   }
-  return inLcs;
-}
 
-export function computeDiff(oldText: string, newText: string): DiffToken[] {
-  const oldTokens = tokenize(oldText);
-  const newTokens = tokenize(newText);
-  const [oldInLcs, newInLcs] = lcs(oldTokens, newTokens);
-
-  const result: DiffToken[] = [];
-  let oi = 0,
-    ni = 0;
-
-  while (oi < oldTokens.length || ni < newTokens.length) {
-    if (oi < oldTokens.length && oldInLcs[oi] && ni < newTokens.length && newInLcs[ni]) {
-      result.push({ type: 'equal', text: oldTokens[oi] });
-      oi++;
-      ni++;
+  const result: WordToken[] = [];
+  let ai = 0,
+    bi = 0;
+  while (ai < m || bi < n) {
+    if (ai < m && inA[ai] && bi < n && inB[bi]) {
+      result.push({ type: 'equal', text: at[ai] });
+      ai++;
+      bi++;
     } else {
-      while (oi < oldTokens.length && !oldInLcs[oi]) {
-        result.push({ type: 'remove', text: oldTokens[oi] });
-        oi++;
+      while (ai < m && !inA[ai]) {
+        result.push({ type: 'remove', text: at[ai] });
+        ai++;
       }
-      while (ni < newTokens.length && !newInLcs[ni]) {
-        result.push({ type: 'add', text: newTokens[ni] });
-        ni++;
+      while (bi < n && !inB[bi]) {
+        result.push({ type: 'add', text: bt[bi] });
+        bi++;
       }
     }
   }
-
   return result;
 }
 
-/* ── List diff (for chip inputs) ─────────────────────── */
+/* ── Line-level diff ─────────────────────────────────── */
+
+interface LineDiff {
+  type: 'equal' | 'remove' | 'add' | 'modify';
+  oldLine?: string;
+  newLine?: string;
+  words?: WordToken[];
+}
+
+function lineDiff(oldText: string, newText: string): LineDiff[] {
+  const oldLines = oldText.split('\n');
+  const newLines = newText.split('\n');
+  const m = oldLines.length,
+    n = newLines.length;
+
+  // LCS on lines
+  const dp: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
+      dp[i][j] =
+        oldLines[i - 1] === newLines[j - 1]
+          ? dp[i - 1][j - 1] + 1
+          : Math.max(dp[i - 1][j], dp[i][j - 1]);
+
+  // Backtrack to build edit script
+  const ops: LineDiff[] = [];
+  let i = m,
+    j = n;
+  const stack: LineDiff[] = [];
+  while (i > 0 || j > 0) {
+    if (i > 0 && j > 0 && oldLines[i - 1] === newLines[j - 1]) {
+      stack.push({ type: 'equal', oldLine: oldLines[i - 1] });
+      i--;
+      j--;
+    } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
+      stack.push({ type: 'add', newLine: newLines[j - 1] });
+      j--;
+    } else {
+      stack.push({ type: 'remove', oldLine: oldLines[i - 1] });
+      i--;
+    }
+  }
+  stack.reverse();
+
+  // Pair adjacent remove+add as "modify" with word-level diff
+  let k = 0;
+  while (k < stack.length) {
+    if (stack[k].type === 'remove' && k + 1 < stack.length && stack[k + 1].type === 'add') {
+      const old = stack[k].oldLine!;
+      const neu = stack[k + 1].newLine!;
+      ops.push({ type: 'modify', oldLine: old, newLine: neu, words: wordDiff(old, neu) });
+      k += 2;
+    } else {
+      ops.push(stack[k]);
+      k++;
+    }
+  }
+  return ops;
+}
+
+/* ── List diff ───────────────────────────────────────── */
 
 export interface ListDiffItem {
   type: 'equal' | 'remove' | 'add';
@@ -82,22 +134,14 @@ export function computeListDiff(oldItems: string[], newItems: string[]): ListDif
   const oldSet = new Set(oldItems);
   const newSet = new Set(newItems);
   const result: ListDiffItem[] = [];
-
-  for (const item of oldItems) {
+  for (const item of oldItems)
     result.push({ type: newSet.has(item) ? 'equal' : 'remove', text: item });
-  }
-  for (const item of newItems) {
-    if (!oldSet.has(item)) result.push({ type: 'add', text: item });
-  }
+  for (const item of newItems) if (!oldSet.has(item)) result.push({ type: 'add', text: item });
   return result;
 }
 
-/* ── Shared style helpers ────────────────────────────── */
+/* ── Styles ──────────────────────────────────────────── */
 
-const removeCls = 'diff-remove';
-const addCls = 'diff-add';
-
-/* CSS injected once — uses theme-aware colors via opacity */
 const DIFF_STYLES = `
 @keyframes ai-shimmer {
   0% { transform: translateX(-100%); }
@@ -109,15 +153,10 @@ const DIFF_STYLES = `
   animation: ai-shimmer 1.5s ease-in-out infinite;
 }
 .dark .ai-shimmer { opacity: 0.10; }
-
-.diff-remove { background: rgba(239,68,68,0.12); color: var(--danger); text-decoration: line-through; border-radius: 2px; padding: 0 1px; }
-.diff-add { background: rgba(34,197,94,0.12); color: #22c55e; border-radius: 2px; padding: 0 1px; }
-.dark .diff-remove { background: rgba(248,113,113,0.12); color: #f87171; }
-.dark .diff-add { background: rgba(74,222,128,0.12); color: #4ade80; }
-.diff-block-old { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.15); color: var(--danger); }
-.diff-block-new { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.15); color: #22c55e; }
-.dark .diff-block-old { background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.15); color: #f87171; }
-.dark .diff-block-new { background: rgba(74,222,128,0.08); border-color: rgba(74,222,128,0.15); color: #4ade80; }
+.diff-line-rm { background: var(--diff-rm-line); color: var(--diff-rm-text); }
+.diff-line-add { background: var(--diff-add-line); color: var(--diff-add-text); }
+.diff-word-rm { background: var(--diff-rm-word); color: var(--diff-rm-text) !important; text-decoration: line-through; border-radius: 2px; padding: 0 1px; }
+.diff-word-add { background: var(--diff-add-word); color: var(--diff-add-text) !important; border-radius: 2px; padding: 0 1px; }
 `;
 
 let stylesInjected = false;
@@ -129,42 +168,104 @@ function ensureStyles() {
   document.head.appendChild(style);
 }
 
-/* ── Render components ───────────────────────────────── */
+/* ── Render: word tokens ─────────────────────────────── */
 
-export function InlineDiffView({ oldText, newText }: { oldText: string; newText: string }) {
-  ensureStyles();
-  const tokens = computeDiff(oldText, newText);
+function WordTokens({ tokens }: { tokens: WordToken[] }) {
   return (
-    <div className="text-sm leading-relaxed text-text">
+    <>
       {tokens.map((t, i) => {
         if (t.type === 'equal') return <span key={i}>{t.text}</span>;
         if (t.type === 'remove')
           return (
-            <span key={i} className={removeCls}>
+            <span key={i} className="diff-word-rm">
               {t.text}
             </span>
           );
         return (
-          <span key={i} className={addCls}>
+          <span key={i} className="diff-word-add">
             {t.text}
           </span>
+        );
+      })}
+    </>
+  );
+}
+
+/* ── Render: inline diff (for writing tools review) ──── */
+
+export function InlineDiffView({ oldText, newText }: { oldText: string; newText: string }) {
+  ensureStyles();
+  const lines = lineDiff(oldText, newText);
+  return (
+    <div className="text-sm leading-relaxed text-text whitespace-pre-wrap">
+      {lines.map((line, i) => {
+        if (line.type === 'equal') return <div key={i}>{line.oldLine}</div>;
+        if (line.type === 'remove')
+          return (
+            <div key={i} className="diff-line-rm">
+              <span className="diff-word-rm">{line.oldLine}</span>
+            </div>
+          );
+        if (line.type === 'add')
+          return (
+            <div key={i} className="diff-line-add">
+              <span className="diff-word-add">{line.newLine}</span>
+            </div>
+          );
+        // modify: show word-level diff
+        return (
+          <div key={i} className="diff-line-add">
+            <WordTokens tokens={line.words!} />
+          </div>
         );
       })}
     </div>
   );
 }
 
+/* ── Render: block diff (for AI chat tool results) ───── */
+
 export function BlockDiffView({ oldText, newText }: { oldText: string; newText: string }) {
   ensureStyles();
+  const lines = lineDiff(oldText, newText);
   return (
-    <div className="space-y-1 text-xs font-mono">
-      <div className="diff-block-old rounded px-2 py-1.5 whitespace-pre-wrap line-through">
-        {oldText}
-      </div>
-      <div className="diff-block-new rounded px-2 py-1.5 whitespace-pre-wrap">{newText}</div>
+    <div className="text-xs font-mono rounded-md overflow-hidden border border-border whitespace-pre-wrap">
+      {lines.map((line, i) => {
+        if (line.type === 'equal')
+          return (
+            <div key={i} className="px-2 py-0.5 text-text-secondary">
+              {line.oldLine || '\u00A0'}
+            </div>
+          );
+        if (line.type === 'remove')
+          return (
+            <div key={i} className="diff-line-rm px-2 py-0.5">
+              <span className="diff-word-rm">{line.oldLine}</span>
+            </div>
+          );
+        if (line.type === 'add')
+          return (
+            <div key={i} className="diff-line-add px-2 py-0.5">
+              <span className="diff-word-add">{line.newLine}</span>
+            </div>
+          );
+        // modify: removed line then added line with word highlights
+        return (
+          <div key={i}>
+            <div className="diff-line-rm px-2 py-0.5">
+              <WordTokens tokens={line.words!.filter((t) => t.type !== 'add')} />
+            </div>
+            <div className="diff-line-add px-2 py-0.5">
+              <WordTokens tokens={line.words!.filter((t) => t.type !== 'remove')} />
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
+
+/* ── Render: list diff (for chip inputs) ─────────────── */
 
 export function ListDiffView({ items }: { items: ListDiffItem[] }) {
   ensureStyles();
@@ -175,9 +276,9 @@ export function ListDiffView({ items }: { items: ListDiffItem[] }) {
           key={i}
           className={`text-xs px-2 py-0.5 rounded ${
             item.type === 'remove'
-              ? removeCls
+              ? 'diff-word-rm'
               : item.type === 'add'
-                ? addCls
+                ? 'diff-word-add'
                 : 'bg-bg-tertiary text-text'
           }`}
         >
@@ -187,3 +288,6 @@ export function ListDiffView({ items }: { items: ListDiffItem[] }) {
     </div>
   );
 }
+
+/* ── Re-export computeDiff for external use ──────────── */
+export { wordDiff as computeDiff };

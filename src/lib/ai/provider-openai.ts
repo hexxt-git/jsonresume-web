@@ -27,7 +27,7 @@ function toOpenAIMessages(
       out.push({
         role: 'tool',
         tool_call_id: m.id,
-        content: JSON.stringify({ result: m.result, success: m.success }),
+        content: JSON.stringify({ result: m.result, success: m.success, previous_value: m.before }),
       });
     }
   }

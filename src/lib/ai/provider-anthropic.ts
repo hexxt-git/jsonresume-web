@@ -25,7 +25,7 @@ function toAnthropicMessages(messages: AnyMessage[]): Anthropic.MessageParam[] {
       const block: Anthropic.ToolResultBlockParam = {
         type: 'tool_result',
         tool_use_id: m.id,
-        content: JSON.stringify({ result: m.result, success: m.success }),
+        content: JSON.stringify({ result: m.result, success: m.success, previous_value: m.before }),
       };
       if (last?.role === 'user' && Array.isArray(last.content)) {
         (last.content as Anthropic.ContentBlockParam[]).push(block);
