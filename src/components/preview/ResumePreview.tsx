@@ -47,9 +47,22 @@ export function ResumePreview() {
     return Math.round(Math.min((container.clientWidth - 32) / A4_WIDTH, 1) * 100) / 100;
   }, []);
 
-  // Auto-fit zoom to container width on mount
+  // Auto-fit zoom to container width on mount and when container becomes visible (mobile tab switch)
   useEffect(() => {
     setZoom(fitZoom());
+
+    const container = containerRef.current;
+    if (!container || typeof ResizeObserver === 'undefined') return;
+    let timer: ReturnType<typeof setTimeout>;
+    const ro = new ResizeObserver(() => {
+      clearTimeout(timer);
+      timer = setTimeout(() => setZoom(fitZoom()), 300);
+    });
+    ro.observe(container);
+    return () => {
+      clearTimeout(timer);
+      ro.disconnect();
+    };
   }, [fitZoom]);
 
   const handlePrint = useCallback(() => {

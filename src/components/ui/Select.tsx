@@ -22,7 +22,7 @@ export function Select({
   size = 'md',
   className,
 }: SelectProps) {
-  const trigger = size === 'sm' ? 'text-xs px-2 py-0.5 gap-1' : 'text-xs px-3 py-1.5 gap-1.5';
+  const trigger = size === 'sm' ? 'text-xs px-2 py-1 gap-1' : 'text-xs px-3 py-1.5 gap-1.5';
 
   return (
     <RadixSelect.Root value={value} onValueChange={onValueChange}>

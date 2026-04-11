@@ -4,36 +4,37 @@ import { ResumePreview } from './components/preview/ResumePreview';
 import { ImportDialog } from './components/import-export/ImportDialog';
 import { ExportDialog } from './components/import-export/ExportDialog';
 import { useResumeStore } from './store/resumeStore';
+import { useAiStore } from './store/aiStore';
 import { SlotsPicker } from './components/slots/SlotsPicker';
 import { sampleResume } from './utils/sample';
 import { parseResumeFile } from './parser';
-import { useDarkModeStore } from './store/darkModeStore';
 import { useSlotsStore } from './store/slotsStore';
-import { useT, useI18nStore, locales, type Locale } from './i18n';
+import { useSettingsStore, type ColorMode } from './store/settingsStore';
+import { useT, locales, type Locale } from './i18n';
 import { Select } from './components/ui/Select';
 
-const darkModeOptions = [
+const colorModeOptions = [
   { value: 'light', label: '\u2600 Light' },
   { value: 'dark', label: '\u263E Dark' },
   { value: 'system', label: '\u25D0 System' },
 ];
 
-function DarkModeToggle() {
-  const mode = useDarkModeStore((s) => s.mode);
-  const setMode = useDarkModeStore((s) => s.setMode);
+function ColorModeToggle() {
+  const mode = useSettingsStore((s) => s.colorMode);
+  const setMode = useSettingsStore((s) => s.setColorMode);
   return (
     <Select
       value={mode}
-      onValueChange={(v) => setMode(v as 'light' | 'dark' | 'system')}
-      options={darkModeOptions}
+      onValueChange={(v) => setMode(v as ColorMode)}
+      options={colorModeOptions}
       size="sm"
     />
   );
 }
 
 function LocalePicker() {
-  const locale = useI18nStore((s) => s.locale);
-  const setLocale = useI18nStore((s) => s.setLocale);
+  const locale = useSettingsStore((s) => s.locale);
+  const setLocale = useSettingsStore((s) => s.setLocale);
   const options = locales.map((l) => ({ value: l.id, label: l.label }));
   return (
     <Select
@@ -42,6 +43,174 @@ function LocalePicker() {
       options={options}
       size="sm"
     />
+  );
+}
+
+const colorModes: { value: ColorMode; label: string }[] = [
+  { value: 'light', label: '\u2600' },
+  { value: 'dark', label: '\u263E' },
+  { value: 'system', label: '\u25D0' },
+];
+
+function ButtonGroup<T extends string>({
+  options,
+  value,
+  onChange,
+}: {
+  options: { value: T; label: string }[];
+  value: T;
+  onChange: (v: T) => void;
+}) {
+  return (
+    <div className="flex rounded overflow-hidden border border-border">
+      {options.map((o) => (
+        <button
+          key={o.value}
+          onClick={() => onChange(o.value)}
+          className={`flex-1 text-xs px-2 py-1 cursor-pointer transition-colors ${
+            value === o.value
+              ? 'bg-accent text-white'
+              : 'bg-bg text-text-secondary hover:bg-bg-hover'
+          }`}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function MobileMenu({ reset, onImport }: { reset: () => void; onImport: () => void }) {
+  const [open, setOpen] = useState(false);
+  const t = useT();
+  const colorMode = useSettingsStore((s) => s.colorMode);
+  const setColorMode = useSettingsStore((s) => s.setColorMode);
+  const locale = useSettingsStore((s) => s.locale);
+  const setLocale = useSettingsStore((s) => s.setLocale);
+
+  return (
+    <div className="relative sm:hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="text-xs px-1.5 py-1 border border-border rounded hover:bg-bg-hover cursor-pointer text-text-secondary"
+      >
+        &#8943;
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute right-0 top-full mt-1 z-50 w-48 bg-bg border border-border rounded-lg shadow-lg p-2 space-y-2">
+            <button
+              onClick={() => {
+                onImport();
+                setOpen(false);
+              }}
+              className="w-full text-xs px-2 py-1.5 text-left text-text-secondary hover:bg-bg-hover rounded cursor-pointer"
+            >
+              {t('app.import')}
+            </button>
+            <div className="border-t border-border pt-2">
+              <ButtonGroup options={colorModes} value={colorMode} onChange={setColorMode} />
+            </div>
+            <ButtonGroup
+              options={locales.map((l) => ({ value: l.id, label: l.label }))}
+              value={locale}
+              onChange={(v) => setLocale(v as Locale)}
+            />
+            <div className="border-t border-border pt-2">
+              <button
+                onClick={() => {
+                  reset();
+                  setOpen(false);
+                }}
+                className="w-full text-xs px-2 py-1.5 text-left text-danger hover:bg-bg-hover rounded cursor-pointer"
+              >
+                {t('app.reset')}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function SplitPane({
+  mobileView,
+  setMobileView,
+  children,
+}: {
+  mobileView: 'editor' | 'preview';
+  setMobileView: (v: 'editor' | 'preview') => void;
+  children: React.ReactNode;
+}) {
+  const splitPct = useSettingsStore((s) => s.splitPct);
+  const setSplitPct = useSettingsStore((s) => s.setSplitPct);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef(false);
+
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    e.preventDefault();
+    dragging.current = true;
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  }, []);
+
+  const onPointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      if (!dragging.current || !containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const pct = ((e.clientX - rect.left) / rect.width) * 100;
+      setSplitPct(Math.min(80, Math.max(20, pct)));
+    },
+    [setSplitPct],
+  );
+
+  const onPointerUp = useCallback(() => {
+    dragging.current = false;
+  }, []);
+
+  const pct = Math.min(80, Math.max(20, splitPct));
+
+  return (
+    <div
+      ref={containerRef}
+      className="flex-1 flex min-h-0"
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+    >
+      {/* Inject dynamic split width via media query so mobile stays full-width */}
+      <style>{`@media(min-width:640px){.split-editor{width:${pct}% !important}}`}</style>
+
+      <div
+        className={`split-editor h-full overflow-hidden shrink-0 ${
+          mobileView === 'preview' ? 'hidden sm:block' : ''
+        }`}
+        style={{ width: '100%' }}
+      >
+        <ResumeEditor onShowPreview={() => setMobileView('preview')} />
+      </div>
+      {/* Drag handle — desktop only */}
+      <div
+        onPointerDown={onPointerDown}
+        className="hidden sm:flex w-1.5 shrink-0 cursor-col-resize items-center justify-center bg-border hover:bg-accent/30 transition-colors"
+      >
+        <div className="w-0.5 h-8 rounded-full bg-text-muted/40" />
+      </div>
+      <div
+        className={`h-full overflow-hidden flex-col flex-1 min-w-0 ${
+          mobileView === 'editor' ? 'hidden sm:flex' : 'flex'
+        }`}
+      >
+        {/* Mobile: back to editor button */}
+        <button
+          onClick={() => setMobileView('editor')}
+          className="sm:hidden flex items-center gap-1 px-3 py-1.5 text-xs text-accent-text border-b border-border shrink-0 cursor-pointer hover:bg-bg-hover"
+        >
+          &larr; Editor
+        </button>
+        {children}
+      </div>
+    </div>
   );
 }
 
@@ -62,16 +231,33 @@ function App() {
 
   // Bootstrap: ensure at least one slot always exists
   useEffect(() => {
-    if (slots.length === 0) {
-      saveSlot('Resume 1', resume, themeId);
+    if (useSlotsStore.getState().slots.length === 0) {
+      saveSlot('', resume, themeId);
     }
   }, [slots.length, saveSlot, resume, themeId]);
 
+  // Auto-save resume + chat history to active slot (500ms debounce).
+  // Messages read imperatively — NOT subscribed — to avoid re-renders on every streaming chunk.
   useEffect(() => {
     if (!activeSlotId) return;
-    const timer = setTimeout(() => updateSlot(activeSlotId, resume, themeId, custom), 500);
+    const timer = setTimeout(() => {
+      const chatHistory = useAiStore.getState().messages;
+      updateSlot(activeSlotId, resume, themeId, custom, chatHistory);
+    }, 500);
     return () => clearTimeout(timer);
   }, [resume, themeId, custom, activeSlotId, updateSlot]);
+
+  // Save chat history when streaming ends (covers chat-only interactions that don't change the resume).
+  const isStreaming = useAiStore((s) => s.isStreaming);
+  const wasStreamingRef = useRef(false);
+  useEffect(() => {
+    if (wasStreamingRef.current && !isStreaming && activeSlotId) {
+      const chatHistory = useAiStore.getState().messages;
+      const r = useResumeStore.getState();
+      updateSlot(activeSlotId, r.resume, r.selectedThemeId, r.customization, chatHistory);
+    }
+    wasStreamingRef.current = isStreaming;
+  }, [isStreaming, activeSlotId, updateSlot]);
 
   const isEmpty =
     !resume.basics?.name &&
@@ -88,31 +274,20 @@ function App() {
 
   return (
     <div className="h-screen flex flex-col bg-bg">
-      <header className="flex items-center justify-between px-4 py-2 border-b border-border bg-bg shrink-0">
-        <div className="flex items-center gap-3">
-          <h1 className="text-sm font-bold text-text tracking-tight">{t('app.title')}</h1>
-          <span className="hidden sm:inline text-xs text-text-muted">{t('app.subtitle')}</span>
-          <DarkModeToggle />
-          <LocalePicker />
-        </div>
-        <div className="flex items-center gap-2">
+      <header className="flex items-center justify-between px-2 py-1.5 border-b border-border bg-bg shrink-0 gap-1">
+        <h1 className="text-sm font-bold text-text tracking-tight shrink-0">{t('app.title')}</h1>
+        <div className="flex items-center gap-1 shrink-0">
           <SlotsPicker />
           <button
-            onClick={reset}
-            className="text-xs px-3 py-1.5 border border-border rounded-md hover:bg-bg-hover transition-colors cursor-pointer text-danger"
-          >
-            {t('app.reset')}
-          </button>
-          <button
             onClick={() => setImportOpen(true)}
-            className="text-xs px-3 py-1.5 border border-border rounded-md hover:bg-bg-hover transition-colors cursor-pointer text-text-secondary"
+            className="hidden sm:inline-flex text-xs px-2 py-1 border border-border rounded hover:bg-bg-hover transition-colors cursor-pointer text-text-secondary"
           >
             {t('app.import')}
           </button>
           <div className="relative">
             <button
               onClick={() => setExportOpen(!exportOpen)}
-              className="text-xs px-3 py-1.5 bg-accent text-white rounded-md hover:opacity-90 transition-colors cursor-pointer"
+              className="text-xs px-2 py-1 bg-accent text-white rounded hover:opacity-90 transition-colors cursor-pointer"
             >
               {t('app.export')}
             </button>
@@ -122,47 +297,34 @@ function App() {
               onPrint={handlePrint}
             />
           </div>
+          <div className="hidden sm:flex items-center gap-1 ml-0.5">
+            <ColorModeToggle />
+            <LocalePicker />
+            <button
+              onClick={reset}
+              className="text-xs px-2 py-1 border border-border rounded hover:bg-bg-hover transition-colors cursor-pointer text-danger"
+            >
+              {t('app.reset')}
+            </button>
+          </div>
+          <MobileMenu reset={reset} onImport={() => setImportOpen(true)} />
         </div>
       </header>
 
-      <div className="sm:hidden flex border-b border-border shrink-0">
-        <button
-          onClick={() => setMobileView('editor')}
-          className={`flex-1 py-2 text-xs font-medium text-center cursor-pointer ${mobileView === 'editor' ? 'text-accent-text border-b-2 border-accent' : 'text-text-muted'}`}
-        >
-          {t('app.editor')}
-        </button>
-        <button
-          onClick={() => setMobileView('preview')}
-          className={`flex-1 py-2 text-xs font-medium text-center cursor-pointer ${mobileView === 'preview' ? 'text-accent-text border-b-2 border-accent' : 'text-text-muted'}`}
-        >
-          {t('app.preview')}
-        </button>
-      </div>
-
-      <div className="flex-1 flex overflow-hidden">
-        <div
-          className={`w-full sm:w-1/2 border-r border-border overflow-hidden ${mobileView === 'preview' ? 'hidden sm:block' : ''}`}
-        >
-          <ResumeEditor />
-        </div>
-        <div
-          className={`w-full sm:w-1/2 overflow-hidden flex-col ${mobileView === 'editor' ? 'hidden sm:flex' : 'flex'}`}
-        >
-          {isEmpty ? (
-            <EmptyState
-              onImport={() => setImportOpen(true)}
-              onSample={() => setResume(sampleResume)}
-              onFile={async (file) => {
-                const parsed = await parseResumeFile(file);
-                setResume(parsed);
-              }}
-            />
-          ) : (
-            <ResumePreview />
-          )}
-        </div>
-      </div>
+      <SplitPane mobileView={mobileView} setMobileView={setMobileView}>
+        {isEmpty ? (
+          <EmptyState
+            onImport={() => setImportOpen(true)}
+            onSample={() => setResume(sampleResume)}
+            onFile={async (file) => {
+              const parsed = await parseResumeFile(file);
+              setResume(parsed);
+            }}
+          />
+        ) : (
+          <ResumePreview />
+        )}
+      </SplitPane>
 
       <ImportDialog open={importOpen} onClose={() => setImportOpen(false)} />
     </div>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useSlotsStore } from '../../store/slotsStore';
+import { useSlotsStore, slotDisplayName } from '../../store/slotsStore';
 import { useResumeStore } from '../../store/resumeStore';
+import { useAiStore } from '../../store/aiStore';
 import { useT } from '../../i18n';
 
 function formatDate(ts: number): string {
@@ -35,39 +36,44 @@ export function SlotsPicker() {
   const [renameValue, setRenameValue] = useState('');
 
   const handleNew = () => {
-    // Save current slot before switching
+    // Save current slot before switching (including chat history)
     if (activeSlotId) {
-      updateSlot(activeSlotId, resume, themeId, customization);
+      const chatHistory = useAiStore.getState().messages;
+      updateSlot(activeSlotId, resume, themeId, customization, chatHistory);
     }
     const emptyResume = { basics: { name: '', label: '', summary: '' } };
-    saveSlot(`Resume ${slots.length + 1}`, emptyResume, 'modern');
+    saveSlot('', emptyResume, 'modern');
     setResume(emptyResume);
     setTheme('modern');
     resetCustomization();
+    useAiStore.getState().clearMessages();
     setOpen(false);
   };
 
   const handleDuplicate = () => {
     // Save current first
     if (activeSlotId) {
-      updateSlot(activeSlotId, resume, themeId, customization);
+      const chatHistory = useAiStore.getState().messages;
+      updateSlot(activeSlotId, resume, themeId, customization, chatHistory);
     }
-    const name = (resume.basics?.name || 'Resume') + ' (copy)';
-    saveSlot(name, structuredClone(resume), themeId, { ...customization });
+    const chatHistory = structuredClone(useAiStore.getState().messages);
+    saveSlot('', structuredClone(resume), themeId, { ...customization }, chatHistory);
     setOpen(false);
   };
 
   const handleLoad = (id: string) => {
     if (id === activeSlotId) return;
-    // Auto-save current slot before switching
+    // Auto-save current slot before switching (including chat history)
     if (activeSlotId) {
-      updateSlot(activeSlotId, resume, themeId, customization);
+      const chatHistory = useAiStore.getState().messages;
+      updateSlot(activeSlotId, resume, themeId, customization, chatHistory);
     }
     const slot = useSlotsStore.getState().getSlot(id);
     if (slot) {
       setResume(slot.resume);
       setTheme(slot.themeId);
       setFullCustomization(slot.customization);
+      useAiStore.getState().setMessages(slot.chatHistory || []);
       setActiveSlotId(id);
     }
     setOpen(false);
@@ -79,18 +85,18 @@ export function SlotsPicker() {
     if (wasActive) {
       const state = useSlotsStore.getState();
       if (state.activeSlotId) {
-        // A remaining slot was auto-selected — load it
         const next = state.getSlot(state.activeSlotId);
         if (next) {
           setResume(next.resume);
           setTheme(next.themeId);
+          useAiStore.getState().setMessages(next.chatHistory || []);
         }
       } else {
-        // No slots left — create a fresh one
         const emptyResume = { basics: { name: '', label: '', summary: '' } };
-        saveSlot('Resume 1', emptyResume, 'modern');
+        saveSlot('', emptyResume, 'modern');
         setResume(emptyResume);
         setTheme('modern');
+        useAiStore.getState().clearMessages();
       }
     }
   };
@@ -101,8 +107,8 @@ export function SlotsPicker() {
   };
 
   const handleFinishRename = () => {
-    if (renaming && renameValue.trim()) {
-      renameSlot(renaming, renameValue.trim());
+    if (renaming) {
+      renameSlot(renaming, renameValue);
     }
     setRenaming(null);
   };
@@ -113,10 +119,12 @@ export function SlotsPicker() {
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="text-xs px-3 py-1.5 border border-border rounded-md hover:bg-bg-hover transition-colors cursor-pointer max-w-[160px] truncate text-text"
+        className="text-xs px-2 py-1 border border-border rounded hover:bg-bg-hover transition-colors cursor-pointer text-text flex items-center gap-1 max-w-[100px] sm:max-w-[160px]"
       >
-        {activeSlot ? activeSlot.name : t('slots.resumes')}
-        <span className="text-text-muted ml-1">({slots.length})</span>
+        <span className="truncate">
+          {activeSlot ? slotDisplayName(activeSlot) : t('slots.resumes')}
+        </span>
+        <span className="text-text-muted shrink-0">({slots.length})</span>
       </button>
 
       {open && (
@@ -168,13 +176,13 @@ export function SlotsPicker() {
                           <span
                             className={`font-medium ${slot.id === activeSlotId ? 'text-accent-text' : 'text-text'}`}
                           >
-                            {slot.name}
+                            {slotDisplayName(slot)}
                           </span>
                           <span className="text-text-muted ml-2">{formatDate(slot.updatedAt)}</span>
                         </button>
                       )}
                       <button
-                        onClick={() => handleStartRename(slot.id, slot.name)}
+                        onClick={() => handleStartRename(slot.id, slotDisplayName(slot))}
                         className="text-text-muted hover:text-text-secondary cursor-pointer px-1"
                         title={t('slots.rename')}
                       >

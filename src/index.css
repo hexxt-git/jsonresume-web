@@ -61,3 +61,49 @@
   --color-accent-text: var(--accent-text);
   --color-danger: var(--danger);
 }
+
+/* Hide scrollbar on tab bars */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Markdown in AI messages */
+.markdown-content .md-h {
+  font-weight: 600;
+  margin-top: 0.5em;
+  margin-bottom: 0.25em;
+}
+.markdown-content .md-li {
+  padding-left: 1em;
+  position: relative;
+}
+.markdown-content .md-li::before {
+  content: '\2022';
+  position: absolute;
+  left: 0;
+  color: var(--text-muted);
+}
+.markdown-content .md-br {
+  height: 0.4em;
+}
+.markdown-content .md-inline-code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.85em;
+  background: var(--bg-tertiary);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+.markdown-content .md-code-block {
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  padding: 0.75em 1em;
+  margin: 0.5em 0;
+  overflow-x: auto;
+  font-family: ui-monospace, monospace;
+  font-size: 0.82em;
+  line-height: 1.5;
+}

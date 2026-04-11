@@ -3,6 +3,7 @@ import { useT } from '../../i18n';
 import { Slider } from '../ui/Slider';
 import { ColorPicker } from '../ui/ColorPicker';
 import { Select } from '../ui/Select';
+import { Toggle } from '../ui/Toggle';
 
 const THEME_DEFAULT = '__default__';
 
@@ -86,6 +87,12 @@ export function ThemeCustomizer() {
         step={0.01}
         defaultValue={1}
         formatValue={(v) => `${Math.round(v * 100)}%`}
+      />
+
+      <Toggle
+        label={t('customize.rtl')}
+        value={!!custom.rtl}
+        onChange={(v) => setCustom('rtl', v ? 1 : 0)}
       />
     </div>
   );

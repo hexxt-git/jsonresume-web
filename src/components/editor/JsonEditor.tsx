@@ -1,14 +1,14 @@
 import { useState, useCallback, useRef } from 'react';
-import Editor, { type OnMount } from '@monaco-editor/react';
+import Editor, { type OnMount, type BeforeMount } from '@monaco-editor/react';
 import { useResumeStore } from '../../store/resumeStore';
-import { useDarkModeStore } from '../../store/darkModeStore';
+import { useSettingsStore } from '../../store/settingsStore';
 import { useT } from '../../i18n';
 import resumeSchema from '../../utils/resumeSchema.json';
 import { saveAs } from 'file-saver';
 
 export function JsonEditor() {
   const t = useT();
-  const darkMode = useDarkModeStore((s) => s.mode);
+  const darkMode = useSettingsStore((s) => s.colorMode);
   const isDark =
     darkMode === 'dark' ||
     (darkMode === 'system' &&
@@ -37,10 +37,8 @@ export function JsonEditor() {
     [setResume],
   );
 
-  const handleMount: OnMount = (editor, monaco) => {
-    editorRef.current = editor;
-
-    // Define custom dark theme matching app colors
+  const handleBeforeMount: BeforeMount = (monaco) => {
+    // Define custom dark theme BEFORE editor renders so it's available immediately
     monaco.editor.defineTheme('app-dark', {
       base: 'vs-dark',
       inherit: true,
@@ -77,6 +75,10 @@ export function JsonEditor() {
         'scrollbarSlider.hoverBackground': '#39394480',
       },
     });
+  };
+
+  const handleMount: OnMount = (editor, monaco) => {
+    editorRef.current = editor;
 
     // Configure JSON language defaults
     monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
@@ -129,6 +131,7 @@ export function JsonEditor() {
           defaultLanguage="json"
           defaultValue={JSON.stringify(resume, null, 2)}
           onChange={handleChange}
+          beforeMount={handleBeforeMount}
           onMount={handleMount}
           theme={isDark ? 'app-dark' : 'vs-light'}
           options={{

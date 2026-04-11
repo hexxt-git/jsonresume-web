@@ -162,6 +162,7 @@ export default {
   'customize.fontSize': 'Font Size',
   'customize.lineHeight': 'Line Height',
   'customize.pagePadding': 'Page Padding',
+  'customize.rtl': 'Right-to-Left',
   'customize.default': 'Default',
   'customize.themeDefault': 'Theme Default',
 
@@ -176,6 +177,30 @@ export default {
   'empty.loadSample': 'Load sample resume',
   'empty.pasteJson': 'Paste JSON',
   'empty.hint': 'Or just start typing in the editor — it auto-saves.',
+
+  // AI tab
+  'editor.ai': 'AI',
+  'ai.keyTitle': 'Enter Gemini API Key',
+  'ai.keyDesc': 'Your key is stored locally. Calls go directly to Google.',
+  'ai.keyPlaceholder': 'AIza...',
+  'ai.keyLink': 'Get a key from Google AI Studio',
+  'ai.keySave': 'Save Key',
+  'ai.keyInvalid': 'Invalid API key',
+  'ai.keyValidating': 'Validating...',
+  'ai.keyRemove': 'Remove Key',
+  'ai.clearChat': 'Clear',
+  'ai.placeholder': 'Ask about your resume...',
+  'ai.send': 'Send',
+  'ai.stop': 'Stop',
+  'ai.improveSum': 'Improve Summary',
+  'ai.genHighlights': 'Generate Highlights',
+  'ai.suggestSkills': 'Suggest Skills',
+  'ai.review': 'General Review',
+  'ai.tailorJob': 'Tailor for Job',
+  'ai.pasteJob': 'Paste the job description',
+  'ai.undo': 'Undo',
+  'ai.redo': 'Redo',
+  'ai.model': 'Model',
 
   // Font options
   'font.systemSans': 'System Sans',

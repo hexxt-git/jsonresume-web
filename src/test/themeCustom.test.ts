@@ -44,6 +44,7 @@ describe('theme customization in resume store', () => {
       fontSizeMultiplier: 0.8,
       lineHeightMultiplier: 1.3,
       paddingMultiplier: 0.5,
+      rtl: false,
     });
     const { customization } = useResumeStore.getState();
     expect(customization.accentColor).toBe('#00ff00');
@@ -100,6 +101,7 @@ describe('buildCustomCss', () => {
       fontSizeMultiplier: 1,
       lineHeightMultiplier: 1,
       paddingMultiplier: 1,
+      rtl: false,
     });
     expect(css).toBe('');
   });

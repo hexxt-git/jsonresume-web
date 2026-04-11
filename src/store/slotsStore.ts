@@ -1,7 +1,16 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ResumeSchema } from '../types/resume';
+import type { AnyMessage } from '../lib/ai';
 import { defaultCustomization, type ThemeCustomization } from './themeCustomStore';
+
+export function slotDisplayName(slot: ResumeSlot): string {
+  return slot.name
+    ? slot.name
+    : slot.resume.basics?.name
+      ? `${slot.resume.basics?.name}'s Resume`
+      : 'Untitled';
+}
 
 export interface ResumeSlot {
   id: string;
@@ -9,6 +18,7 @@ export interface ResumeSlot {
   resume: ResumeSchema;
   themeId: string;
   customization: ThemeCustomization;
+  chatHistory: AnyMessage[];
   updatedAt: number;
 }
 
@@ -21,12 +31,14 @@ interface SlotsStore {
     resume: ResumeSchema,
     themeId: string,
     customization?: ThemeCustomization,
+    chatHistory?: AnyMessage[],
   ) => string;
   updateSlot: (
     id: string,
     resume: ResumeSchema,
     themeId: string,
     customization?: ThemeCustomization,
+    chatHistory?: AnyMessage[],
   ) => void;
   deleteSlot: (id: string) => void;
   renameSlot: (id: string, name: string) => void;
@@ -44,7 +56,7 @@ export const useSlotsStore = create<SlotsStore>()(
       slots: [],
       activeSlotId: null,
 
-      saveSlot: (name, resume, themeId, customization) => {
+      saveSlot: (name, resume, themeId, customization, chatHistory) => {
         const id = genId();
         set((s) => ({
           slots: [
@@ -55,6 +67,7 @@ export const useSlotsStore = create<SlotsStore>()(
               resume,
               themeId,
               customization: customization || { ...defaultCustomization },
+              chatHistory: chatHistory || [],
               updatedAt: Date.now(),
             },
           ],
@@ -63,7 +76,7 @@ export const useSlotsStore = create<SlotsStore>()(
         return id;
       },
 
-      updateSlot: (id, resume, themeId, customization) =>
+      updateSlot: (id, resume, themeId, customization, chatHistory) =>
         set((s) => ({
           slots: s.slots.map((slot) =>
             slot.id === id
@@ -72,6 +85,7 @@ export const useSlotsStore = create<SlotsStore>()(
                   resume,
                   themeId,
                   customization: customization || slot.customization,
+                  chatHistory: chatHistory ?? slot.chatHistory ?? [],
                   updatedAt: Date.now(),
                 }
               : slot,

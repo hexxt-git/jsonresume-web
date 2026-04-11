@@ -4,6 +4,7 @@ export interface ThemeCustomization {
   fontSizeMultiplier: number; // 1.0 = theme default
   lineHeightMultiplier: number; // 1.0 = theme default
   paddingMultiplier: number; // 1.0 = theme default
+  rtl: boolean;
 }
 
 export const defaultCustomization: ThemeCustomization = {
@@ -12,6 +13,7 @@ export const defaultCustomization: ThemeCustomization = {
   fontSizeMultiplier: 1,
   lineHeightMultiplier: 1,
   paddingMultiplier: 1,
+  rtl: false,
 };
 
 /** Generate a CSS override block from customization values. Injected into theme HTML. */
@@ -27,6 +29,10 @@ export function buildCustomCss(c: ThemeCustomization): string {
     ? `h2{color:${c.accentColor} !important;border-bottom-color:${c.accentColor} !important}a{color:${c.accentColor} !important}li::marker{color:${c.accentColor} !important}`
     : '';
 
-  if (!bodyRules && !accentRules) return '';
-  return `<style>${bodyRules}${accentRules}</style>`;
+  const rtlRules = c.rtl
+    ? 'html{direction:rtl}body{direction:rtl;text-align:right !important}'
+    : '';
+
+  if (!bodyRules && !accentRules && !rtlRules) return '';
+  return `<style>${bodyRules}${accentRules}${rtlRules}</style>`;
 }
