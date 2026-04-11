@@ -33,9 +33,9 @@ export default {
   'repeatable.add': '+ إضافة',
   'repeatable.empty': 'لا توجد إدخالات. انقر على "+ إضافة" لإنشاء واحدة.',
   'import.title': 'استيراد السيرة الذاتية',
-  'empty.drop': 'أسقط ملف السيرة الذاتية هنا، أو انقر للتحميل',
-  'empty.or': 'أو',
-  'empty.loadSample': 'تحميل سيرة ذاتية نموذجية',
+  'empty.drop': 'لديك سيرة ذاتية؟ أسقطها هنا كنقطة بداية',
+  'empty.or': 'أو ابدأ من جديد',
+  'empty.loadSample': 'ابدأ بقالب',
   'empty.pasteJson': 'لصق JSON',
   'empty.hint': 'أو ابدأ الكتابة في المحرر — حفظ تلقائي.',
   'slots.resumes': 'السير الذاتية',
@@ -132,7 +132,4 @@ export default {
   'ui.searchCountries': 'البحث عن الدول...',
   'ui.resetDefault': 'إعادة تعيين للافتراضي',
 
-  'empty.drop': 'لديك سيرة ذاتية؟ أسقطها هنا كنقطة بداية',
-  'empty.or': 'أو ابدأ من جديد',
-  'empty.loadSample': 'ابدأ بقالب',
 } as const;
