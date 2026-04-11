@@ -49,14 +49,25 @@ export default {
   'editor.ai': 'ذكاء اصطناعي',
   'editor.auto': 'أتمتة',
   'auto.placeholder': 'ميزات الأتمتة قادمة قريبًا.',
-  'ai.keyTitle': 'أدخل مفتاح API Gemini',
-  'ai.keyDesc': 'يتم تخزين مفتاحك محليًا. المكالمات تذهب مباشرة إلى Google.',
-  'ai.keyPlaceholder': 'AIza...',
-  'ai.keyLink': 'احصل على مفتاح من Google AI Studio',
-  'ai.keySave': 'حفظ المفتاح',
+  'ai.settings': 'إعدادات الذكاء الاصطناعي',
+  'ai.backToChat': 'العودة للمحادثة',
+  'ai.back': 'رجوع',
+  'ai.providersTitle': 'مزودو الذكاء الاصطناعي',
+  'ai.providersDesc': 'المفاتيح تبقى في متصفحك. لا تُرسل إلينا أبدًا.',
+  'ai.setupTitle': 'إعداد مزود ذكاء اصطناعي',
+  'ai.setupDesc':
+    'هذا المشروع مفتوح المصدر ومستضاف مجانًا. يتم تخزين مفاتيح API فقط في التخزين المحلي لمتصفحك وتُرسل مباشرة إلى واجهة المزود \u2014 وليس إلينا أبدًا.',
+  'ai.setupOpenSource': 'مفتوح المصدر',
+  'ai.setupButton': 'تكوين المزودين',
+  'ai.active': 'نشط',
+  'ai.use': 'استخدام',
+  'ai.remove': 'إزالة',
+  'ai.change': 'تغيير',
+  'ai.cancel': 'إلغاء',
+  'ai.save': 'حفظ',
+  'ai.getKey': 'الحصول على مفتاح من',
   'ai.keyInvalid': 'مفتاح API غير صالح',
   'ai.keyValidating': 'جارٍ التحقق...',
-  'ai.keyRemove': 'إزالة المفتاح',
   'ai.clearChat': 'مسح',
   'ai.placeholder': 'اسأل عن سيرتك الذاتية...',
   'ai.send': 'إرسال',
@@ -70,4 +81,58 @@ export default {
   'ai.undo': 'تراجع',
   'ai.redo': 'إعادة',
   'ai.model': 'النموذج',
+  'ai.copy': 'نسخ',
+  'ai.clickDismiss': 'انقر للإغلاق',
+
+  // Onboarding
+  'onboarding.welcomeTitle': 'مرحبًا بك في JSONResume Web',
+  'onboarding.welcomeSub':
+    'محرر سير ذاتية مجاني ومفتوح المصدر يعمل بالكامل في متصفحك. بياناتك تبقى على جهازك.',
+  'onboarding.editTitle': 'تحرير ومعاينة',
+  'onboarding.editSub': 'محرر النموذج على اليسار، معاينة مباشرة على اليمين.',
+  'onboarding.themesTitle': '+12 قالب',
+  'onboarding.themesSub': 'نقرة واحدة لتغيير النمط. خصص الألوان والخطوط والتباعد.',
+  'onboarding.aiTitle': 'مساعد ذكاء اصطناعي',
+  'onboarding.aiSub': 'دع الذكاء الاصطناعي يحسن صياغتك أو يولد نقاطًا بارزة أو يخصص سيرتك لوظيفة.',
+  'onboarding.importTitle': 'ابدأ الآن',
+  'onboarding.importDrop': 'لديك سيرة ذاتية؟ أسقطها هنا كنقطة بداية.',
+  'onboarding.importOr': 'أو',
+  'onboarding.importSample': 'ابدأ بنموذج',
+  'onboarding.importScratch': 'ابدأ من الصفر',
+  'onboarding.dropText': 'أسقط ملفًا أو انقر للتصفح',
+  'onboarding.parsing': 'جارٍ التحليل...',
+  'onboarding.skip': 'تخطي',
+  'onboarding.back': 'رجوع',
+  'onboarding.next': 'التالي',
+
+  // Undo/redo
+  'undo.undo': 'تراجع',
+  'undo.redo': 'إعادة',
+
+  // Preview
+  'preview.zoomOut': 'تصغير',
+  'preview.fitWidth': 'ملاءمة العرض',
+  'preview.actualSize': 'الحجم الفعلي',
+  'preview.zoomIn': 'تكبير',
+  'preview.print': 'طباعة',
+  'preview.pageBreak': 'فاصل صفحة',
+
+  // Combo / pickers
+  'combo.search': 'ابحث أو اكتب...',
+  'combo.use': 'استخدام',
+  'combo.noOptions': 'لا توجد خيارات',
+
+  // URL field
+  'url.prefix': 'https://',
+  'url.uploadImage': 'ارفع على imgbb.com',
+
+  // Misc UI
+  'ui.loading': 'جارٍ التحميل...',
+  'ui.noResults': 'لا توجد نتائج',
+  'ui.searchCountries': 'البحث عن الدول...',
+  'ui.resetDefault': 'إعادة تعيين للافتراضي',
+
+  'empty.drop': 'لديك سيرة ذاتية؟ أسقطها هنا كنقطة بداية',
+  'empty.or': 'أو ابدأ من جديد',
+  'empty.loadSample': 'ابدأ بقالب',
 } as const;
