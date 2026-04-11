@@ -1,7 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import type { AiProvider, AnyMessage, StreamEvent, ToolDeclaration } from './types';
 
-const DEFAULT_MODEL = 'claude-sonnet-4-20250514';
+const DEFAULT_MODEL = 'claude-sonnet-4-6-20260311';
 
 function toAnthropicMessages(messages: AnyMessage[]): Anthropic.MessageParam[] {
   const out: Anthropic.MessageParam[] = [];
@@ -50,12 +50,12 @@ export const anthropicProvider: AiProvider = {
   name: 'anthropic',
 
   models: [
+    { id: 'claude-opus-4-6-20260311', label: 'Claude Opus 4.6' },
+    { id: 'claude-sonnet-4-6-20260311', label: 'Claude Sonnet 4.6' },
+    { id: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5' },
     { id: 'claude-opus-4-20250514', label: 'Claude Opus 4' },
     { id: 'claude-sonnet-4-20250514', label: 'Claude Sonnet 4' },
-    { id: 'claude-3-7-sonnet-20250219', label: 'Claude 3.7 Sonnet' },
-    { id: 'claude-3-5-haiku-20241022', label: 'Claude 3.5 Haiku' },
     { id: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet' },
-    { id: 'claude-3-opus-20240229', label: 'Claude 3 Opus' },
   ],
 
   async *streamChat(apiKey, messages, systemPrompt, tools, model, signal) {

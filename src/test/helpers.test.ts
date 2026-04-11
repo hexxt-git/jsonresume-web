@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { esc, formatDate, dateRange, section, link } from '../themes/helpers';
+import { esc, formatDate, dateRange, section, link, md } from '../themes/helpers';
 
 describe('esc', () => {
   it('escapes HTML entities', () => {
@@ -74,5 +74,35 @@ describe('link', () => {
 
   it('escapes text in link', () => {
     expect(link('https://example.com', '<b>Bold</b>')).toContain('&lt;b&gt;');
+  });
+
+  it('blocks javascript: URLs', () => {
+    expect(link('javascript:alert(1)', 'Click')).toBe('Click');
+  });
+
+  it('blocks data: URLs', () => {
+    expect(link('data:text/html,<script>alert(1)</script>', 'Click')).toBe('Click');
+  });
+
+  it('blocks vbscript: URLs', () => {
+    expect(link('vbscript:msgbox', 'Click')).toBe('Click');
+  });
+
+  it('allows http and https URLs', () => {
+    expect(link('http://example.com', 'X')).toContain('href="http://example.com"');
+    expect(link('https://example.com', 'X')).toContain('href="https://example.com"');
+  });
+});
+
+describe('md XSS protection', () => {
+  it('blocks javascript: in markdown links', () => {
+    const result = md('[click](javascript:alert(1))');
+    expect(result).not.toContain('javascript:');
+    expect(result).toContain('click');
+  });
+
+  it('allows https in markdown links', () => {
+    const result = md('[site](https://example.com)');
+    expect(result).toContain('href="https://example.com"');
   });
 });

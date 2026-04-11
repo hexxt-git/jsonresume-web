@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage, type StateStorage } from 'zustand/middleware';
 import type { ResumeSchema } from '../types/resume';
-import type { AnyMessage } from '../lib/ai';
+import type { AnyMessage, ToolCall } from '../lib/ai';
 import { sampleResume } from '../utils/sample';
 import { defaultCustomization, type ThemeCustomization } from './themeCustomStore';
 
@@ -95,6 +95,23 @@ interface ResumeStore {
   loadSample: () => void;
   reset: () => void;
 
+  // Chat messages (operate on active slot's chatHistory)
+  addUserMessage: (content: string) => void;
+  addAssistantMessage: (content: string) => void;
+  updateLastAssistantMessage: (content: string) => void;
+  addToolCallsToLastAssistant: (calls: ToolCall[]) => void;
+  addToolResult: (
+    toolName: string,
+    result: string,
+    success: boolean,
+    path: string[],
+    before: unknown,
+  ) => void;
+  toggleToolUndo: (id: string, after: unknown) => void;
+  removeLastMessage: () => void;
+  removeToolResult: (id: string) => void;
+  clearMessages: () => void;
+
   // Slot management
   saveSlot: (
     name: string,
@@ -103,7 +120,7 @@ interface ResumeStore {
     customization?: ThemeCustomization,
     chatHistory?: AnyMessage[],
   ) => string;
-  duplicateSlot: (chatHistory?: AnyMessage[]) => void;
+  duplicateSlot: () => void;
   deleteSlot: (id: string) => void;
   renameSlot: (id: string, name: string) => void;
   setActiveSlotId: (id: string | null) => void;
@@ -211,6 +228,106 @@ export const useResumeStore = create<ResumeStore>()(
           activeSection: 'basics' as EditorSection,
         })),
 
+      // ── Chat messages (modify active slot's chatHistory) ──
+
+      addUserMessage: (content) =>
+        set((s) =>
+          updateActive(s, (slot) => ({
+            chatHistory: [
+              ...slot.chatHistory,
+              { id: genId(), role: 'user' as const, content, timestamp: Date.now() },
+            ],
+          })),
+        ),
+
+      addAssistantMessage: (content) =>
+        set((s) =>
+          updateActive(s, (slot) => ({
+            chatHistory: [
+              ...slot.chatHistory,
+              { id: genId(), role: 'assistant' as const, content, timestamp: Date.now() },
+            ],
+          })),
+        ),
+
+      updateLastAssistantMessage: (content) =>
+        set((s) =>
+          updateActive(s, (slot) => {
+            const msgs = [...slot.chatHistory];
+            const last = msgs[msgs.length - 1];
+            if (last?.role === 'assistant') {
+              msgs[msgs.length - 1] = { ...last, content };
+            }
+            return { chatHistory: msgs };
+          }),
+        ),
+
+      addToolCallsToLastAssistant: (calls) =>
+        set((s) =>
+          updateActive(s, (slot) => {
+            const msgs = [...slot.chatHistory];
+            const last = msgs[msgs.length - 1];
+            if (last?.role === 'assistant') {
+              msgs[msgs.length - 1] = {
+                ...last,
+                toolCalls: [...(last.toolCalls || []), ...calls],
+              };
+            }
+            return { chatHistory: msgs };
+          }),
+        ),
+
+      addToolResult: (toolName, result, success, path, before) =>
+        set((s) =>
+          updateActive(s, (slot) => ({
+            chatHistory: [
+              ...slot.chatHistory,
+              {
+                id: genId(),
+                role: 'tool_result' as const,
+                toolName,
+                result,
+                success,
+                path,
+                before,
+                timestamp: Date.now(),
+              },
+            ],
+          })),
+        ),
+
+      toggleToolUndo: (id, after) =>
+        set((s) =>
+          updateActive(s, (slot) => ({
+            chatHistory: slot.chatHistory.map((m) => {
+              if (m.id !== id || m.role !== 'tool_result') return m;
+              if (m.undone) return { ...m, undone: false };
+              return { ...m, after, undone: true };
+            }),
+          })),
+        ),
+
+      removeLastMessage: () =>
+        set((s) =>
+          updateActive(s, (slot) => ({
+            chatHistory: slot.chatHistory.slice(0, -1),
+          })),
+        ),
+
+      removeToolResult: (id) =>
+        set((s) =>
+          updateActive(s, (slot) => ({
+            chatHistory: slot.chatHistory.filter((m) => m.id !== id),
+          })),
+        ),
+
+      clearMessages: () =>
+        set((s) =>
+          updateActive(s, () => ({
+            chatHistory: [],
+          })),
+        ),
+
       // ── Slot management ──
 
       saveSlot: (name, resume, themeId, customization, chatHistory) => {
@@ -233,7 +350,7 @@ export const useResumeStore = create<ResumeStore>()(
         return id;
       },
 
-      duplicateSlot: (chatHistory) => {
+      duplicateSlot: () => {
         const slot = activeSlot(get());
         if (!slot.id) return;
         const id = genId();
@@ -244,7 +361,6 @@ export const useResumeStore = create<ResumeStore>()(
               ...structuredClone(slot),
               id,
               name: '',
-              chatHistory: chatHistory ? structuredClone(chatHistory) : [],
               updatedAt: Date.now(),
             },
           ],

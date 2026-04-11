@@ -95,7 +95,7 @@ function CopyButton({ text }: { text: string }) {
 
 function ToolResultBadge({ msg }: { msg: ToolResultMessage }) {
   const t = useT();
-  const toggleUndo = useAiStore((s) => s.toggleToolUndo);
+  const toggleUndo = useResumeStore((s) => s.toggleToolUndo);
 
   const handleToggle = () => {
     if (!msg.path.length) return;
@@ -142,7 +142,7 @@ function ToolResultBadge({ msg }: { msg: ToolResultMessage }) {
 
 export function AiMessageList() {
   const t = useT();
-  const messages = useAiStore((s) => s.messages);
+  const messages = useResumeStore((s) => activeSlot(s).chatHistory);
   const error = useAiStore((s) => s.error);
   const setError = useAiStore((s) => s.setError);
   const endRef = useRef<HTMLDivElement>(null);

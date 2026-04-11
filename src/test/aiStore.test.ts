@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useAiStore } from '../store/aiStore';
+import { useResumeStore, activeSlot } from '../store/resumeStore';
 import type { AnyMessage } from '../lib/ai';
 
 function asChat(m: AnyMessage) {
@@ -7,11 +8,13 @@ function asChat(m: AnyMessage) {
   throw new Error('Not a chat message');
 }
 
-describe('aiStore', () => {
+function msgs() {
+  return activeSlot(useResumeStore.getState()).chatHistory;
+}
+
+describe('aiStore (keys, provider, model, session)', () => {
   beforeEach(() => {
     const s = useAiStore.getState();
-    s.clearMessages();
-    // Clear all provider keys
     Object.keys(s.apiKeys).forEach((k) => s.clearApiKey(k));
     s.setStreaming(false);
     s.setError(null);
@@ -21,8 +24,6 @@ describe('aiStore', () => {
     const s = useAiStore.getState();
     expect(s.apiKeys).toEqual({});
     expect(s.provider).toBe('gemini');
-    expect(s.model).toBe('gemini-2.5-flash');
-    expect(s.messages).toEqual([]);
     expect(s.isStreaming).toBe(false);
     expect(s.error).toBeNull();
   });
@@ -45,117 +46,6 @@ describe('aiStore', () => {
     expect(useAiStore.getState().model).toBe('gemini-2.5-pro');
   });
 
-  it('addUserMessage appends user message', () => {
-    useAiStore.getState().addUserMessage('hello');
-    const msgs = useAiStore.getState().messages;
-    expect(msgs).toHaveLength(1);
-    const m = asChat(msgs[0]);
-    expect(m.role).toBe('user');
-    expect(m.content).toBe('hello');
-    expect(m.id).toBeTruthy();
-    expect(m.timestamp).toBeGreaterThan(0);
-  });
-
-  it('addAssistantMessage appends assistant message', () => {
-    useAiStore.getState().addAssistantMessage('hi there');
-    const msgs = useAiStore.getState().messages;
-    expect(msgs).toHaveLength(1);
-    const m = asChat(msgs[0]);
-    expect(m.role).toBe('assistant');
-    expect(m.content).toBe('hi there');
-  });
-
-  it('updateLastAssistantMessage updates last assistant message content', () => {
-    useAiStore.getState().addUserMessage('hello');
-    useAiStore.getState().addAssistantMessage('');
-    useAiStore.getState().updateLastAssistantMessage('partial');
-    useAiStore.getState().updateLastAssistantMessage('partial response');
-
-    const msgs = useAiStore.getState().messages;
-    expect(msgs).toHaveLength(2);
-    expect(asChat(msgs[1]).content).toBe('partial response');
-  });
-
-  it('updateLastAssistantMessage does nothing if last message is user', () => {
-    useAiStore.getState().addUserMessage('hello');
-    useAiStore.getState().updateLastAssistantMessage('nope');
-    expect(asChat(useAiStore.getState().messages[0]).content).toBe('hello');
-  });
-
-  it('addToolCallsToLastAssistant attaches tool calls', () => {
-    useAiStore.getState().addAssistantMessage('I will update your summary');
-    useAiStore
-      .getState()
-      .addToolCallsToLastAssistant([
-        { id: 'tc1', name: 'update_summary', args: { summary: 'new' } },
-      ]);
-    const m = asChat(useAiStore.getState().messages[0]);
-    expect(m.toolCalls).toHaveLength(1);
-    expect(m.toolCalls![0].name).toBe('update_summary');
-  });
-
-  it('addToolResult adds a tool result message with path and before', () => {
-    useAiStore
-      .getState()
-      .addToolResult('update_summary', 'Updated summary', true, ['basics', 'summary'], 'old value');
-    const msgs = useAiStore.getState().messages;
-    expect(msgs).toHaveLength(1);
-    expect(msgs[0].role).toBe('tool_result');
-    if (msgs[0].role === 'tool_result') {
-      expect(msgs[0].toolName).toBe('update_summary');
-      expect(msgs[0].success).toBe(true);
-      expect(msgs[0].path).toEqual(['basics', 'summary']);
-      expect(msgs[0].before).toBe('old value');
-      expect(msgs[0].undone).toBeUndefined();
-    }
-  });
-
-  it('toggleToolUndo sets after and undone on first toggle', () => {
-    useAiStore.getState().addToolResult('update_summary', 'ok', true, ['basics', 'summary'], 'old');
-    const id = useAiStore.getState().messages[0].id;
-    useAiStore.getState().toggleToolUndo(id, 'current value');
-    const msg = useAiStore.getState().messages[0];
-    if (msg.role === 'tool_result') {
-      expect(msg.undone).toBe(true);
-      expect(msg.after).toBe('current value');
-    }
-  });
-
-  it('toggleToolUndo clears undone on second toggle', () => {
-    useAiStore.getState().addToolResult('update_summary', 'ok', true, ['basics', 'summary'], 'old');
-    const id = useAiStore.getState().messages[0].id;
-    useAiStore.getState().toggleToolUndo(id, 'current');
-    useAiStore.getState().toggleToolUndo(id, undefined);
-    const msg = useAiStore.getState().messages[0];
-    if (msg.role === 'tool_result') {
-      expect(msg.undone).toBe(false);
-    }
-  });
-
-  it('removeLastMessage removes the last message', () => {
-    useAiStore.getState().addUserMessage('hello');
-    useAiStore.getState().addAssistantMessage('');
-    useAiStore.getState().removeLastMessage();
-    expect(useAiStore.getState().messages).toHaveLength(1);
-    expect(useAiStore.getState().messages[0].role).toBe('user');
-  });
-
-  it('removeToolResult removes by id', () => {
-    useAiStore.getState().addToolResult('update_summary', 'ok', true, ['basics', 'summary'], '');
-    const id = useAiStore.getState().messages[0].id;
-    useAiStore.getState().removeToolResult(id);
-    expect(useAiStore.getState().messages).toHaveLength(0);
-  });
-
-  it('clearMessages resets messages and error', () => {
-    useAiStore.getState().addUserMessage('hello');
-    useAiStore.getState().addAssistantMessage('world');
-    useAiStore.getState().setError('some error');
-    useAiStore.getState().clearMessages();
-    expect(useAiStore.getState().messages).toEqual([]);
-    expect(useAiStore.getState().error).toBeNull();
-  });
-
   it('setStreaming toggles streaming flag', () => {
     useAiStore.getState().setStreaming(true);
     expect(useAiStore.getState().isStreaming).toBe(true);
@@ -169,21 +59,126 @@ describe('aiStore', () => {
     useAiStore.getState().setError(null);
     expect(useAiStore.getState().error).toBeNull();
   });
+});
+
+describe('chat messages (in resumeStore slot)', () => {
+  beforeEach(() => {
+    // Ensure a slot exists
+    const rs = useResumeStore.getState();
+    if (rs.slots.length === 0) rs.saveSlot('');
+    rs.clearMessages();
+  });
+
+  it('addUserMessage appends user message', () => {
+    useResumeStore.getState().addUserMessage('hello');
+    expect(msgs()).toHaveLength(1);
+    const m = asChat(msgs()[0]);
+    expect(m.role).toBe('user');
+    expect(m.content).toBe('hello');
+    expect(m.id).toBeTruthy();
+    expect(m.timestamp).toBeGreaterThan(0);
+  });
+
+  it('addAssistantMessage appends assistant message', () => {
+    useResumeStore.getState().addAssistantMessage('hi there');
+    expect(msgs()).toHaveLength(1);
+    const m = asChat(msgs()[0]);
+    expect(m.role).toBe('assistant');
+    expect(m.content).toBe('hi there');
+  });
+
+  it('updateLastAssistantMessage updates last assistant message content', () => {
+    useResumeStore.getState().addUserMessage('hello');
+    useResumeStore.getState().addAssistantMessage('');
+    useResumeStore.getState().updateLastAssistantMessage('partial');
+    useResumeStore.getState().updateLastAssistantMessage('partial response');
+    expect(msgs()).toHaveLength(2);
+    expect(asChat(msgs()[1]).content).toBe('partial response');
+  });
+
+  it('updateLastAssistantMessage does nothing if last message is user', () => {
+    useResumeStore.getState().addUserMessage('hello');
+    useResumeStore.getState().updateLastAssistantMessage('nope');
+    expect(asChat(msgs()[0]).content).toBe('hello');
+  });
+
+  it('addToolCallsToLastAssistant attaches tool calls', () => {
+    useResumeStore.getState().addAssistantMessage('I will update your summary');
+    useResumeStore
+      .getState()
+      .addToolCallsToLastAssistant([
+        { id: 'tc1', name: 'update_summary', args: { summary: 'new' } },
+      ]);
+    const m = asChat(msgs()[0]);
+    expect(m.toolCalls).toHaveLength(1);
+    expect(m.toolCalls![0].name).toBe('update_summary');
+  });
+
+  it('addToolResult adds a tool result message', () => {
+    useResumeStore
+      .getState()
+      .addToolResult('update_summary', 'Updated summary', true, ['basics', 'summary'], 'old value');
+    expect(msgs()).toHaveLength(1);
+    expect(msgs()[0].role).toBe('tool_result');
+    if (msgs()[0].role === 'tool_result') {
+      expect(msgs()[0].toolName).toBe('update_summary');
+      expect(msgs()[0].success).toBe(true);
+      expect(msgs()[0].path).toEqual(['basics', 'summary']);
+      expect(msgs()[0].before).toBe('old value');
+    }
+  });
+
+  it('toggleToolUndo sets after and undone', () => {
+    useResumeStore
+      .getState()
+      .addToolResult('update_summary', 'ok', true, ['basics', 'summary'], 'old');
+    const id = msgs()[0].id;
+    useResumeStore.getState().toggleToolUndo(id, 'current value');
+    const msg = msgs()[0];
+    if (msg.role === 'tool_result') {
+      expect(msg.undone).toBe(true);
+      expect(msg.after).toBe('current value');
+    }
+  });
+
+  it('removeLastMessage removes the last message', () => {
+    useResumeStore.getState().addUserMessage('hello');
+    useResumeStore.getState().addAssistantMessage('');
+    useResumeStore.getState().removeLastMessage();
+    expect(msgs()).toHaveLength(1);
+    expect(msgs()[0].role).toBe('user');
+  });
+
+  it('removeToolResult removes by id', () => {
+    useResumeStore
+      .getState()
+      .addToolResult('update_summary', 'ok', true, ['basics', 'summary'], '');
+    const id = msgs()[0].id;
+    useResumeStore.getState().removeToolResult(id);
+    expect(msgs()).toHaveLength(0);
+  });
+
+  it('clearMessages resets chat history', () => {
+    useResumeStore.getState().addUserMessage('hello');
+    useResumeStore.getState().addAssistantMessage('world');
+    useResumeStore.getState().clearMessages();
+    expect(msgs()).toEqual([]);
+  });
 
   it('generates unique message ids', () => {
-    useAiStore.getState().addUserMessage('a');
-    useAiStore.getState().addUserMessage('b');
-    useAiStore.getState().addAssistantMessage('c');
-    const ids = useAiStore.getState().messages.map((m) => m.id);
+    useResumeStore.getState().addUserMessage('a');
+    useResumeStore.getState().addUserMessage('b');
+    useResumeStore.getState().addAssistantMessage('c');
+    const ids = msgs().map((m) => m.id);
     expect(new Set(ids).size).toBe(3);
   });
 
   it('preserves message order across types', () => {
-    useAiStore.getState().addUserMessage('q1');
-    useAiStore.getState().addAssistantMessage('a1');
-    useAiStore.getState().addToolResult('tool', 'ok', true, ['skills'], []);
-    useAiStore.getState().addUserMessage('q2');
-    const roles = useAiStore.getState().messages.map((m) => m.role);
+    useResumeStore.getState().addUserMessage('q1');
+    useResumeStore.getState().addAssistantMessage('a1');
+    useResumeStore.getState().addToolResult('tool', 'ok', true, ['skills'], []);
+    useResumeStore.getState().addUserMessage('q2');
+    const roles = msgs().map((m) => m.role);
     expect(roles).toEqual(['user', 'assistant', 'tool_result', 'user']);
   });
 });

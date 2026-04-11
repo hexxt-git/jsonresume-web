@@ -63,10 +63,10 @@ export const geminiProvider: AiProvider = {
   models: [
     { id: 'gemini-2.5-flash', label: '2.5 Flash' },
     { id: 'gemini-2.5-pro', label: '2.5 Pro' },
-    { id: 'gemini-2.0-flash', label: '2.0 Flash' },
-    { id: 'gemini-2.0-flash-lite', label: '2.0 Flash Lite' },
-    { id: 'gemini-1.5-flash', label: '1.5 Flash' },
-    { id: 'gemini-1.5-pro', label: '1.5 Pro' },
+    { id: 'gemini-2.5-flash-lite', label: '2.5 Flash Lite' },
+    { id: 'gemini-3.1-pro-preview', label: '3.1 Pro (Preview)' },
+    { id: 'gemini-3-flash-preview', label: '3 Flash (Preview)' },
+    { id: 'gemini-3.1-flash-lite-preview', label: '3.1 Flash Lite (Preview)' },
   ],
 
   async *streamChat(apiKey, messages, systemPrompt, tools, model, signal) {

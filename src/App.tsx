@@ -4,7 +4,7 @@ import { ResumePreview } from './components/preview/ResumePreview';
 import { ImportDialog } from './components/import-export/ImportDialog';
 import { ExportDialog } from './components/import-export/ExportDialog';
 import { useResumeStore, activeSlot } from './store/resumeStore';
-import { useAiStore } from './store/aiStore';
+
 import { SlotsPicker } from './components/slots/SlotsPicker';
 import { sampleResume } from './utils/sample';
 import { parseResumeFile } from './parser';
@@ -266,8 +266,6 @@ function App() {
   const { undo, redo, canUndo, canRedo } = useUndoRedo();
   const slots = useResumeStore((s) => s.slots);
   const saveSlot = useResumeStore((s) => s.saveSlot);
-  const activeSlotId = useResumeStore((s) => s.activeSlotId);
-  const updateSlotChatHistory = useResumeStore((s) => s.updateSlotChatHistory);
 
   // Bootstrap: ensure at least one slot always exists
   useEffect(() => {
@@ -275,17 +273,6 @@ function App() {
       saveSlot('');
     }
   }, [slots.length, saveSlot]);
-
-  // Save chat history to slot when AI streaming ends
-  const isStreaming = useAiStore((s) => s.isStreaming);
-  const wasStreamingRef = useRef(false);
-  useEffect(() => {
-    if (wasStreamingRef.current && !isStreaming && activeSlotId) {
-      const chatHistory = useAiStore.getState().messages;
-      updateSlotChatHistory(activeSlotId, chatHistory);
-    }
-    wasStreamingRef.current = isStreaming;
-  }, [isStreaming, activeSlotId, updateSlotChatHistory]);
 
   const isEmpty =
     !resume.basics?.name &&

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useResumeStore, slotDisplayName } from '../../store/resumeStore';
-import { useAiStore } from '../../store/aiStore';
 import { useUndoStore } from '../../store/undoStore';
 import { useT } from '../../i18n';
 
@@ -23,41 +22,24 @@ export function SlotsPicker() {
   const deleteSlot = useResumeStore((s) => s.deleteSlot);
   const renameSlot = useResumeStore((s) => s.renameSlot);
   const setActiveSlotId = useResumeStore((s) => s.setActiveSlotId);
-  const updateSlotChatHistory = useResumeStore((s) => s.updateSlotChatHistory);
 
   const [open, setOpen] = useState(false);
   const [renaming, setRenaming] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
 
   const handleNew = () => {
-    // Save current chat history before switching
-    if (activeSlotId) {
-      updateSlotChatHistory(activeSlotId, useAiStore.getState().messages);
-    }
     saveSlot('');
-    useAiStore.getState().clearMessages();
     setOpen(false);
   };
 
   const handleDuplicate = () => {
-    if (activeSlotId) {
-      updateSlotChatHistory(activeSlotId, useAiStore.getState().messages);
-    }
-    duplicateSlot(useAiStore.getState().messages);
+    duplicateSlot();
     setOpen(false);
   };
 
   const handleLoad = (id: string) => {
     if (id === activeSlotId) return;
-    // Save current chat before switching
-    if (activeSlotId) {
-      updateSlotChatHistory(activeSlotId, useAiStore.getState().messages);
-    }
-    // Switch slot — resume data is already in the slot
     setActiveSlotId(id);
-    // Load chat history for new slot
-    const slot = useResumeStore.getState().getSlot(id);
-    useAiStore.getState().setMessages(slot?.chatHistory || []);
     setOpen(false);
   };
 
@@ -65,15 +47,8 @@ export function SlotsPicker() {
     const wasActive = id === activeSlotId;
     deleteSlot(id);
     useUndoStore.getState().deleteSlotHistory(id);
-    if (wasActive) {
-      const state = useResumeStore.getState();
-      if (state.activeSlotId) {
-        const next = state.getSlot(state.activeSlotId);
-        useAiStore.getState().setMessages(next?.chatHistory || []);
-      } else {
-        saveSlot('');
-        useAiStore.getState().clearMessages();
-      }
+    if (wasActive && !useResumeStore.getState().activeSlotId) {
+      saveSlot('');
     }
   };
 

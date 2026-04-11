@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 import type { AiProvider, AnyMessage, StreamEvent, ToolDeclaration } from './types';
 
-const DEFAULT_MODEL = 'gpt-4o-mini';
+const DEFAULT_MODEL = 'gpt-5.4-mini';
 
 function toOpenAIMessages(
   messages: AnyMessage[],
@@ -50,16 +50,17 @@ export const openaiProvider: AiProvider = {
   name: 'openai',
 
   models: [
+    { id: 'gpt-5.4-nano', label: 'GPT-5.4 Nano' },
+    { id: 'gpt-5.4-mini', label: 'GPT-5.4 Mini' },
+    { id: 'gpt-5.4', label: 'GPT-5.4' },
+    { id: 'gpt-5.2', label: 'GPT-5.2' },
     { id: 'gpt-4.1-nano', label: 'GPT-4.1 Nano' },
     { id: 'gpt-4.1-mini', label: 'GPT-4.1 Mini' },
     { id: 'gpt-4.1', label: 'GPT-4.1' },
     { id: 'gpt-4o-mini', label: 'GPT-4o Mini' },
     { id: 'gpt-4o', label: 'GPT-4o' },
     { id: 'o4-mini', label: 'o4 Mini' },
-    { id: 'o3', label: 'o3' },
     { id: 'o3-mini', label: 'o3 Mini' },
-    { id: 'o1', label: 'o1' },
-    { id: 'o1-mini', label: 'o1 Mini' },
   ],
 
   async *streamChat(apiKey, messages, systemPrompt, tools, model, signal) {

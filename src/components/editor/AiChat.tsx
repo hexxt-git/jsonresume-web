@@ -39,7 +39,7 @@ export default function AiChat() {
   const provider = useAiStore((s) => s.provider);
   const model = useAiStore((s) => s.model);
   const isStreaming = useAiStore((s) => s.isStreaming);
-  const clearMessages = useAiStore((s) => s.clearMessages);
+  const clearMessages = useResumeStore((s) => s.clearMessages);
   const providerObj = getProvider(provider);
   const apiKey = apiKeys[provider] || '';
   const [showSettings, setShowSettings] = useState(false);
@@ -56,21 +56,16 @@ export default function AiChat() {
     el.style.height = Math.min(el.scrollHeight, 96) + 'px';
   }, [input]);
 
-  /**
-   * Agent loop: send message → stream response → auto-execute tool calls →
-   * feed results back → repeat until no more tool calls.
-   */
   const handleSend = useCallback(
     async (text: string) => {
       const content = text.trim();
-      // Guard: check store directly to prevent race conditions on double-send
       if (!content || useAiStore.getState().isStreaming) return;
 
-      const store = useAiStore.getState();
-      store.addUserMessage(content);
-      store.addAssistantMessage('');
-      store.setStreaming(true);
-      store.setError(null);
+      const rs = useResumeStore.getState();
+      rs.addUserMessage(content);
+      rs.addAssistantMessage('');
+      useAiStore.getState().setStreaming(true);
+      useAiStore.getState().setError(null);
       setInput('');
 
       const controller = new AbortController();
@@ -80,9 +75,9 @@ export default function AiChat() {
         const MAX_LOOPS = 10;
 
         for (let loop = 0; loop < MAX_LOOPS; loop++) {
-          const resume = activeSlot(useResumeStore.getState()).resume;
-          // Always exclude the trailing empty assistant placeholder from API messages
-          const allMessages = useAiStore.getState().messages;
+          const slot = activeSlot(useResumeStore.getState());
+          const resume = slot.resume;
+          const allMessages = slot.chatHistory;
           const apiMessages = allMessages.slice(0, -1);
 
           let accumulated = '';
@@ -101,7 +96,7 @@ export default function AiChat() {
             if (controller.signal.aborted) break;
             if (event.type === 'text') {
               accumulated += event.content;
-              useAiStore.getState().updateLastAssistantMessage(accumulated);
+              useResumeStore.getState().updateLastAssistantMessage(accumulated);
             } else if (event.type === 'tool_call') {
               toolCalls.push(event.call);
             }
@@ -110,20 +105,16 @@ export default function AiChat() {
           if (controller.signal.aborted) break;
           if (toolCalls.length === 0) break;
 
-          // Attach tool calls to the current assistant message
-          useAiStore.getState().addToolCallsToLastAssistant(toolCalls);
+          useResumeStore.getState().addToolCallsToLastAssistant(toolCalls);
 
-          // Capture snapshot before AI mutations so undo reverts the whole batch
           captureBeforeDiscreteMutation();
 
-          // Auto-execute each tool call
           for (const call of toolCalls) {
             const { success, message, path, before } = executeResumeTool(call);
-            useAiStore.getState().addToolResult(call.name, message, success, path, before);
+            useResumeStore.getState().addToolResult(call.name, message, success, path, before);
           }
 
-          // Add a new assistant placeholder for the next agent loop turn
-          useAiStore.getState().addAssistantMessage('');
+          useResumeStore.getState().addAssistantMessage('');
         }
       } catch (err) {
         if ((err as Error).name !== 'AbortError') {
@@ -132,11 +123,10 @@ export default function AiChat() {
             .setError(err instanceof Error ? err.message : 'Something went wrong');
         }
       } finally {
-        // Clean up any trailing empty assistant placeholder
-        const msgs = useAiStore.getState().messages;
+        const msgs = activeSlot(useResumeStore.getState()).chatHistory;
         const last = msgs[msgs.length - 1];
         if (last?.role === 'assistant' && !last.content && !last.toolCalls?.length) {
-          useAiStore.getState().removeLastMessage();
+          useResumeStore.getState().removeLastMessage();
         }
         useAiStore.getState().setStreaming(false);
         abortRef.current = null;
@@ -186,7 +176,6 @@ export default function AiChat() {
           >
             {t('ai.clearChat')}
           </button>
-          {/* Provider + model selector */}
           <select
             value={model}
             onChange={(e) => useAiStore.getState().setModel(e.target.value)}
@@ -203,7 +192,6 @@ export default function AiChat() {
         <AiSettingsButton onClick={() => setShowSettings(true)} />
       </div>
 
-      {/* Messages */}
       <AiMessageList />
 
       {/* Input bar */}
