@@ -131,7 +131,7 @@ function MobileTabBar({
           {t('editor.ai')} <Sparkle />
         </button>
         <button onClick={() => setTab('auto')} className={tabCls(tab === 'auto')}>
-          {t('editor.auto')} <span className="text-xs text-text-muted">(Coming Soon)</span>
+          {t('editor.auto')}*
         </button>
         {onShowPreview && (
           <>
@@ -207,7 +207,7 @@ function DesktopTabBar({
         {t('editor.ai')} <Sparkle />
       </button>
       <button onClick={() => setTab('auto')} className={cls(tab === 'auto')}>
-        {t('editor.auto')} <span className="text-xs text-text-muted">(Coming Soon)</span>
+        {t('editor.auto')}*
       </button>
       <div className="flex-1" />
       <div className="flex items-center gap-0.5 pr-2">

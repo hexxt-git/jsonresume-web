@@ -12,6 +12,7 @@ import { useSettingsStore, type ColorMode } from './store/settingsStore';
 import { useT, locales, type Locale } from './i18n';
 import { Select } from './components/ui/Select';
 import { OnboardingDialog } from './components/OnboardingDialog';
+import { useUndoRedo } from './hooks/useUndoRedo';
 
 const colorModeOptions = [
   { value: 'light', label: '\u2600 Light' },
@@ -80,7 +81,21 @@ function ButtonGroup<T extends string>({
   );
 }
 
-function MobileMenu({ reset, onImport }: { reset: () => void; onImport: () => void }) {
+function MobileMenu({
+  reset,
+  onImport,
+  undo,
+  redo,
+  canUndo,
+  canRedo,
+}: {
+  reset: () => void;
+  onImport: () => void;
+  undo: () => void;
+  redo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const t = useT();
   const colorMode = useSettingsStore((s) => s.colorMode);
@@ -100,15 +115,39 @@ function MobileMenu({ reset, onImport }: { reset: () => void; onImport: () => vo
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div className="absolute right-0 top-full mt-1 z-50 w-48 bg-bg border border-border rounded-lg shadow-lg p-2 space-y-2">
-            <button
-              onClick={() => {
-                onImport();
-                setOpen(false);
-              }}
-              className="w-full text-xs px-2 py-1.5 text-left text-text-secondary hover:bg-bg-hover rounded cursor-pointer"
-            >
-              {t('app.import')}
-            </button>
+            <div className="flex gap-1">
+              <button
+                onClick={() => {
+                  undo();
+                  setOpen(false);
+                }}
+                disabled={!canUndo}
+                className="flex-1 text-xs px-2 py-1.5 text-text-secondary hover:bg-bg-hover rounded cursor-pointer disabled:opacity-30 disabled:cursor-default"
+              >
+                {t('undo.undo')}
+              </button>
+              <button
+                onClick={() => {
+                  redo();
+                  setOpen(false);
+                }}
+                disabled={!canRedo}
+                className="flex-1 text-xs px-2 py-1.5 text-text-secondary hover:bg-bg-hover rounded cursor-pointer disabled:opacity-30 disabled:cursor-default"
+              >
+                {t('undo.redo')}
+              </button>
+            </div>
+            <div className="border-t border-border pt-2">
+              <button
+                onClick={() => {
+                  onImport();
+                  setOpen(false);
+                }}
+                className="w-full text-xs px-2 py-1.5 text-left text-text-secondary hover:bg-bg-hover rounded cursor-pointer"
+              >
+                {t('app.import')}
+              </button>
+            </div>
             <div className="border-t border-border pt-2">
               <ButtonGroup options={colorModes} value={colorMode} onChange={setColorMode} />
             </div>
@@ -224,6 +263,7 @@ function App() {
   const resume = slot.resume;
   const setResume = useResumeStore((s) => s.setResume);
   const reset = useResumeStore((s) => s.reset);
+  const { undo, redo, canUndo, canRedo } = useUndoRedo();
   const slots = useResumeStore((s) => s.slots);
   const saveSlot = useResumeStore((s) => s.saveSlot);
   const activeSlotId = useResumeStore((s) => s.activeSlotId);
@@ -286,7 +326,14 @@ function App() {
               {t('app.reset')}
             </button>
           </div>
-          <MobileMenu reset={reset} onImport={() => setImportOpen(true)} />
+          <MobileMenu
+            reset={reset}
+            onImport={() => setImportOpen(true)}
+            undo={undo}
+            redo={redo}
+            canUndo={canUndo}
+            canRedo={canRedo}
+          />
         </div>
       </header>
 
