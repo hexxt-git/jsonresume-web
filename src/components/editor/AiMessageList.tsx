@@ -86,7 +86,7 @@ function CopyButton({ text }: { text: string }) {
 
 /* ── Tool result badge with undo ──────────────────────── */
 
-function ToolResultBadge({ msg }: { msg: ToolResultMessage }) {
+function ToolResultBadge({ msg, hideDiffs }: { msg: ToolResultMessage; hideDiffs?: boolean }) {
   const t = useT();
   const toggleUndo = useResumeStore((s) => s.toggleToolUndo);
   const [showDiff, setShowDiff] = useState(true);
@@ -155,7 +155,7 @@ function ToolResultBadge({ msg }: { msg: ToolResultMessage }) {
             {msg.undone ? t('ai.redo') : t('ai.undo')}
           </button>
         )}
-        {hasDiff && beforeStr !== afterStr && (
+        {!hideDiffs && hasDiff && beforeStr !== afterStr && (
           <button
             onClick={() => setShowDiff(!showDiff)}
             className="text-text-muted hover:text-text-secondary transition-colors cursor-pointer text-[10px]"
@@ -164,7 +164,7 @@ function ToolResultBadge({ msg }: { msg: ToolResultMessage }) {
           </button>
         )}
       </div>
-      {showDiff && hasDiff && beforeStr !== afterStr && (
+      {showDiff && !hideDiffs && hasDiff && beforeStr !== afterStr && (
         <div className="mt-1">
           <BlockDiffView oldText={beforeStr} newText={afterStr} />
         </div>
@@ -191,7 +191,13 @@ const PRESETS = [
   },
 ];
 
-export function AiMessageList({ onSend }: { onSend?: (text: string) => void }) {
+export function AiMessageList({
+  onSend,
+  hideDiffs,
+}: {
+  onSend?: (text: string) => void;
+  hideDiffs?: boolean;
+}) {
   const t = useT();
   const messages = useResumeStore((s) => activeSlot(s).chatHistory);
   const error = useAiStore((s) => s.error);
@@ -233,7 +239,7 @@ export function AiMessageList({ onSend }: { onSend?: (text: string) => void }) {
   return (
     <div className="flex-1 overflow-y-auto px-4 space-y-3">
       {messages.map((m) => (
-        <MessageRow key={m.id} message={m} />
+        <MessageRow key={m.id} message={m} hideDiffs={hideDiffs} />
       ))}
       {error && (
         <div className="flex justify-start">
@@ -251,11 +257,11 @@ export function AiMessageList({ onSend }: { onSend?: (text: string) => void }) {
   );
 }
 
-function MessageRow({ message: m }: { message: AnyMessage }) {
+function MessageRow({ message: m, hideDiffs }: { message: AnyMessage; hideDiffs?: boolean }) {
   if (m.role === 'tool_result') {
     return (
       <div className="flex justify-start pl-2">
-        <ToolResultBadge msg={m} />
+        <ToolResultBadge msg={m} hideDiffs={hideDiffs} />
       </div>
     );
   }

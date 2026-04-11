@@ -136,9 +136,11 @@ export function computeListDiff(oldItems: string[], newItems: string[]): ListDif
   const oldSet = new Set(oldItems);
   const newSet = new Set(newItems);
   const result: ListDiffItem[] = [];
-  for (const item of oldItems)
-    result.push({ type: newSet.has(item) ? 'equal' : 'remove', text: item });
-  for (const item of newItems) if (!oldSet.has(item)) result.push({ type: 'add', text: item });
+  // Show removed items first
+  for (const item of oldItems) if (!newSet.has(item)) result.push({ type: 'remove', text: item });
+  // Then show new list in order, marking additions
+  for (const item of newItems)
+    result.push({ type: oldSet.has(item) ? 'equal' : 'add', text: item });
   return result;
 }
 

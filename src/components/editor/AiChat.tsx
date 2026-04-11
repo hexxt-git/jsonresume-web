@@ -9,7 +9,7 @@ import { useT } from '../../i18n';
 import { AiSetupPrompt, AiSettingsButton, AiProviderSettings } from './AiKeyGate';
 import { AiMessageList } from './AiMessageList';
 import { PROVIDERS } from '../../lib/ai';
-import { LampOn, Send2, StopCircle, Trash } from 'iconsax-react';
+import { Eye, EyeSlash, LampOn, Send2, StopCircle, Trash } from 'iconsax-react';
 
 /* ── Header buttons ──────────────────────────────────── */
 
@@ -121,6 +121,7 @@ export default function AiChat() {
   const providerObj = getProvider(provider);
   const apiKey = apiKeys[provider] || '';
   const [showSettings, setShowSettings] = useState(false);
+  const [hideDiffs, setHideDiffs] = useState(false);
 
   const [input, setInput] = useState('');
   const abortRef = useRef<AbortController | null>(null);
@@ -251,12 +252,24 @@ export default function AiChat() {
       {/* Header */}
       <div className="flex items-center gap-1.5 px-2 py-2 shrink-0">
         <ClearChatButton />
+        <button
+          onClick={() => setHideDiffs((h) => !h)}
+          className={`flex items-center gap-1 text-xs transition-colors cursor-pointer p-1 rounded ${hideDiffs ? 'text-text-muted bg-bg-hover/20' : 'text-text-secondary bg-bg-hover/30 hover:bg-bg-hover hover:text-text'}`}
+          title={hideDiffs ? 'Enable diffs' : 'Disable diffs'}
+        >
+          {hideDiffs ? (
+            <EyeSlash size={14} variant="Bold" color="currentColor" />
+          ) : (
+            <Eye size={14} variant="Bold" color="currentColor" />
+          )}
+          Diffs
+        </button>
         <ModelPickerButton />
         <div className="flex-1" />
         <AiSettingsButton onClick={() => setShowSettings(true)} />
       </div>
 
-      <AiMessageList onSend={handleSend} />
+      <AiMessageList onSend={handleSend} hideDiffs={hideDiffs} />
 
       {/* Input */}
       <div className="px-3 lg:px-12 lg:pb-8 pb-3 pt-1 lg:pt-2 shrink-0">
