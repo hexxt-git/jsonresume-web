@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, type ReactNode } from 'react';
 import { ResumeEditor } from './components/editor/ResumeEditor';
 import { ResumePreview } from './components/preview/ResumePreview';
 import { ImportDialog } from './components/import-export/ImportDialog';
@@ -13,11 +13,16 @@ import { useT, locales, type Locale } from './i18n';
 import { Select } from './components/ui/Select';
 import { OnboardingDialog } from './components/OnboardingDialog';
 import { useUndoRedo } from './hooks/useUndoRedo';
+import { Sun1, Moon, Monitor } from 'iconsax-react';
 
 const colorModeOptions = [
-  { value: 'light', label: '\u2600 Light' },
-  { value: 'dark', label: '\u263E Dark' },
-  { value: 'system', label: '\u25D0 System' },
+  { value: 'light', label: 'Light', icon: <Sun1 size={12} variant="Bold" color="currentColor" /> },
+  { value: 'dark', label: 'Dark', icon: <Moon size={12} variant="Bold" color="currentColor" /> },
+  {
+    value: 'system',
+    label: 'System',
+    icon: <Monitor size={12} variant="Bold" color="currentColor" />,
+  },
 ];
 
 function ColorModeToggle() {
@@ -47,10 +52,14 @@ function LocalePicker() {
   );
 }
 
-const colorModes: { value: ColorMode; label: string }[] = [
-  { value: 'light', label: '\u2600' },
-  { value: 'dark', label: '\u263E' },
-  { value: 'system', label: '\u25D0' },
+const colorModes: { value: ColorMode; label: string; icon: ReactNode }[] = [
+  { value: 'light', label: 'Light', icon: <Sun1 size={14} variant="Bold" color="currentColor" /> },
+  { value: 'dark', label: 'Dark', icon: <Moon size={14} variant="Bold" color="currentColor" /> },
+  {
+    value: 'system',
+    label: 'System',
+    icon: <Monitor size={14} variant="Bold" color="currentColor" />,
+  },
 ];
 
 function ButtonGroup<T extends string>({
@@ -58,7 +67,7 @@ function ButtonGroup<T extends string>({
   value,
   onChange,
 }: {
-  options: { value: T; label: string }[];
+  options: { value: T; label: string; icon?: ReactNode }[];
   value: T;
   onChange: (v: T) => void;
 }) {
@@ -68,12 +77,13 @@ function ButtonGroup<T extends string>({
         <button
           key={o.value}
           onClick={() => onChange(o.value)}
-          className={`flex-1 text-xs px-2 py-1 cursor-pointer transition-colors ${
+          className={`flex-1 flex items-center justify-center gap-1 text-xs px-2 py-1 cursor-pointer transition-colors ${
             value === o.value
               ? 'bg-accent text-white'
               : 'bg-bg text-text-secondary hover:bg-bg-hover'
           }`}
         >
+          {o.icon}
           {o.label}
         </button>
       ))}

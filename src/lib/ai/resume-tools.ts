@@ -37,7 +37,7 @@ export const resumeToolDeclarations: ToolDeclaration[] = [
   {
     name: 'update_basics_field',
     description:
-      'Update a single field in the basics section. Fields: name, label, email, phone, url, image.',
+      'Update a single top-level field in the basics section. Fields: name, label, email, phone, url, image.',
     parameters: {
       type: 'object',
       properties: {
@@ -49,6 +49,43 @@ export const resumeToolDeclarations: ToolDeclaration[] = [
         value: { type: 'string', description: 'New value for the field' },
       },
       required: ['field', 'value'],
+    },
+  },
+  {
+    name: 'update_location',
+    description:
+      'Update the location in the basics section. Pass only the fields you want to change.',
+    parameters: {
+      type: 'object',
+      properties: {
+        city: { type: 'string', description: 'City name' },
+        region: { type: 'string', description: 'State/region' },
+        countryCode: { type: 'string', description: 'ISO country code (e.g. US, DZ, FR)' },
+        postalCode: { type: 'string', description: 'Postal/zip code' },
+      },
+    },
+  },
+  {
+    name: 'set_profiles',
+    description:
+      'Replace all social/professional profiles in the basics section. Each profile has network, username, and url.',
+    parameters: {
+      type: 'object',
+      properties: {
+        profiles: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              network: { type: 'string', description: 'e.g. LinkedIn, GitHub, Twitter' },
+              username: { type: 'string' },
+              url: { type: 'string' },
+            },
+          },
+          description: 'Array of profile objects',
+        },
+      },
+      required: ['profiles'],
     },
   },
   {
@@ -168,6 +205,23 @@ export function executeResumeTool(call: ToolCall): ToolExecResult {
           [...current, call.args.entry] as ResumeSchema[keyof ResumeSchema],
         );
         return { success: true, message: `Added entry to ${section}`, path, before };
+      }
+
+      case 'update_location': {
+        const path = ['basics', 'location'];
+        const before = structuredClone(getAtPath(resume, path));
+        const fields = call.args as Record<string, string>;
+        for (const [k, v] of Object.entries(fields)) {
+          if (typeof v === 'string') store.updateBasicsLocation(k, v);
+        }
+        return { success: true, message: 'Updated location', path, before };
+      }
+
+      case 'set_profiles': {
+        const path = ['basics', 'profiles'];
+        const before = structuredClone(getAtPath(resume, path));
+        store.updateBasics('profiles', call.args.profiles);
+        return { success: true, message: 'Updated profiles', path, before };
       }
 
       default:

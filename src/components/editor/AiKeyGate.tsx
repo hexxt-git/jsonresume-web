@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAiStore } from '../../store/aiStore';
 import { PROVIDERS, getProvider } from '../../lib/ai';
 import { useT } from '../../i18n';
-import { Eye, EyeOff, Settings, ExternalLink } from 'lucide-react';
+import { Eye, EyeSlash, Setting, ExportSquare } from 'iconsax-react';
 
 /* ── Provider settings ───────────────────────────────── */
 
@@ -167,7 +167,11 @@ function ProviderRow({
               onClick={() => setShowKey(!showKey)}
               className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary cursor-pointer"
             >
-              {showKey ? <EyeOff size={14} /> : <Eye size={14} />}
+              {showKey ? (
+                <EyeSlash size={14} color="currentColor" />
+              ) : (
+                <Eye size={14} color="currentColor" />
+              )}
             </button>
           </div>
           {error && <p className="text-xs text-danger">{error}</p>}
@@ -178,7 +182,8 @@ function ProviderRow({
               rel="noopener noreferrer"
               className="flex items-center gap-1 text-[10px] text-accent hover:underline"
             >
-              {t('ai.getKey')} {keyLinkLabel} <ExternalLink size={9} />
+              {t('ai.getKey')} {keyLinkLabel}{' '}
+              <ExportSquare size={9} variant="Bold" color="currentColor" />
             </a>
             <div className="flex gap-1.5">
               {editing && (
@@ -215,7 +220,12 @@ export function AiSetupPrompt({ onSetup }: { onSetup: () => void }) {
   return (
     <div className="h-full flex items-center justify-center p-8">
       <div className="text-center space-y-3 max-w-sm">
-        <Settings size={24} className="mx-auto text-text-faint" />
+        <Setting
+          size={24}
+          variant="Bold"
+          color="currentColor"
+          className="mx-auto text-text-faint"
+        />
         <h3 className="text-sm font-semibold text-text">{t('ai.setupTitle')}</h3>
         <p className="text-xs text-text-muted leading-relaxed">
           {t('ai.setupDesc').split(t('ai.setupOpenSource'))[0]}
@@ -259,7 +269,7 @@ export function AiSettingsButton({ onClick }: { onClick: () => void }) {
       className="text-text-muted hover:text-text-secondary transition-colors cursor-pointer p-1 rounded hover:bg-bg-hover"
       title={t('ai.settings')}
     >
-      <Settings size={14} />
+      <Setting size={14} variant="Bold" color="currentColor" />
     </button>
   );
 }

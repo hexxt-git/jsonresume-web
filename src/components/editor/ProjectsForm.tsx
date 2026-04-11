@@ -16,6 +16,7 @@ export function ProjectsForm() {
       items={projects}
       onChange={(items) => updateArraySection('projects', items)}
       defaultItem={{ name: '', url: '', description: '', highlights: [], keywords: [] }}
+      entryLabel={(item) => item.name || 'Project'}
       renderItem={(item, index, update) => (
         <div className="space-y-2">
           <div className="grid grid-cols-2 gap-2">

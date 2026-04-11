@@ -24,6 +24,9 @@ export function EducationForm() {
         score: '',
         courses: [],
       }}
+      entryLabel={(item) =>
+        [item.studyType, item.area, item.institution].filter(Boolean).join(', ') || 'Entry'
+      }
       renderItem={(item, index, update) => (
         <div className="space-y-2">
           <FormField

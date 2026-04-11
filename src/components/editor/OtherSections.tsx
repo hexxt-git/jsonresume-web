@@ -16,6 +16,9 @@ export function VolunteerForm() {
       items={items}
       onChange={(v) => update('volunteer', v)}
       defaultItem={{ organization: '', position: '', startDate: '', endDate: '', highlights: [] }}
+      entryLabel={(item) =>
+        [item.position, item.organization].filter(Boolean).join(' at ') || 'Entry'
+      }
       renderItem={(item, i, upd) => (
         <div className="space-y-2">
           <div className="grid grid-cols-2 gap-2">
@@ -79,6 +82,7 @@ export function AwardsForm() {
       items={items}
       onChange={(v) => update('awards', v)}
       defaultItem={{ title: '', awarder: '', date: '', summary: '' }}
+      entryLabel={(item) => [item.title, item.awarder].filter(Boolean).join(' from ') || 'Award'}
       renderItem={(item, i, upd) => (
         <div className="space-y-2">
           <div className="grid grid-cols-2 gap-2">
@@ -123,6 +127,7 @@ export function CertificatesForm() {
       items={items}
       onChange={(v) => update('certificates', v)}
       defaultItem={{ name: '', issuer: '', date: '', url: '' }}
+      entryLabel={(item) => [item.name, item.issuer].filter(Boolean).join(' by ') || 'Certificate'}
       renderItem={(item, i, upd) => (
         <div className="space-y-2">
           <div className="grid grid-cols-2 gap-2">
@@ -169,6 +174,9 @@ export function PublicationsForm() {
       items={items}
       onChange={(v) => update('publications', v)}
       defaultItem={{ name: '', publisher: '', releaseDate: '', url: '', summary: '' }}
+      entryLabel={(item) =>
+        [item.name, item.publisher].filter(Boolean).join(' in ') || 'Publication'
+      }
       renderItem={(item, i, upd) => (
         <div className="space-y-2">
           <div className="grid grid-cols-2 gap-2">
@@ -220,6 +228,7 @@ export function LanguagesForm() {
       items={items}
       onChange={(v) => update('languages', v)}
       defaultItem={{ language: '', fluency: '' }}
+      entryLabel={(item) => item.language || 'Language'}
       renderItem={(item, i, upd) => (
         <div className="grid grid-cols-2 gap-2">
           <FormField
@@ -251,6 +260,7 @@ export function InterestsForm() {
       items={items}
       onChange={(v) => update('interests', v)}
       defaultItem={{ name: '', keywords: [] }}
+      entryLabel={(item) => item.name || 'Interest'}
       renderItem={(item, i, upd) => (
         <div className="space-y-2">
           <FormField
@@ -280,6 +290,7 @@ export function ReferencesForm() {
       items={items}
       onChange={(v) => update('references', v)}
       defaultItem={{ name: '', reference: '' }}
+      entryLabel={(item) => item.name || 'Reference'}
       renderItem={(item, i, upd) => (
         <div className="space-y-2">
           <FormField

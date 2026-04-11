@@ -3,7 +3,7 @@ import { useResumeStore, activeSlot } from '../../store/resumeStore';
 import { getThemeById } from '../../themes';
 import { buildCustomCss } from '../../store/themeCustomStore';
 import { useT } from '../../i18n';
-import { Printer } from 'lucide-react';
+import { Printer } from 'iconsax-react';
 
 const A4_HEIGHT = 1123; // 297mm at 96dpi
 const A4_WIDTH = 794; // 210mm at 96dpi
@@ -186,7 +186,7 @@ export function ResumePreview() {
             className="w-7 h-7 flex items-center justify-center bg-accent text-white rounded hover:opacity-90 transition-colors cursor-pointer"
             title={t('preview.print')}
           >
-            <Printer size={14} />
+            <Printer size={14} variant="Bold" color="currentColor" />
           </button>
         </div>
       </div>

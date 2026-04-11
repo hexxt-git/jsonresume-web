@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useT } from '../../i18n';
+import { AiEntryProvider } from './AiContext';
 
 interface RepeatableSectionProps<T> {
   title: string;
@@ -7,6 +8,8 @@ interface RepeatableSectionProps<T> {
   onChange: (items: T[]) => void;
   defaultItem: T;
   renderItem: (item: T, index: number, update: (index: number, item: T) => void) => ReactNode;
+  /** Extract a label for AI context, e.g. "Frontend Engineer at Acme Corp" */
+  entryLabel?: (item: T) => string;
 }
 
 export function RepeatableSection<T>({
@@ -15,6 +18,7 @@ export function RepeatableSection<T>({
   onChange,
   defaultItem,
   renderItem,
+  entryLabel,
 }: RepeatableSectionProps<T>) {
   const t = useT();
   const update = (index: number, item: T) => {
@@ -79,7 +83,9 @@ export function RepeatableSection<T>({
               </button>
             </div>
           </div>
-          {renderItem(item, index, update)}
+          <AiEntryProvider label={entryLabel ? entryLabel(item) : `#${index + 1}`}>
+            {renderItem(item, index, update)}
+          </AiEntryProvider>
         </div>
       ))}
     </div>

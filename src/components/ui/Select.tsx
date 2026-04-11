@@ -1,8 +1,10 @@
+import type { ReactNode } from 'react';
 import * as RadixSelect from '@radix-ui/react-select';
 
 export interface SelectOption {
   value: string;
   label: string;
+  icon?: ReactNode;
 }
 
 interface SelectProps {
@@ -23,6 +25,7 @@ export function Select({
   className,
 }: SelectProps) {
   const trigger = size === 'sm' ? 'text-xs px-2 py-1 gap-1' : 'text-xs px-3 py-1.5 gap-1.5';
+  const selected = options.find((o) => o.value === value);
 
   return (
     <RadixSelect.Root value={value} onValueChange={onValueChange}>
@@ -31,7 +34,10 @@ export function Select({
           text-text-secondary hover:bg-bg-hover outline-none cursor-pointer transition-colors
           data-placeholder:text-text-muted ${trigger} ${className}`}
       >
-        <RadixSelect.Value placeholder={placeholder} />
+        <span className="flex items-center gap-1.5">
+          {selected?.icon}
+          <RadixSelect.Value placeholder={placeholder} />
+        </span>
         <RadixSelect.Icon className="text-text-muted">
           <ChevronDown />
         </RadixSelect.Icon>
@@ -57,6 +63,7 @@ export function Select({
                 <RadixSelect.ItemIndicator className="w-3 text-accent">
                   <Check />
                 </RadixSelect.ItemIndicator>
+                {opt.icon && <span className="shrink-0">{opt.icon}</span>}
                 <RadixSelect.ItemText>{opt.label}</RadixSelect.ItemText>
               </RadixSelect.Item>
             ))}

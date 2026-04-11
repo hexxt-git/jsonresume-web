@@ -1,7 +1,7 @@
 import { useState, lazy, Suspense, useRef, useEffect, useCallback } from 'react';
 import { useResumeStore } from '../../store/resumeStore';
 import type { EditorSection } from '../../store/resumeStore';
-import { useSettingsStore } from '../../store/settingsStore';
+import { useSettingsStore, type EditorTab } from '../../store/settingsStore';
 import { useT } from '../../i18n';
 import { useUndoRedo } from '../../hooks/useUndoRedo';
 import { Undo2, Redo2 } from 'lucide-react';
@@ -78,7 +78,7 @@ const formMap: Record<EditorSection, React.FC> = {
   references: ReferencesForm,
 };
 
-type Tab = 'form' | 'json' | 'themes' | 'ai' | 'auto';
+type Tab = EditorTab;
 
 /* ── Mobile: single unified scrollable tab bar ────────── */
 
@@ -351,12 +351,12 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
   const t = useT();
   const activeSection = useResumeStore((s) => s.activeSection);
   const setActiveSection = useResumeStore((s) => s.setActiveSection);
-  const [tab, setTab] = useState<Tab>('form');
+  const tab = useSettingsStore((s) => s.editorTab);
+  const setTab = useSettingsStore((s) => s.setEditorTab);
   const [customizeOpen, setCustomizeOpen] = useState(false);
   const [aiSettings, setAiSettings] = useState(false);
   const ActiveForm = formMap[activeSection];
   const { undo, redo, canUndo, canRedo } = useUndoRedo();
-
   return (
     <div className="flex flex-col h-full">
       <MobileTabBar

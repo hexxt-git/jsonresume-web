@@ -23,6 +23,7 @@ export function WorkForm() {
         location: '',
         highlights: [],
       }}
+      entryLabel={(item) => [item.position, item.name].filter(Boolean).join(' at ') || 'Entry'}
       renderItem={(item, index, update) => (
         <div className="space-y-2">
           <div className="grid grid-cols-2 gap-2">

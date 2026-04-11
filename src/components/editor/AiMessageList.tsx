@@ -4,7 +4,8 @@ import { getAtPath, setAtPath } from '../../lib/ai/resume-tools';
 import { useResumeStore, activeSlot } from '../../store/resumeStore';
 import type { AnyMessage, ToolResultMessage } from '../../lib/ai';
 import { useT } from '../../i18n';
-import { CopyIcon, CheckCheck } from 'lucide-react';
+import { Copy, TickCircle } from 'iconsax-react';
+import { BlockDiffView } from './DiffView';
 
 /* ── Lightweight Markdown renderer ────────────────────── */
 
@@ -83,9 +84,9 @@ function CopyButton({ text }: { text: string }) {
       title={t('ai.copy')}
     >
       {copied ? (
-        <CheckCheck size={16} color="currentColor" />
+        <TickCircle size={16} variant="Bold" color="currentColor" />
       ) : (
-        <CopyIcon size={16} color="currentColor" />
+        <Copy size={16} variant="Bold" color="currentColor" />
       )}
     </button>
   );
@@ -96,43 +97,77 @@ function CopyButton({ text }: { text: string }) {
 function ToolResultBadge({ msg }: { msg: ToolResultMessage }) {
   const t = useT();
   const toggleUndo = useResumeStore((s) => s.toggleToolUndo);
+  const [showDiff, setShowDiff] = useState(false);
 
   const handleToggle = () => {
     if (!msg.path.length) return;
     const resume = activeSlot(useResumeStore.getState()).resume;
 
     if (msg.undone) {
-      // Redo: restore the "after" value
       setAtPath(msg.path, msg.after);
       toggleUndo(msg.id, undefined);
     } else {
-      // Undo: snapshot current value into "after", then restore "before"
       const current = structuredClone(getAtPath(resume, msg.path));
       setAtPath(msg.path, msg.before);
       toggleUndo(msg.id, current);
     }
   };
 
+  const hasDiff = msg.success && msg.before != null;
+  const currentValue = hasDiff
+    ? (() => {
+        const resume = activeSlot(useResumeStore.getState()).resume;
+        return getAtPath(resume, msg.path);
+      })()
+    : null;
+
+  const beforeStr = hasDiff
+    ? typeof msg.before === 'string'
+      ? msg.before
+      : JSON.stringify(msg.before, null, 2)
+    : '';
+  const afterStr =
+    currentValue != null
+      ? typeof currentValue === 'string'
+        ? currentValue
+        : JSON.stringify(currentValue, null, 2)
+      : '';
+
   return (
-    <div className="flex items-center gap-2 text-xs">
-      <span
-        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded ${
-          msg.success
-            ? msg.undone
-              ? 'bg-yellow-500/10 text-yellow-400 line-through'
-              : 'bg-green-500/10 text-green-400'
-            : 'bg-danger/10 text-danger'
-        }`}
-      >
-        {msg.success ? (msg.undone ? '\u21A9' : '\u2713') : '\u2717'} {msg.result}
-      </span>
-      {msg.success && msg.path.length > 0 && (
-        <button
-          onClick={handleToggle}
-          className="text-text-muted hover:text-accent transition-colors cursor-pointer underline"
+    <div className="space-y-1">
+      <div className="flex items-center gap-2 text-xs">
+        <span
+          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded ${
+            msg.success
+              ? msg.undone
+                ? 'bg-yellow-500/10 text-yellow-400 line-through'
+                : 'bg-green-500/10 text-green-400'
+              : 'bg-danger/10 text-danger'
+          }`}
         >
-          {msg.undone ? t('ai.redo') : t('ai.undo')}
-        </button>
+          {msg.success ? (msg.undone ? '\u21A9' : '\u2713') : '\u2717'} {msg.result}
+        </span>
+        {msg.success && msg.path.length > 0 && (
+          <button
+            onClick={handleToggle}
+            className="text-text-muted hover:text-accent transition-colors cursor-pointer underline"
+          >
+            {msg.undone ? t('ai.redo') : t('ai.undo')}
+          </button>
+        )}
+        {hasDiff && beforeStr !== afterStr && (
+          <button
+            onClick={() => setShowDiff(!showDiff)}
+            className="text-text-muted hover:text-text-secondary transition-colors cursor-pointer text-[10px]"
+          >
+            {showDiff ? 'hide diff' : 'diff'}
+          </button>
+        )}
+      </div>
+      {showDiff && hasDiff && beforeStr !== afterStr && (
+        <div className="ml-2">
+          <BlockDiffView oldText={beforeStr} newText={afterStr} />
+        </div>
       )}
     </div>
   );

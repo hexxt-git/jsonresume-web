@@ -16,6 +16,7 @@ export function SkillsForm() {
       items={skills}
       onChange={(items) => updateArraySection('skills', items)}
       defaultItem={{ name: '', level: '', keywords: [] }}
+      entryLabel={(item) => item.name || 'Skill'}
       renderItem={(item, index, update) => (
         <div className="space-y-2">
           <div className="grid grid-cols-2 gap-2">

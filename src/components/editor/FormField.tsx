@@ -1,3 +1,6 @@
+import { AiWritingTools } from './AiWritingTools';
+import { useAiContext } from './AiContext';
+
 interface FormFieldProps {
   label: string;
   value: string;
@@ -15,6 +18,7 @@ export function FormField({
   placeholder,
   multiline,
 }: FormFieldProps) {
+  const aiContext = useAiContext(label);
   const id = label.toLowerCase().replace(/\s+/g, '-');
   const cls =
     'w-full px-3 py-1.5 text-sm border border-border-input bg-bg-input text-text rounded-md focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent';
@@ -24,14 +28,16 @@ export function FormField({
         {label}
       </label>
       {multiline ? (
-        <textarea
-          id={id}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          rows={3}
-          className={cls + ' resize-y'}
-        />
+        <AiWritingTools mode="text" value={value} onChange={onChange} context={aiContext}>
+          <textarea
+            id={id}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={placeholder}
+            rows={4}
+            className={cls + ' resize-y pr-8'}
+          />
+        </AiWritingTools>
       ) : (
         <input
           id={id}
