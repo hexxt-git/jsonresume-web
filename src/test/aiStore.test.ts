@@ -119,12 +119,13 @@ describe('chat messages (in resumeStore slot)', () => {
       .getState()
       .addToolResult('update_summary', 'Updated summary', true, ['basics', 'summary'], 'old value');
     expect(msgs()).toHaveLength(1);
-    expect(msgs()[0].role).toBe('tool_result');
-    if (msgs()[0].role === 'tool_result') {
-      expect(msgs()[0].toolName).toBe('update_summary');
-      expect(msgs()[0].success).toBe(true);
-      expect(msgs()[0].path).toEqual(['basics', 'summary']);
-      expect(msgs()[0].before).toBe('old value');
+    const m = msgs()[0];
+    expect(m.role).toBe('tool_result');
+    if (m.role === 'tool_result') {
+      expect(m.toolName).toBe('update_summary');
+      expect(m.success).toBe(true);
+      expect(m.path).toEqual(['basics', 'summary']);
+      expect(m.before).toBe('old value');
     }
   });
 

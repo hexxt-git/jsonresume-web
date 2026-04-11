@@ -5,8 +5,6 @@ import {
   MagicStar,
   Edit,
   Briefcase,
-  MessageCircle,
-  Task,
   TextalignJustifycenter,
   MessageSquare,
   Chart,
