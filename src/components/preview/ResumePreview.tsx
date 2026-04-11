@@ -15,7 +15,7 @@ export function ResumePreview() {
   const custom = useResumeStore((s) => activeSlot(s).customization);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [pageCount, setPageCount] = useState(1);
+  const [contentHeight, setContentHeight] = useState(A4_HEIGHT);
   const [zoom, setZoom] = useState(1);
 
   const html = useMemo(() => {
@@ -25,21 +25,72 @@ export function ResumePreview() {
     return base.replace('</head>', `${overrides}</head>`);
   }, [resume, themeId, custom]);
 
+  // Continuously measure iframe content height via MutationObserver + ResizeObserver
   useEffect(() => {
     const iframe = iframeRef.current;
     if (!iframe) return;
-    const onLoad = () => {
+
+    let mo: MutationObserver | null = null;
+    let ro: ResizeObserver | null = null;
+    let raf = 0;
+
+    const measure = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        try {
+          const doc = iframe.contentDocument;
+          if (!doc) return;
+          const h = doc.documentElement.scrollHeight;
+          if (h > 0) setContentHeight(h);
+        } catch {
+          /* cross-origin */
+        }
+      });
+    };
+
+    const setup = () => {
       try {
-        const h = iframe.contentDocument?.documentElement?.scrollHeight || A4_HEIGHT;
-        setPageCount(Math.ceil(h / A4_HEIGHT));
+        const doc = iframe.contentDocument;
+        if (!doc?.body) return;
+
+        // Initial measurement
+        measure();
+
+        // Watch for DOM mutations (content changes, font loads, image loads)
+        mo = new MutationObserver(measure);
+        mo.observe(doc.documentElement, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          characterData: true,
+        });
+
+        // Watch for size changes on the body
+        if (typeof ResizeObserver !== 'undefined') {
+          ro = new ResizeObserver(measure);
+          ro.observe(doc.body);
+        }
+
+        // Also measure after fonts finish loading
+        doc.fonts?.ready?.then(measure);
       } catch {
         /* cross-origin */
       }
     };
-    iframe.addEventListener('load', onLoad);
-    onLoad();
-    return () => iframe.removeEventListener('load', onLoad);
+
+    iframe.addEventListener('load', setup);
+    // If already loaded (srcDoc)
+    setup();
+
+    return () => {
+      iframe.removeEventListener('load', setup);
+      cancelAnimationFrame(raf);
+      mo?.disconnect();
+      ro?.disconnect();
+    };
   }, [html]);
+
+  const pageCount = Math.max(1, Math.ceil(contentHeight / A4_HEIGHT));
 
   const fitZoom = useCallback(() => {
     const container = containerRef.current;
@@ -47,7 +98,7 @@ export function ResumePreview() {
     return Math.round(Math.min((container.clientWidth - 32) / A4_WIDTH, 1) * 100) / 100;
   }, []);
 
-  // Auto-fit zoom to container width on mount and when container becomes visible (mobile tab switch)
+  // Auto-fit zoom to container width on mount and resize
   useEffect(() => {
     setZoom(fitZoom());
 
@@ -92,8 +143,6 @@ export function ResumePreview() {
     container.addEventListener('wheel', handler, { passive: false });
     return () => container.removeEventListener('wheel', handler);
   });
-
-  const contentHeight = pageCount * A4_HEIGHT;
 
   return (
     <div className="flex flex-col h-full">
@@ -168,7 +217,7 @@ export function ResumePreview() {
             <div
               key={i}
               className="absolute left-0 right-0 pointer-events-none"
-              style={{ top: (i + 1) * A4_HEIGHT * zoom + 15 }}
+              style={{ top: (i + 1) * A4_HEIGHT * zoom }}
             >
               <div className="border-t border-dashed border-text-muted opacity-60" />
               <span className="absolute right-2 -top-5 text-[12px] text-text-muted opacity-60 select-none">
