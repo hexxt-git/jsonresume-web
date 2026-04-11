@@ -1,4 +1,4 @@
-import { useState, useMemo, type KeyboardEvent } from 'react';
+import { useState, useRef, useEffect, useMemo, type KeyboardEvent } from 'react';
 import { useT } from '../../i18n';
 import { AiWritingTools } from './AiWritingTools';
 import { useAiContext } from './AiContext';
@@ -31,6 +31,7 @@ export function ChipInput({ label, items, onChange, placeholder }: ChipInputProp
   const aiContext = useAiContext(label);
   const resolvedPlaceholder = placeholder || t('chip.placeholder');
   const [input, setInput] = useState('');
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const ids = useMemo(() => {
     const seen = new Map<string, number>();
@@ -75,6 +76,21 @@ export function ChipInput({ label, items, onChange, placeholder }: ChipInputProp
     onChange(next);
   };
 
+  const handleFinishEdit = (index: number, newText: string) => {
+    const trimmed = newText.trim();
+    if (!trimmed) {
+      onChange(items.filter((_, j) => j !== index));
+    } else if (trimmed !== items[index]) {
+      const isDuplicate = items.some((existing, j) => j !== index && existing === trimmed);
+      if (!isDuplicate) {
+        const next = [...items];
+        next[index] = trimmed;
+        onChange(next);
+      }
+    }
+    setEditingIndex(null);
+  };
+
   return (
     <div>
       <label className="block text-xs font-medium text-text-secondary mb-1">{label}</label>
@@ -83,6 +99,7 @@ export function ChipInput({ label, items, onChange, placeholder }: ChipInputProp
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
+            onDragStart={() => setEditingIndex(null)}
             onDragEnd={handleDragEnd}
           >
             <SortableContext items={ids} strategy={horizontalListSortingStrategy}>
@@ -91,6 +108,10 @@ export function ChipInput({ label, items, onChange, placeholder }: ChipInputProp
                   key={ids[i]}
                   id={ids[i]}
                   text={item}
+                  isEditing={editingIndex === i}
+                  onStartEdit={() => setEditingIndex(i)}
+                  onFinishEdit={(newText) => handleFinishEdit(i, newText)}
+                  onCancelEdit={() => setEditingIndex(null)}
                   onRemove={() => onChange(items.filter((_, j) => j !== i))}
                 />
               ))}
@@ -110,16 +131,89 @@ export function ChipInput({ label, items, onChange, placeholder }: ChipInputProp
   );
 }
 
-function SortableChip({ id, text, onRemove }: { id: string; text: string; onRemove: () => void }) {
+function SortableChip({
+  id,
+  text,
+  isEditing,
+  onStartEdit,
+  onFinishEdit,
+  onCancelEdit,
+  onRemove,
+}: {
+  id: string;
+  text: string;
+  isEditing: boolean;
+  onStartEdit: () => void;
+  onFinishEdit: (newText: string) => void;
+  onCancelEdit: () => void;
+  onRemove: () => void;
+}) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id,
+    disabled: isEditing,
   });
+  const [editValue, setEditValue] = useState(text);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const didDrag = useRef(false);
+
+  useEffect(() => {
+    if (isDragging) didDrag.current = true;
+  }, [isDragging]);
+
+  useEffect(() => {
+    if (isEditing) {
+      setEditValue(text);
+      // Focus after render
+      requestAnimationFrame(() => {
+        inputRef.current?.focus();
+        inputRef.current?.select();
+      });
+    }
+  }, [isEditing, text]);
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
   };
+
+  const handleClick = () => {
+    if (didDrag.current) {
+      didDrag.current = false;
+      return;
+    }
+    onStartEdit();
+  };
+
+  const handleEditKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      onFinishEdit(editValue);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      onCancelEdit();
+    }
+  };
+
+  if (isEditing) {
+    return (
+      <span
+        ref={setNodeRef}
+        style={style}
+        className="inline-flex items-center bg-bg-tertiary text-text text-xs px-1 py-0.5 rounded ring-1 ring-accent"
+      >
+        <input
+          ref={inputRef}
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
+          onKeyDown={handleEditKeyDown}
+          onBlur={() => onFinishEdit(editValue)}
+          className="bg-transparent outline-none text-xs text-text"
+          style={{ width: `${Math.max(editValue.length, 1) + 1}ch` }}
+        />
+      </span>
+    );
+  }
 
   return (
     <span
@@ -128,6 +222,7 @@ function SortableChip({ id, text, onRemove }: { id: string; text: string; onRemo
       className="inline-flex items-center gap-1 bg-bg-tertiary text-text text-xs px-2 py-0.5 rounded cursor-grab active:cursor-grabbing touch-none"
       {...attributes}
       {...listeners}
+      onClick={handleClick}
     >
       {text}
       <button
