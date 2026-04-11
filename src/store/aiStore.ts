@@ -8,7 +8,7 @@ function makeId() {
 
 interface AiStore {
   /* persisted */
-  apiKey: string;
+  apiKeys: Record<string, string>; // providerId → key
   provider: string;
   model: string;
 
@@ -17,11 +17,16 @@ interface AiStore {
   isStreaming: boolean;
   error: string | null;
 
-  /* actions */
-  setApiKey: (key: string) => void;
-  clearApiKey: () => void;
+  /* actions — keys */
+  setApiKey: (providerId: string, key: string) => void;
+  clearApiKey: (providerId: string) => void;
+  getApiKey: (providerId: string) => string;
+
+  /* actions — provider/model */
+  setProvider: (provider: string) => void;
   setModel: (model: string) => void;
 
+  /* actions — messages */
   addUserMessage: (content: string) => void;
   addAssistantMessage: (content: string) => void;
   updateLastAssistantMessage: (content: string) => void;
@@ -45,8 +50,8 @@ interface AiStore {
 
 export const useAiStore = create<AiStore>()(
   persist(
-    (set) => ({
-      apiKey: '',
+    (set, get) => ({
+      apiKeys: {},
       provider: 'gemini',
       model: 'gemini-2.5-flash',
 
@@ -54,8 +59,16 @@ export const useAiStore = create<AiStore>()(
       isStreaming: false,
       error: null,
 
-      setApiKey: (apiKey) => set({ apiKey }),
-      clearApiKey: () => set({ apiKey: '' }),
+      setApiKey: (providerId, key) =>
+        set((s) => ({ apiKeys: { ...s.apiKeys, [providerId]: key } })),
+      clearApiKey: (providerId) =>
+        set((s) => {
+          const { [providerId]: _, ...rest } = s.apiKeys;
+          return { apiKeys: rest };
+        }),
+      getApiKey: (providerId) => get().apiKeys[providerId] || '',
+
+      setProvider: (provider) => set({ provider }),
       setModel: (model) => set({ model }),
 
       addUserMessage: (content) =>
@@ -119,10 +132,8 @@ export const useAiStore = create<AiStore>()(
           messages: s.messages.map((m) => {
             if (m.id !== id || m.role !== 'tool_result') return m;
             if (m.undone) {
-              // Redo: clear undone state
               return { ...m, undone: false };
             }
-            // Undo: store current value as after
             return { ...m, after, undone: true };
           }),
         })),
@@ -139,10 +150,22 @@ export const useAiStore = create<AiStore>()(
     {
       name: 'ai-store',
       partialize: (state) => ({
-        apiKey: state.apiKey,
+        apiKeys: state.apiKeys,
         provider: state.provider,
         model: state.model,
       }),
+      // Migrate from old single-key format
+      migrate: (persisted: unknown, version: number) => {
+        const state = persisted as Record<string, unknown>;
+        if (version === 0 && state.apiKey && typeof state.apiKey === 'string') {
+          // Old format: single apiKey field → migrate to apiKeys map
+          const provider = (state.provider as string) || 'gemini';
+          state.apiKeys = { [provider]: state.apiKey };
+          delete state.apiKey;
+        }
+        return state as ReturnType<typeof useAiStore.getState>;
+      },
+      version: 1,
     },
   ),
 );

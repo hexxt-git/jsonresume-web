@@ -254,11 +254,6 @@ function App() {
     !resume.skills?.length &&
     !resume.projects?.length;
 
-  const handlePrint = useCallback(() => {
-    const iframe = document.querySelector<HTMLIFrameElement>('iframe[title="Resume Preview"]');
-    iframe?.contentWindow?.print();
-  }, []);
-
   return (
     <div className="h-screen flex flex-col bg-bg">
       <header className="flex items-center justify-between px-2 py-1.5 border-b border-border bg-bg shrink-0 gap-1">
@@ -278,11 +273,7 @@ function App() {
             >
               {t('app.export')}
             </button>
-            <ExportDialog
-              open={exportOpen}
-              onClose={() => setExportOpen(false)}
-              onPrint={handlePrint}
-            />
+            <ExportDialog open={exportOpen} onClose={() => setExportOpen(false)} />
           </div>
           <div className="hidden sm:flex items-center gap-1 ml-0.5">
             <ColorModeToggle />

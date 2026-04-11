@@ -4,5 +4,5 @@ export interface ThemeDefinition {
   id: string;
   name: string;
   description: string;
-  render: (resume: ResumeSchema) => string;
+  render: (resume: ResumeSchema, customCss?: string) => string;
 }

@@ -172,10 +172,10 @@ export default {
   'jsonEditor.format': 'Format',
 
   // Empty state
-  'empty.drop': 'Drop a resume file here, or click to upload',
+  'empty.drop': 'Already have a resume? Drop it here to use as a starting point',
   'empty.formats': 'PDF, DOCX, JSON, YAML',
-  'empty.or': 'or',
-  'empty.loadSample': 'Load sample resume',
+  'empty.or': 'or start fresh',
+  'empty.loadSample': 'Start with a template',
   'empty.pasteJson': 'Paste JSON',
   'empty.hint': 'Or just start typing in the editor — it auto-saves.',
 

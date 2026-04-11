@@ -3,6 +3,7 @@ import { useResumeStore, activeSlot } from '../../store/resumeStore';
 import { getThemeById } from '../../themes';
 import { buildCustomCss } from '../../store/themeCustomStore';
 import { useT } from '../../i18n';
+import { Printer } from 'lucide-react';
 
 const A4_HEIGHT = 1123; // 297mm at 96dpi
 const A4_WIDTH = 794; // 210mm at 96dpi
@@ -18,12 +19,10 @@ export function ResumePreview() {
   const [contentHeight, setContentHeight] = useState(A4_HEIGHT);
   const [zoom, setZoom] = useState(1);
 
-  const html = useMemo(() => {
-    const base = getThemeById(themeId).render(resume);
-    const overrides = buildCustomCss(custom);
-    if (!overrides) return base;
-    return base.replace('</head>', `${overrides}</head>`);
-  }, [resume, themeId, custom]);
+  const html = useMemo(
+    () => getThemeById(themeId).render(resume, buildCustomCss(custom)),
+    [resume, themeId, custom],
+  );
 
   // Continuously measure iframe content height via MutationObserver + ResizeObserver
   useEffect(() => {
@@ -184,9 +183,10 @@ export function ResumePreview() {
           <div className="w-px h-4 bg-border mx-1" />
           <button
             onClick={handlePrint}
-            className="text-xs px-3 py-1 bg-accent text-white rounded hover:opacity-90 transition-colors cursor-pointer"
+            className="w-7 h-7 flex items-center justify-center bg-accent text-white rounded hover:opacity-90 transition-colors cursor-pointer"
+            title="Print"
           >
-            {t('app.printPdf')}
+            <Printer size={14} />
           </button>
         </div>
       </div>

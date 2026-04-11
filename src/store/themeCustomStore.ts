@@ -67,5 +67,5 @@ export function buildCustomCss(c: ThemeCustomization): string {
   }
 
   if (!parts.length) return '';
-  return `<style>${parts.join('')}</style>`;
+  return parts.join('');
 }

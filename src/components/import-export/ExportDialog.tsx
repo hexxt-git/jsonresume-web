@@ -8,7 +8,6 @@ import YAML from 'yaml';
 interface ExportDialogProps {
   open: boolean;
   onClose: () => void;
-  onPrint: () => void;
 }
 
 const EXT_ICONS: Record<string, string> = {
@@ -18,7 +17,7 @@ const EXT_ICONS: Record<string, string> = {
   PDF: 'pdf',
 };
 
-export function ExportDialog({ open, onClose, onPrint }: ExportDialogProps) {
+export function ExportDialog({ open, onClose }: ExportDialogProps) {
   const t = useT();
   const resume = useResumeStore((s) => activeSlot(s).resume);
   const themeId = useResumeStore((s) => activeSlot(s).themeId);
@@ -28,10 +27,12 @@ export function ExportDialog({ open, onClose, onPrint }: ExportDialogProps) {
 
   const fname = resume.basics?.name?.replace(/\s+/g, '_') || 'resume';
 
-  const renderHtml = () => {
-    const base = getThemeById(themeId).render(resume);
-    const overrides = buildCustomCss(custom);
-    return overrides ? base.replace('</head>', `${overrides}</head>`) : base;
+  const renderHtml = () => getThemeById(themeId).render(resume, buildCustomCss(custom));
+
+  const handlePrint = () => {
+    const iframe = document.querySelector<HTMLIFrameElement>('iframe[title="Resume Preview"]');
+    iframe?.contentWindow?.print();
+    onClose();
   };
 
   const options = [
@@ -69,10 +70,7 @@ export function ExportDialog({ open, onClose, onPrint }: ExportDialogProps) {
       ext: 'PDF',
       label: t('export.pdf'),
       sub: t('export.pdfDesc'),
-      action: () => {
-        onPrint();
-        onClose();
-      },
+      action: handlePrint,
     },
   ];
 

@@ -98,8 +98,10 @@ export function OnboardingDialog() {
           ) : (
             <>
               <div className="text-center mb-3">
-                <h2 className="text-base font-semibold text-text">Import Your Resume</h2>
-                <p className="text-sm text-text-tertiary mt-1">Or skip to start from scratch.</p>
+                <h2 className="text-base font-semibold text-text">Got an existing resume?</h2>
+                <p className="text-sm text-text-tertiary mt-1">
+                  Import it as a starting point, or skip to start fresh.
+                </p>
               </div>
 
               <input
@@ -130,7 +132,9 @@ export function OnboardingDialog() {
                 ) : (
                   <>
                     <div className="text-2xl text-text-faint mb-1">+</div>
-                    <p className="text-sm text-text-secondary">Drop file here or click to browse</p>
+                    <p className="text-sm text-text-secondary">
+                      Drop a file here or click to browse
+                    </p>
                     <p className="text-xs text-text-muted mt-1">PDF, DOCX, JSON, YAML</p>
                   </>
                 )}

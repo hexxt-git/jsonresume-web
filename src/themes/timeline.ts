@@ -29,7 +29,7 @@ ${item.extra || ''}
     .join('')}</div>`;
 }
 
-function render(resume: ResumeSchema): string {
+function render(resume: ResumeSchema, customCss?: string): string {
   const b = resume.basics;
   return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(b?.name)} - ${esc(b?.label || 'Resume')}</title>
 <style>
@@ -59,7 +59,7 @@ li{margin-bottom:3px;color:#6b7280}
 .langs{display:flex;gap:12px;flex-wrap:wrap}
 .lang{color:#6b7280;font-size:calc(13px * var(--fs-mult, 1))}
 @media print{body{padding:20px 24px}.timeline::before{background:#ccc}.tl-dot{background:#4f46e5;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
-</style></head><body>
+${customCss || ''}</style></head><body>
 ${b?.image ? `<img src="${esc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px">` : ''}
 ${b?.name ? `<h1>${esc(b.name)}</h1>` : ''}
 ${b?.label ? `<p class="label">${esc(b.label)}</p>` : ''}

@@ -6,8 +6,9 @@ import type { ToolCall } from '../../lib/ai';
 import { resumeToolDeclarations, executeResumeTool } from '../../lib/ai/resume-tools';
 import { captureBeforeDiscreteMutation } from '../../hooks/useUndoRedo';
 import { useT } from '../../i18n';
-import { AiKeyGate } from './AiKeyGate';
+import { AiSetupPrompt, AiSettingsButton, AiProviderSettings } from './AiKeyGate';
 import { AiMessageList } from './AiMessageList';
+import { PROVIDERS } from '../../lib/ai';
 
 function buildSystemPrompt(resume: unknown): string {
   return `You are an advanced AI resume assistant. You are a full LLM — you can generate, rewrite, translate, and transform any text yourself. You also have tools to directly write changes into the user's resume.
@@ -34,13 +35,14 @@ ${JSON.stringify(resume, null, 2)}
 
 export default function AiChat() {
   const t = useT();
-  const apiKey = useAiStore((s) => s.apiKey);
+  const apiKeys = useAiStore((s) => s.apiKeys);
   const provider = useAiStore((s) => s.provider);
   const model = useAiStore((s) => s.model);
   const isStreaming = useAiStore((s) => s.isStreaming);
-  const clearApiKey = useAiStore((s) => s.clearApiKey);
   const clearMessages = useAiStore((s) => s.clearMessages);
   const providerObj = getProvider(provider);
+  const apiKey = apiKeys[provider] || '';
+  const [showSettings, setShowSettings] = useState(false);
 
   const [input, setInput] = useState('');
   const abortRef = useRef<AbortController | null>(null);
@@ -152,20 +154,39 @@ export default function AiChat() {
     }
   };
 
-  if (!apiKey) return <AiKeyGate />;
+  if (!apiKey && !showSettings) return <AiSetupPrompt onSetup={() => setShowSettings(true)} />;
+
+  if (showSettings) {
+    return (
+      <div className="flex flex-col h-full">
+        <div className="flex items-center justify-between px-4 py-2 border-b border-border shrink-0">
+          <span className="text-xs font-medium text-text">AI Settings</span>
+          <button
+            onClick={() => setShowSettings(false)}
+            className="text-xs text-accent hover:underline cursor-pointer"
+          >
+            {apiKey ? 'Back to chat' : 'Back'}
+          </button>
+        </div>
+        <AiProviderSettings />
+      </div>
+    );
+  }
+
+  const providerMeta = PROVIDERS.find((p) => p.id === provider);
 
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-border shrink-0">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             onClick={clearMessages}
             className="text-xs text-text-muted hover:text-text transition-colors cursor-pointer"
           >
             {t('ai.clearChat')}
           </button>
-          {/* Model selector */}
+          {/* Provider + model selector */}
           <select
             value={model}
             onChange={(e) => useAiStore.getState().setModel(e.target.value)}
@@ -173,18 +194,13 @@ export default function AiChat() {
           >
             {providerObj.models.map((m) => (
               <option key={m.id} value={m.id}>
+                {providerMeta ? `${providerMeta.name} — ` : ''}
                 {m.label}
               </option>
             ))}
           </select>
         </div>
-        <button
-          onClick={clearApiKey}
-          className="text-xs text-text-muted hover:text-danger transition-colors cursor-pointer"
-          title={t('ai.keyRemove')}
-        >
-          {t('ai.keyRemove')}
-        </button>
+        <AiSettingsButton onClick={() => setShowSettings(true)} />
       </div>
 
       {/* Messages */}

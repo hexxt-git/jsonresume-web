@@ -6,7 +6,7 @@ import { useT } from '../../i18n';
 import resumeSchema from '../../utils/resumeSchema.json';
 import { saveAs } from 'file-saver';
 
-export function JsonEditor() {
+export default function JsonEditor() {
   const t = useT();
   const darkMode = useSettingsStore((s) => s.colorMode);
   const isDark =

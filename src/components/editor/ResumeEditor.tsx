@@ -7,6 +7,15 @@ import { useUndoRedo } from '../../hooks/useUndoRedo';
 import { Undo2, Redo2 } from 'lucide-react';
 
 const AiChat = lazy(() => import('./AiChat'));
+const JsonEditor = lazy(() => import('./JsonEditor'));
+import { AiGate, AiProviderSettings } from './AiKeyGate';
+
+const LazyFallback = (
+  <div className="h-full flex items-center justify-center text-xs text-text-tertiary">
+    Loading...
+  </div>
+);
+
 import { BasicsForm } from './BasicsForm';
 import { WorkForm } from './WorkForm';
 import { EducationForm } from './EducationForm';
@@ -21,7 +30,6 @@ import {
   InterestsForm,
   ReferencesForm,
 } from './OtherSections';
-import { JsonEditor } from './JsonEditor';
 import { ThemePicker } from '../themes/ThemePicker';
 import { ThemeCustomizer } from '../themes/ThemeCustomizer';
 
@@ -332,6 +340,7 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
   const setActiveSection = useResumeStore((s) => s.setActiveSection);
   const [tab, setTab] = useState<Tab>('form');
   const [customizeOpen, setCustomizeOpen] = useState(false);
+  const [aiSettings, setAiSettings] = useState(false);
   const ActiveForm = formMap[activeSection];
   const { undo, redo, canUndo, canRedo } = useUndoRedo();
 
@@ -355,27 +364,38 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
         canRedo={canRedo}
       />
 
-      {tab === 'auto' ? (
-        <div className="flex-1 flex items-center justify-center p-8">
-          <div className="text-center space-y-2">
-            <p className="text-sm text-text-tertiary">{t('auto.placeholder')}</p>
+      {aiSettings && (tab === 'ai' || tab === 'auto') ? (
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2 border-b border-border shrink-0">
+            <span className="text-xs font-medium text-text">AI Settings</span>
+            <button
+              onClick={() => setAiSettings(false)}
+              className="text-xs text-accent hover:underline cursor-pointer"
+            >
+              Back
+            </button>
           </div>
+          <AiProviderSettings />
         </div>
+      ) : tab === 'auto' ? (
+        <AiGate onSetup={() => setAiSettings(true)}>
+          <div className="flex-1 flex items-center justify-center p-8">
+            <div className="text-center space-y-2">
+              <p className="text-sm text-text-tertiary">{t('auto.placeholder')}</p>
+            </div>
+          </div>
+        </AiGate>
       ) : tab === 'ai' ? (
         <div className="flex-1 overflow-hidden">
-          <Suspense
-            fallback={
-              <div className="h-full flex items-center justify-center text-xs text-text-tertiary">
-                Loading...
-              </div>
-            }
-          >
+          <Suspense fallback={LazyFallback}>
             <AiChat />
           </Suspense>
         </div>
       ) : tab === 'json' ? (
         <div className="flex-1 overflow-hidden">
-          <JsonEditor />
+          <Suspense fallback={LazyFallback}>
+            <JsonEditor />
+          </Suspense>
         </div>
       ) : tab === 'themes' ? (
         <div className="flex-1 overflow-y-auto">

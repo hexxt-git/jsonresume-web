@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useAiStore } from '../../store/aiStore';
 import { getAtPath, setAtPath } from '../../lib/ai/resume-tools';
-import { useResumeStore } from '../../store/resumeStore';
+import { useResumeStore, activeSlot } from '../../store/resumeStore';
 import type { AnyMessage, ToolResultMessage } from '../../lib/ai';
 import { useT } from '../../i18n';
 import { CopyIcon, CheckCheck } from 'lucide-react';
@@ -98,7 +98,7 @@ function ToolResultBadge({ msg }: { msg: ToolResultMessage }) {
 
   const handleToggle = () => {
     if (!msg.path.length) return;
-    const resume = useResumeStore.getState().resume;
+    const resume = activeSlot(useResumeStore.getState()).resume;
 
     if (msg.undone) {
       // Redo: restore the "after" value

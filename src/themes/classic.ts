@@ -2,7 +2,7 @@ import type { ResumeSchema } from '../types/resume';
 import type { ThemeDefinition } from './types';
 import { esc, md, dateRange, section, link } from './helpers';
 
-function render(resume: ResumeSchema): string {
+function render(resume: ResumeSchema, customCss?: string): string {
   const b = resume.basics;
   return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(b?.name)} - ${esc(b?.label || 'Resume')}</title>
 <style>
@@ -31,7 +31,7 @@ li{margin-bottom:3px;color:#444}
 .languages span+span::before{content:" | "}
 .languages{color:#555;font-size:calc(13px * var(--fs-mult, 1))}
 @media print{body{padding:16px 20px;font-size:calc(12px * var(--fs-mult, 1))}.section{margin-bottom:14px}.entry{margin-bottom:10px}}
-</style></head><body>
+${customCss || ''}</style></head><body>
 ${b?.image ? `<img src="${esc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 12px">` : ''}
 ${b?.name ? `<h1>${esc(b.name)}</h1>` : ''}
 ${b?.label ? `<p class="label">${esc(b.label)}</p>` : ''}

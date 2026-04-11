@@ -67,8 +67,7 @@ describe('buildCustomCss', () => {
 
   it('generates font-size multiplier override', () => {
     const css = buildCustomCss({ ...defaultCustomization, fontSizeMultiplier: 1.2 });
-    expect(css).toContain('<style>');
-    expect(css).toContain('font-size');
+    expect(css).toContain('--fs-mult');
     expect(css).toContain('1.2');
   });
 

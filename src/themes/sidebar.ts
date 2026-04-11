@@ -2,7 +2,7 @@ import type { ResumeSchema } from '../types/resume';
 import type { ThemeDefinition } from './types';
 import { esc, md, dateRange, section, link } from './helpers';
 
-function render(resume: ResumeSchema): string {
+function render(resume: ResumeSchema, customCss?: string): string {
   const b = resume.basics;
   const sidebarSections = [
     b?.email ? `<div class="sb-section"><h3>Email</h3><p>${esc(b.email)}</p></div>` : '',
@@ -57,7 +57,7 @@ a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}
 ul{padding-left:18px;margin-top:6px}
 li{margin-bottom:3px;color:#4b5563}
 @media print{body{display:flex}.sidebar{width:240px;min-width:240px;background:#1e293b;-webkit-print-color-adjust:exact;print-color-adjust:exact}.main{padding:24px 28px}}
-</style></head><body>
+${customCss || ''}</style></head><body>
 <aside class="sidebar">
 ${b?.image ? `<img src="${esc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid #334155;display:block;margin:0 auto 12px">` : ''}
 ${b?.name ? `<h1>${esc(b.name)}</h1>` : ''}

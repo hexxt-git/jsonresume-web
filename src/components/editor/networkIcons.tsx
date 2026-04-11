@@ -243,7 +243,7 @@ export function NetworkPickerButton({
       <Popover.Trigger asChild>
         <button
           type="button"
-          className="h-[34px] w-[34px] shrink-0 flex items-center justify-center border border-border-input bg-bg-input rounded-md
+          className="h-[34px] shrink-0 flex items-center justify-center gap-2 px-2 border border-border-input bg-bg-input rounded-md
             hover:bg-bg-hover cursor-pointer transition-colors"
           title={value || 'Pick network'}
         >
@@ -263,6 +263,7 @@ export function NetworkPickerButton({
               <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
             </svg>
           )}
+          {value && <span className="text-xs text-text-muted">{value}</span>}
         </button>
       </Popover.Trigger>
       <Popover.Portal>

@@ -1,8 +1,11 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useResumeStore, activeSlot } from '../store/resumeStore';
 import { useUndoStore, type SlotSnapshot } from '../store/undoStore';
 
-/* ── Snapshot capture ─────────────────────────────────── */
+/* ── Module-level singleton state ─────────────────────── */
+/* These are intentionally module-scoped — the undo capture
+   subscription is a singleton that lives for the app lifetime,
+   independent of React component mount/unmount cycles.       */
 
 let _isUndoRedo = false;
 let _debounceTimer: ReturnType<typeof setTimeout>;
@@ -21,16 +24,11 @@ function getActiveId(): string | null {
   return useResumeStore.getState().activeSlotId;
 }
 
-/**
- * Push the PREVIOUS state (before the latest burst of edits) to the undo stack,
- * then update _prevJson to the current state.
- */
 function pushPrevIfChanged() {
   const slotId = getActiveId();
   if (!slotId || !_prevJson) return;
   const currentJson = JSON.stringify(getCurrentSnapshot());
   if (currentJson === _prevJson) return;
-  // Push the state from BEFORE the edits
   const prevSnap: SlotSnapshot = JSON.parse(_prevJson);
   useUndoStore.getState().pushSnapshot(slotId, prevSnap);
   _prevJson = currentJson;
@@ -46,43 +44,82 @@ export function captureBeforeDiscreteMutation() {
   pushPrevIfChanged();
 }
 
-/* ── Subscriber: auto-capture debounced snapshots ────── */
+function doUndo() {
+  const slotId = getActiveId();
+  if (!slotId) return;
+  clearTimeout(_debounceTimer);
+  pushPrevIfChanged();
 
-let _subscribed = false;
+  const current = getCurrentSnapshot();
+  const snapshot = useUndoStore.getState().undo(slotId, current);
+  if (!snapshot) return;
 
-function ensureSubscribed() {
-  if (_subscribed) return;
-  _subscribed = true;
-
-  // Seed _prevJson with current state (baseline for first edit)
-  if (getActiveId()) {
-    _prevJson = JSON.stringify(getCurrentSnapshot());
-  }
-
-  useResumeStore.subscribe((state, prev) => {
-    if (_isUndoRedo) return;
-
-    const slotId = state.activeSlotId;
-    if (!slotId) return;
-
-    // Check if slot data actually changed
-    const slot = activeSlot(state);
-    const prevSlot = activeSlot(prev);
-    if (
-      slot.resume === prevSlot.resume &&
-      slot.themeId === prevSlot.themeId &&
-      slot.customization === prevSlot.customization
-    ) {
-      return;
-    }
-
-    // Debounced capture: push previous state after edits settle
-    clearTimeout(_debounceTimer);
-    _debounceTimer = setTimeout(pushPrevIfChanged, 1000);
-  });
+  _isUndoRedo = true;
+  const store = useResumeStore.getState();
+  store.setResume(snapshot.resume);
+  store.setTheme(snapshot.themeId);
+  store.setFullCustomization(snapshot.customization);
+  _prevJson = JSON.stringify(snapshot);
+  _isUndoRedo = false;
 }
 
-/* ── Hook ─────────────────────────────────────────────── */
+function doRedo() {
+  const slotId = getActiveId();
+  if (!slotId) return;
+  clearTimeout(_debounceTimer);
+
+  const current = getCurrentSnapshot();
+  const snapshot = useUndoStore.getState().redo(slotId, current);
+  if (!snapshot) return;
+
+  _isUndoRedo = true;
+  const store = useResumeStore.getState();
+  store.setResume(snapshot.resume);
+  store.setTheme(snapshot.themeId);
+  store.setFullCustomization(snapshot.customization);
+  _prevJson = JSON.stringify(snapshot);
+  _isUndoRedo = false;
+}
+
+/* ── Store subscription (runs once at module load) ────── */
+
+// Seed baseline
+if (getActiveId()) {
+  _prevJson = JSON.stringify(getCurrentSnapshot());
+}
+
+// Single subscription — handles both slot data changes and slot switches
+useResumeStore.subscribe((state, prev) => {
+  if (_isUndoRedo) return;
+
+  // Slot switch: re-seed baseline, don't push undo entry
+  if (state.activeSlotId !== prev.activeSlotId) {
+    if (state.activeSlotId) {
+      _prevJson = JSON.stringify(getCurrentSnapshot());
+    }
+    return;
+  }
+
+  const slotId = state.activeSlotId;
+  if (!slotId) return;
+
+  // Check if slot data actually changed
+  const slot = activeSlot(state);
+  const prevSlot = activeSlot(prev);
+  if (
+    slot.resume === prevSlot.resume &&
+    slot.themeId === prevSlot.themeId &&
+    slot.customization === prevSlot.customization
+  ) {
+    return;
+  }
+
+  // Debounced capture: push previous state after edits settle
+  clearTimeout(_debounceTimer);
+  _debounceTimer = setTimeout(pushPrevIfChanged, 1000);
+});
+
+/* ── React hook (pure selector + keyboard shortcuts) ──── */
 
 export function useUndoRedo() {
   const activeSlotId = useResumeStore((s) => s.activeSlotId);
@@ -92,58 +129,8 @@ export function useUndoRedo() {
   const canUndo = !!h && h.past.length > 0;
   const canRedo = !!h && h.future.length > 0;
 
-  // Subscribe once on mount
-  const seeded = useRef(false);
-  useEffect(() => {
-    if (seeded.current) return;
-    seeded.current = true;
-    ensureSubscribed();
-  }, []);
-
-  // Re-seed _prevJson when switching slots
-  useEffect(() => {
-    if (!activeSlotId) return;
-    _prevJson = JSON.stringify(getCurrentSnapshot());
-  }, [activeSlotId]);
-
-  const undo = useCallback(() => {
-    const slotId = getActiveId();
-    if (!slotId) return;
-    clearTimeout(_debounceTimer);
-
-    // Flush any pending debounced snapshot first
-    pushPrevIfChanged();
-
-    const current = getCurrentSnapshot();
-    const snapshot = useUndoStore.getState().undo(slotId, current);
-    if (!snapshot) return;
-
-    _isUndoRedo = true;
-    const store = useResumeStore.getState();
-    store.setResume(snapshot.resume);
-    store.setTheme(snapshot.themeId);
-    store.setFullCustomization(snapshot.customization);
-    _prevJson = JSON.stringify(snapshot);
-    _isUndoRedo = false;
-  }, []);
-
-  const redo = useCallback(() => {
-    const slotId = getActiveId();
-    if (!slotId) return;
-    clearTimeout(_debounceTimer);
-
-    const current = getCurrentSnapshot();
-    const snapshot = useUndoStore.getState().redo(slotId, current);
-    if (!snapshot) return;
-
-    _isUndoRedo = true;
-    const store = useResumeStore.getState();
-    store.setResume(snapshot.resume);
-    store.setTheme(snapshot.themeId);
-    store.setFullCustomization(snapshot.customization);
-    _prevJson = JSON.stringify(snapshot);
-    _isUndoRedo = false;
-  }, []);
+  const undo = useCallback(doUndo, []);
+  const redo = useCallback(doRedo, []);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -156,12 +143,12 @@ export function useUndoRedo() {
       if (target.closest('.monaco-editor')) return;
 
       e.preventDefault();
-      if (e.shiftKey) redo();
-      else undo();
+      if (e.shiftKey) doRedo();
+      else doUndo();
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [undo, redo]);
+  }, []);
 
   return { undo, redo, canUndo, canRedo };
 }
