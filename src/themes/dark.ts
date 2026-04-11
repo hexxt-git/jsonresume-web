@@ -32,7 +32,7 @@ li::marker{color:#666}
 .skill-item span{color:#999;font-size:13px}
 .languages span+span::before{content:" | "}
 .languages{color:#999;font-size:13px}
-@media print{body{background:#fff;color:#333}h1,h3{color:#1a1a1a}h2{color:#1a1a1a;border-bottom-color:#1a1a1a}a{color:#2c5282;border-bottom:none}.label,.entry-meta{color:#666}.contact,.entry-org,.summary,li,.skill-item span,.languages{color:#555}.divider{border-top-color:#ccc}li::marker{color:#999}}
+@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style></head><body>
 ${b?.image ? `<img src="${esc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 12px;border:2px solid #404040">` : ''}
 ${b?.name ? `<h1>${esc(b.name)}</h1>` : ''}

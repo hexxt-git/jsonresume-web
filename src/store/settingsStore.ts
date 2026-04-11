@@ -8,10 +8,12 @@ interface SettingsStore {
   colorMode: ColorMode;
   locale: Locale;
   splitPct: number;
+  sidebarPct: number;
 
   setColorMode: (mode: ColorMode) => void;
   setLocale: (locale: Locale) => void;
   setSplitPct: (pct: number) => void;
+  setSidebarPct: (pct: number) => void;
 }
 
 export const useSettingsStore = create<SettingsStore>()(
@@ -20,10 +22,12 @@ export const useSettingsStore = create<SettingsStore>()(
       colorMode: 'system',
       locale: 'en',
       splitPct: 42.86,
+      sidebarPct: 25,
 
       setColorMode: (colorMode) => set({ colorMode }),
       setLocale: (locale) => set({ locale }),
       setSplitPct: (splitPct) => set({ splitPct }),
+      setSidebarPct: (sidebarPct) => set({ sidebarPct }),
     }),
     { name: 'settings' },
   ),

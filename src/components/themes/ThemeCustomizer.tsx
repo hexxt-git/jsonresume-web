@@ -32,7 +32,7 @@ export function ThemeCustomizer() {
       <div className="flex justify-end">
         <button
           onClick={resetCustom}
-          className="text-xs text-text-muted hover:text-text-secondary cursor-pointer"
+          className="text-xs text-danger hover:underline cursor-pointer"
         >
           {t('customize.reset')}
         </button>
@@ -84,6 +84,17 @@ export function ThemeCustomizer() {
         onChange={(v) => setCustom('paddingMultiplier', v)}
         min={0.25}
         max={1.75}
+        step={0.01}
+        defaultValue={1}
+        formatValue={(v) => `${Math.round(v * 100)}%`}
+      />
+
+      <Slider
+        label={t('customize.sectionSpacing')}
+        value={custom.sectionSpacingMultiplier}
+        onChange={(v) => setCustom('sectionSpacingMultiplier', v)}
+        min={0.25}
+        max={2}
         step={0.01}
         defaultValue={1}
         formatValue={(v) => `${Math.round(v * 100)}%`}

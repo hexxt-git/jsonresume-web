@@ -1,6 +1,7 @@
-import { useState, lazy, Suspense, useRef, useEffect } from 'react';
+import { useState, lazy, Suspense, useRef, useEffect, useCallback } from 'react';
 import { useResumeStore } from '../../store/resumeStore';
 import type { EditorSection } from '../../store/resumeStore';
+import { useSettingsStore } from '../../store/settingsStore';
 import { useT } from '../../i18n';
 
 const AiChat = lazy(() => import('./AiChat'));
@@ -21,6 +22,18 @@ import {
 import { JsonEditor } from './JsonEditor';
 import { ThemePicker } from '../themes/ThemePicker';
 import { ThemeCustomizer } from '../themes/ThemeCustomizer';
+
+const Sparkle = () => (
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className="inline-block ml-0.5 -mt-0.5"
+  >
+    <path d="M12 0L14.5 7.5C15 9 15 9 16.5 9.5L24 12L16.5 14.5C15 15 15 15 14.5 16.5L12 24L9.5 16.5C9 15 9 15 7.5 14.5L0 12L7.5 9.5C9 9 9 9 9.5 7.5L12 0Z" />
+  </svg>
+);
 
 const sectionIds: EditorSection[] = [
   'basics',
@@ -52,7 +65,7 @@ const formMap: Record<EditorSection, React.FC> = {
   references: ReferencesForm,
 };
 
-type Tab = 'form' | 'json' | 'themes' | 'ai';
+type Tab = 'form' | 'json' | 'themes' | 'ai' | 'auto';
 
 /* ── Mobile: single unified scrollable tab bar ────────── */
 
@@ -102,7 +115,10 @@ function MobileTabBar({
           {t('editor.themes')}
         </button>
         <button onClick={() => setTab('ai')} className={tabCls(tab === 'ai')}>
-          {t('editor.ai')}
+          {t('editor.ai')} <Sparkle />
+        </button>
+        <button onClick={() => setTab('auto')} className={tabCls(tab === 'auto')}>
+          {t('editor.auto')}
         </button>
         {onShowPreview && (
           <>
@@ -165,7 +181,10 @@ function DesktopTabBar({
         {t('editor.themes')}
       </button>
       <button onClick={() => setTab('ai')} className={cls(tab === 'ai')}>
-        {t('editor.ai')}
+        {t('editor.ai')} <Sparkle />
+      </button>
+      <button onClick={() => setTab('auto')} className={cls(tab === 'auto')}>
+        {t('editor.auto')}
       </button>
     </div>
   );
@@ -188,10 +207,45 @@ function FormContent({
   const prev = idx > 0 ? sectionIds[idx - 1] : null;
   const next = idx < sectionIds.length - 1 ? sectionIds[idx + 1] : null;
 
+  const sidebarPct = useSettingsStore((s) => s.sidebarPct);
+  const setSidebarPct = useSettingsStore((s) => s.setSidebarPct);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef(false);
+
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    e.preventDefault();
+    dragging.current = true;
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  }, []);
+
+  const onPointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      if (!dragging.current || !containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const pct = ((e.clientX - rect.left) / rect.width) * 100;
+      setSidebarPct(Math.min(50, Math.max(15, pct)));
+    },
+    [setSidebarPct],
+  );
+
+  const onPointerUp = useCallback(() => {
+    dragging.current = false;
+  }, []);
+
+  const pct = Math.min(50, Math.max(15, sidebarPct));
+
   return (
-    <div className="flex flex-1 overflow-hidden">
+    <div
+      ref={containerRef}
+      className="flex flex-1 overflow-hidden"
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+    >
       {/* Desktop sidebar */}
-      <nav className="hidden sm:block w-32 shrink-0 border-r border-border bg-bg-secondary overflow-y-auto">
+      <nav
+        className="hidden sm:block shrink-0 bg-bg-secondary overflow-y-auto"
+        style={{ width: `${pct}%` }}
+      >
         {sectionIds.map((id) => (
           <button
             key={id}
@@ -206,6 +260,11 @@ function FormContent({
           </button>
         ))}
       </nav>
+      {/* Drag handle */}
+      <div
+        onPointerDown={onPointerDown}
+        className="hidden sm:flex w-1 shrink-0 cursor-col-resize items-center justify-center bg-border hover:bg-accent/30 transition-colors"
+      />
       <div className="flex-1 overflow-y-auto">
         <div className="p-4">
           <ActiveForm />
@@ -259,11 +318,17 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
       />
       <DesktopTabBar tab={tab} setTab={setTab} t={t} />
 
-      {tab === 'ai' ? (
+      {tab === 'auto' ? (
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="text-center space-y-2">
+            <p className="text-sm text-text-tertiary">{t('auto.placeholder')}</p>
+          </div>
+        </div>
+      ) : tab === 'ai' ? (
         <div className="flex-1 overflow-hidden">
           <Suspense
             fallback={
-              <div className="h-full flex items-center justify-center text-xs text-text-muted">
+              <div className="h-full flex items-center justify-center text-xs text-text-tertiary">
                 Loading...
               </div>
             }

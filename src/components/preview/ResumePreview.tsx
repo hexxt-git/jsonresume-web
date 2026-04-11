@@ -170,8 +170,8 @@ export function ResumePreview() {
               className="absolute left-0 right-0 pointer-events-none"
               style={{ top: (i + 1) * A4_HEIGHT * zoom + 15 }}
             >
-              <div className="border-t border-dashed border-text-muted opacity-40" />
-              <span className="absolute right-2 -top-4 text-[11px] text-text-muted opacity-40 select-none">
+              <div className="border-t border-dashed border-text-muted opacity-60" />
+              <span className="absolute right-2 -top-5 text-[12px] text-text-muted opacity-60 select-none">
                 page break
               </span>
             </div>

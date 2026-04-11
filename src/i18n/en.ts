@@ -162,6 +162,7 @@ export default {
   'customize.fontSize': 'Font Size',
   'customize.lineHeight': 'Line Height',
   'customize.pagePadding': 'Page Padding',
+  'customize.sectionSpacing': 'Section Spacing',
   'customize.rtl': 'Right-to-Left',
   'customize.default': 'Default',
   'customize.themeDefault': 'Theme Default',
@@ -180,6 +181,8 @@ export default {
 
   // AI tab
   'editor.ai': 'AI',
+  'editor.auto': 'Automation',
+  'auto.placeholder': 'Automation features coming soon.',
   'ai.keyTitle': 'Enter Gemini API Key',
   'ai.keyDesc': 'Your key is stored locally. Calls go directly to Google.',
   'ai.keyPlaceholder': 'AIza...',
