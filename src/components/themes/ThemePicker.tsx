@@ -1,15 +1,19 @@
 import { useMemo } from 'react';
 import { useResumeStore, activeSlot } from '../../store/resumeStore';
 import { themes } from '../../themes';
+import { sampleResume } from '../../utils/sample';
 
 export function ThemePicker() {
   const selectedThemeId = useResumeStore((s) => activeSlot(s).themeId);
   const setTheme = useResumeStore((s) => s.setTheme);
   const resume = useResumeStore((s) => activeSlot(s).resume);
 
+  const isEmpty = !resume.basics?.name && !resume.work?.length;
+  const previewResume = isEmpty ? sampleResume : resume;
+
   const previews = useMemo(
-    () => themes.map((t) => ({ id: t.id, name: t.name, html: t.render(resume) })),
-    [resume],
+    () => themes.map((t) => ({ id: t.id, name: t.name, html: t.render(previewResume) })),
+    [previewResume],
   );
 
   return (

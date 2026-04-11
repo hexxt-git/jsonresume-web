@@ -1,45 +1,46 @@
-import * as pdfjsLib from 'pdfjs-dist';
 import type { TextItem } from './types';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url,
-).toString();
+let pdfjsLib: typeof import('pdfjs-dist') | null = null;
+
+async function getPdfjs() {
+  if (!pdfjsLib) {
+    pdfjsLib = await import('pdfjs-dist');
+    pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+      'pdfjs-dist/build/pdf.worker.min.mjs',
+      import.meta.url,
+    ).toString();
+  }
+  return pdfjsLib;
+}
 
 export async function extractTextItemsFromPdf(file: File): Promise<TextItem[]> {
+  const pdfjs = await getPdfjs();
   const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
   const items: TextItem[] = [];
 
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
-    const commonObjs = page.commonObjs;
 
-    for (const raw of content.items) {
-      if (!('str' in raw)) continue;
+    for (const item of content.items) {
+      if (!('str' in item) || !item.str.trim()) continue;
+      const tx = item.transform;
 
-      const text = raw.str.replace(/-\u00AD\u2010/g, '-');
-      if (!text.trim() && !raw.hasEOL) continue;
-
-      let fontName = raw.fontName || '';
-      try {
-        const fontObj = commonObjs.get(raw.fontName);
-        if (fontObj && typeof fontObj === 'object' && 'name' in fontObj) {
-          fontName = fontObj.name as string;
-        }
-      } catch {
-        /* font lookup can fail */
+      // Attempt to extract font name from the item
+      let fontName = '';
+      if ('fontName' in item && typeof item.fontName === 'string') {
+        fontName = item.fontName;
       }
 
       items.push({
-        text,
-        x: raw.transform[4],
-        y: raw.transform[5],
-        width: raw.width,
-        height: raw.height,
+        text: item.str.replace(/[\u00AD\u2010]/g, '-'),
+        x: tx[4],
+        y: tx[5],
+        width: (item as any).width ?? 0,
+        height: (item as any).height ?? Math.abs(tx[3]),
         fontName,
-        hasEOL: raw.hasEOL ?? false,
+        hasEOL: (item as any).hasEOL ?? false,
       });
     }
   }

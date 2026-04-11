@@ -1,6 +1,6 @@
 import type { ResumeSchema } from '../types/resume';
 import type { ThemeDefinition } from './types';
-import { esc, md, dateRange, section, link } from './helpers';
+import { esc, md, dateRange, section, link, safeSrc } from './helpers';
 
 function render(resume: ResumeSchema, customCss?: string): string {
   const b = resume.basics;
@@ -32,9 +32,10 @@ li{margin-bottom:1px;color:#444}
 .tag{background:#eee;padding:1px 6px;border-radius:2px;font-size:calc(10px * var(--fs-mult, 1));color:#555}
 @media print{body{padding:12px 16px;font-size:calc(10.5px * var(--fs-mult, 1))}.section{margin-bottom:8px}.entry{margin-bottom:5px}}
 ${customCss || ''}</style></head><body>
+<header role="banner">
 <div class="header">
-<div class="header-line">${b?.image ? `<img src="${esc(b.image)}" alt="${esc(b.name)}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin-right:10px">` : ''}${b?.name ? `<h1>${esc(b.name)}</h1>` : ''}${b?.label ? `<span class="label">${esc(b.label)}</span>` : ''}</div>
-<div class="contact">
+<div class="header-line">${b?.image ? `<img src="${safeSrc(b.image)}" alt="${esc(b.name)}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin-right:10px">` : ''}${b?.name ? `<h1>${esc(b.name)}</h1>` : ''}${b?.label ? `<span class="label">${esc(b.label)}</span>` : ''}</div>
+<address class="contact" aria-label="Contact information">
 ${[
   b?.email,
   b?.phone,
@@ -47,8 +48,10 @@ ${[
   .filter(Boolean)
   .map((s) => `<span>${s}</span>`)
   .join('')}
-</div></div>
+</address></div>
 ${b?.summary ? `<p class="summary">${md(b.summary)}</p>` : ''}
+</header>
+<main role="main">
 ${section(
   'Experience',
   (resume.work || [])
@@ -96,6 +99,7 @@ ${section('Certificates', (resume.certificates || []).map((c) => `<div class="en
 ${section('Publications', (resume.publications || []).map((p) => `<div class="entry"><div class="entry-header"><h3>${link(p.url, p.name || '')}</h3><span class="entry-meta">${p.releaseDate || ''}</span></div>${p.publisher ? `<div class="entry-sub">${esc(p.publisher)}</div>` : ''}${p.summary ? `<p style="color:#444;margin-top:2px;font-size:calc(11px * var(--fs-mult, 1))">${md(p.summary)}</p>` : ''}</div>`).join(''))}
 ${section('Interests', (resume.interests || []).map((i) => `<div class="entry"><h3 style="display:inline">${esc(i.name)}: </h3><span style="color:#555;font-size:calc(11px * var(--fs-mult, 1))">${(i.keywords || []).join(', ')}</span></div>`).join(''))}
 ${section('References', (resume.references || []).map((r) => `<div class="entry"><h3>${esc(r.name)}</h3>${r.reference ? `<p style="color:#444;font-style:italic;margin-top:2px;font-size:calc(11px * var(--fs-mult, 1))">"${md(r.reference)}"</p>` : ''}</div>`).join(''))}
+</main>
 </body></html>`;
 }
 

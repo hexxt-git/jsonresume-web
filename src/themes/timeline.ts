@@ -1,6 +1,6 @@
 import type { ResumeSchema } from '../types/resume';
 import type { ThemeDefinition } from './types';
-import { esc, md, dateRange, section, link } from './helpers';
+import { esc, md, dateRange, section, link, safeSrc } from './helpers';
 
 function timelineEntries(
   items: {
@@ -60,17 +60,20 @@ li{margin-bottom:3px;color:#6b7280}
 .lang{color:#6b7280;font-size:calc(13px * var(--fs-mult, 1))}
 @media print{body{padding:20px 24px}.timeline::before{background:#ccc}.tl-dot{background:#4f46e5;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 ${customCss || ''}</style></head><body>
-${b?.image ? `<img src="${esc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px">` : ''}
+<header role="banner">
+${b?.image ? `<img src="${safeSrc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px">` : ''}
 ${b?.name ? `<h1>${esc(b.name)}</h1>` : ''}
 ${b?.label ? `<p class="label">${esc(b.label)}</p>` : ''}
-<div class="contact">
+<address class="contact" aria-label="Contact information">
 ${b?.email ? `<span>${esc(b.email)}</span>` : ''}
 ${b?.phone ? `<span>${esc(b.phone)}</span>` : ''}
 ${b?.location?.city ? `<span>${esc(b.location.city)}${b.location.region ? ', ' + esc(b.location.region) : ''}</span>` : ''}
 ${b?.url ? `<span>${link(b.url, b.url.replace(/^https?:\/\//, ''))}</span>` : ''}
 ${(b?.profiles || []).map((p) => `<span>${link(p.url, p.network || p.username || '')}</span>`).join('')}
-</div>
+</address>
 ${b?.summary ? `<p class="summary">${md(b.summary)}</p>` : ''}
+</header>
+<main role="main">
 ${section(
   'Experience',
   timelineEntries(
@@ -121,6 +124,7 @@ ${section('Certificates', (resume.certificates || []).map((c) => `<div class="en
 ${section('Publications', (resume.publications || []).map((p) => `<div class="entry" style="margin-bottom:12px"><h3>${link(p.url, p.name || '')}</h3>${p.publisher ? `<p style="color:#6b7280;font-size:calc(13px * var(--fs-mult, 1))">${esc(p.publisher)}${p.releaseDate ? ` (${p.releaseDate})` : ''}</p>` : ''}${p.summary ? `<p style="color:#6b7280;margin-top:4px">${md(p.summary)}</p>` : ''}</div>`).join(''))}
 ${section('Interests', (resume.interests || []).map((i) => `<div style="margin-bottom:8px"><h3 style="display:inline">${esc(i.name)}</h3>${i.keywords?.length ? `: <span style="color:#6b7280">${i.keywords.map((k) => esc(k)).join(', ')}</span>` : ''}</div>`).join(''))}
 ${section('References', (resume.references || []).map((r) => `<div style="margin-bottom:12px"><h3>${esc(r.name)}</h3>${r.reference ? `<p style="color:#6b7280;font-style:italic;margin-top:4px">"${md(r.reference)}"</p>` : ''}</div>`).join(''))}
+</main>
 </body></html>`;
 }
 

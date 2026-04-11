@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, type ReactNode } from 'react';
 import * as Popover from '@radix-ui/react-popover';
+import { useT } from '../../i18n';
 
 interface Option {
   value: string;
@@ -29,6 +30,7 @@ function OptionIcon({ opt }: { opt: Option }) {
  * User can pick a preset OR type any custom value.
  */
 export function ComboField({ label, value, onChange, options, placeholder }: ComboFieldProps) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -85,7 +87,7 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
                     setOpen(false);
                   }
                 }}
-                placeholder="Search or type custom..."
+                placeholder={t('combo.search')}
                 className="w-full px-2 py-1 text-sm bg-bg-input border border-border-input rounded-md text-text
                   focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
               />
@@ -102,10 +104,10 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
                       }}
                       className="text-accent hover:underline cursor-pointer"
                     >
-                      Use &ldquo;{filter.trim()}&rdquo;
+                      {t('combo.use')} &ldquo;{filter.trim()}&rdquo;
                     </button>
                   ) : (
-                    'No options'
+                    t('combo.noOptions')
                   )}
                 </div>
               ) : (

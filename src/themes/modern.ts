@@ -1,6 +1,6 @@
 import type { ResumeSchema } from '../types/resume';
 import type { ThemeDefinition } from './types';
-import { esc, md, dateRange, section, link } from './helpers';
+import { esc, md, dateRange, section, link, safeSrc } from './helpers';
 
 function render(resume: ResumeSchema, customCss?: string): string {
   const b = resume.basics;
@@ -31,17 +31,20 @@ li{margin-bottom:4px;color:#555}
 .lang{font-size:calc(13px * var(--fs-mult, 1));color:#555}
 @media print{body{padding:20px 24px;font-size:calc(12px * var(--fs-mult, 1))}h1{font-size:calc(22px * var(--fs-mult, 1))}.section{margin-bottom:16px}.entry{margin-bottom:12px}}
 ${customCss || ''}</style></head><body>
-${b?.image ? `<img src="${esc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px">` : ''}
+<header role="banner">
+${b?.image ? `<img src="${safeSrc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px">` : ''}
 ${b?.name ? `<h1>${esc(b.name)}</h1>` : ''}
 ${b?.label ? `<p class="label">${esc(b.label)}</p>` : ''}
-<div class="contact">
+<address class="contact" aria-label="Contact information">
 ${b?.email ? `<span>${esc(b.email)}</span>` : ''}
 ${b?.phone ? `<span>${esc(b.phone)}</span>` : ''}
 ${b?.location?.city ? `<span>${esc(b.location.city)}${b.location.region ? ', ' + esc(b.location.region) : ''}</span>` : ''}
 ${b?.url ? `<span>${link(b.url, b.url.replace(/^https?:\/\//, ''))}</span>` : ''}
 ${(b?.profiles || []).map((p) => `<span>${link(p.url, p.network ? `${p.network}` : p.username || '')}</span>`).join('')}
-</div>
+</address>
 ${b?.summary ? `<p class="summary">${md(b.summary)}</p>` : ''}
+</header>
+<main role="main">
 ${section(
   'Experience',
   (resume.work || [])
@@ -164,6 +167,7 @@ ${r.reference ? `<p style="margin-top:4px;color:#555;font-style:italic">"${md(r.
     )
     .join(''),
 )}
+</main>
 </body></html>`;
 }
 

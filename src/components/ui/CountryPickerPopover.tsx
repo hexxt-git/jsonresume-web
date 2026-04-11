@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, type ReactNode } from 'react';
 import * as Popover from '@radix-ui/react-popover';
 import { type CountryData, useCountries, flagUrl } from '../../hooks/useCountries';
+import { useT } from '../../i18n';
 
 interface Props {
   children: ReactNode;
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export function CountryPickerPopover({ children, onSelect, showDialCode }: Props) {
+  const t = useT();
   const { countries, loading } = useCountries();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -52,16 +54,18 @@ export function CountryPickerPopover({ children, onSelect, showDialCode }: Props
               ref={inputRef}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search countries..."
+              placeholder={t('ui.searchCountries')}
               className="w-full px-2 py-1 text-sm bg-bg-input border border-border-input rounded-md text-text
                 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
             />
           </div>
           <div className="max-h-[200px] overflow-y-auto p-1">
             {loading ? (
-              <div className="px-2 py-4 text-xs text-text-muted text-center">Loading...</div>
+              <div className="px-2 py-4 text-xs text-text-muted text-center">{t('ui.loading')}</div>
             ) : filtered.length === 0 ? (
-              <div className="px-2 py-4 text-xs text-text-muted text-center">No results</div>
+              <div className="px-2 py-4 text-xs text-text-muted text-center">
+                {t('ui.noResults')}
+              </div>
             ) : (
               filtered.map((c) => (
                 <button

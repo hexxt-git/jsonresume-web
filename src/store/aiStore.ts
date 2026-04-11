@@ -154,18 +154,6 @@ export const useAiStore = create<AiStore>()(
         provider: state.provider,
         model: state.model,
       }),
-      // Migrate from old single-key format
-      migrate: (persisted: unknown, version: number) => {
-        const state = persisted as Record<string, unknown>;
-        if (version === 0 && state.apiKey && typeof state.apiKey === 'string') {
-          // Old format: single apiKey field → migrate to apiKeys map
-          const provider = (state.provider as string) || 'gemini';
-          state.apiKeys = { [provider]: state.apiKey };
-          delete state.apiKey;
-        }
-        return state as ReturnType<typeof useAiStore.getState>;
-      },
-      version: 1,
     },
   ),
 );

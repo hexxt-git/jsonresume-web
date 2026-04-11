@@ -99,7 +99,8 @@ export default function JsonEditor() {
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
       const value = editor.getValue();
       const blob = new Blob([value], { type: 'application/json' });
-      const name = useResumeStore.getState().resume.basics?.name?.replace(/\s+/g, '_') || 'resume';
+      const name =
+        activeSlot(useResumeStore.getState()).resume.basics?.name?.replace(/\s+/g, '_') || 'resume';
       saveAs(blob, `${name}.json`);
     });
 

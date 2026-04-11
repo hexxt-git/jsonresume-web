@@ -10,11 +10,14 @@ const AiChat = lazy(() => import('./AiChat'));
 const JsonEditor = lazy(() => import('./JsonEditor'));
 import { AiGate, AiProviderSettings } from './AiKeyGate';
 
-const LazyFallback = (
-  <div className="h-full flex items-center justify-center text-xs text-text-tertiary">
-    Loading...
-  </div>
-);
+function LazyFallback() {
+  const t = useT();
+  return (
+    <div className="h-full flex items-center justify-center text-xs text-text-tertiary">
+      {t('ui.loading')}
+    </div>
+  );
+}
 
 import { BasicsForm } from './BasicsForm';
 import { WorkForm } from './WorkForm';
@@ -128,7 +131,7 @@ function MobileTabBar({
           {t('editor.ai')} <Sparkle />
         </button>
         <button onClick={() => setTab('auto')} className={tabCls(tab === 'auto')}>
-          {t('editor.auto')}
+          {t('editor.auto')} <span className="text-xs text-text-muted">(Coming Soon)</span>
         </button>
         {onShowPreview && (
           <>
@@ -204,14 +207,24 @@ function DesktopTabBar({
         {t('editor.ai')} <Sparkle />
       </button>
       <button onClick={() => setTab('auto')} className={cls(tab === 'auto')}>
-        {t('editor.auto')}
+        {t('editor.auto')} <span className="text-xs text-text-muted">(Coming Soon)</span>
       </button>
       <div className="flex-1" />
       <div className="flex items-center gap-0.5 pr-2">
-        <button onClick={undo} disabled={!canUndo} className={undoCls} title="Undo (Cmd+Z)">
+        <button
+          onClick={undo}
+          disabled={!canUndo}
+          className={undoCls}
+          title={`${t('undo.undo')} (Cmd+Z)`}
+        >
           <Undo2 size={14} className="text-text-muted" />
         </button>
-        <button onClick={redo} disabled={!canRedo} className={undoCls} title="Redo (Cmd+Shift+Z)">
+        <button
+          onClick={redo}
+          disabled={!canRedo}
+          className={undoCls}
+          title={`${t('undo.redo')} (Cmd+Shift+Z)`}
+        >
           <Redo2 size={14} className="text-text-muted" />
         </button>
       </div>
@@ -367,12 +380,12 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
       {aiSettings && (tab === 'ai' || tab === 'auto') ? (
         <div className="flex flex-col flex-1 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-2 border-b border-border shrink-0">
-            <span className="text-xs font-medium text-text">AI Settings</span>
+            <span className="text-xs font-medium text-text">{t('ai.settings')}</span>
             <button
               onClick={() => setAiSettings(false)}
               className="text-xs text-accent hover:underline cursor-pointer"
             >
-              Back
+              {t('ai.back')}
             </button>
           </div>
           <AiProviderSettings />
@@ -387,13 +400,13 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
         </AiGate>
       ) : tab === 'ai' ? (
         <div className="flex-1 overflow-hidden">
-          <Suspense fallback={LazyFallback}>
+          <Suspense fallback={<LazyFallback />}>
             <AiChat />
           </Suspense>
         </div>
       ) : tab === 'json' ? (
         <div className="flex-1 overflow-hidden">
-          <Suspense fallback={LazyFallback}>
+          <Suspense fallback={<LazyFallback />}>
             <JsonEditor />
           </Suspense>
         </div>

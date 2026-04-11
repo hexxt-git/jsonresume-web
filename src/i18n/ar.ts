@@ -1,5 +1,5 @@
 export default {
-  'app.title': 'منشئ السيرة الذاتية',
+  'app.title': 'JSONResume Web',
   'app.subtitle': 'JSON Resume',
   'app.reset': 'إعادة تعيين',
   'app.import': 'استيراد',

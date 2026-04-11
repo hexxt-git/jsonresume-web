@@ -91,6 +91,7 @@ import {
 } from 'simple-icons';
 import { useState, useRef, useEffect } from 'react';
 import * as Popover from '@radix-ui/react-popover';
+import { useT } from '../../i18n';
 
 interface BrandIcon {
   path: string;
@@ -222,6 +223,7 @@ export function NetworkPickerButton({
   value: string;
   onChange: (v: string) => void;
 }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -245,7 +247,7 @@ export function NetworkPickerButton({
           type="button"
           className="h-[34px] shrink-0 flex items-center justify-center gap-2 px-2 border border-border-input bg-bg-input rounded-md
             hover:bg-bg-hover cursor-pointer transition-colors"
-          title={value || 'Pick network'}
+          title={value || t('basics.network')}
         >
           {value && ICONS[value] ? (
             <NetworkIcon name={value} size={18} />
@@ -283,7 +285,7 @@ export function NetworkPickerButton({
                   setOpen(false);
                 }
               }}
-              placeholder="Search or type custom..."
+              placeholder={t('combo.search')}
               className="w-full px-2 py-1 text-xs bg-bg-input border border-border-input rounded-md text-text
                 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
             />
@@ -317,7 +319,7 @@ export function NetworkPickerButton({
                 }}
                 className="w-full text-xs text-accent hover:underline cursor-pointer py-1"
               >
-                Use &ldquo;{filter.trim()}&rdquo;
+                {t('combo.use')} &ldquo;{filter.trim()}&rdquo;
               </button>
             </div>
           )}

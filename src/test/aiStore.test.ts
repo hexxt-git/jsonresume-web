@@ -11,14 +11,15 @@ describe('aiStore', () => {
   beforeEach(() => {
     const s = useAiStore.getState();
     s.clearMessages();
-    s.clearApiKey();
+    // Clear all provider keys
+    Object.keys(s.apiKeys).forEach((k) => s.clearApiKey(k));
     s.setStreaming(false);
     s.setError(null);
   });
 
   it('starts with empty state', () => {
     const s = useAiStore.getState();
-    expect(s.apiKey).toBe('');
+    expect(s.apiKeys).toEqual({});
     expect(s.provider).toBe('gemini');
     expect(s.model).toBe('gemini-2.5-flash');
     expect(s.messages).toEqual([]);
@@ -26,15 +27,17 @@ describe('aiStore', () => {
     expect(s.error).toBeNull();
   });
 
-  it('setApiKey persists key', () => {
-    useAiStore.getState().setApiKey('test-key-123');
-    expect(useAiStore.getState().apiKey).toBe('test-key-123');
+  it('setApiKey persists key per provider', () => {
+    useAiStore.getState().setApiKey('gemini', 'test-key-123');
+    expect(useAiStore.getState().apiKeys.gemini).toBe('test-key-123');
+    expect(useAiStore.getState().getApiKey('gemini')).toBe('test-key-123');
   });
 
-  it('clearApiKey removes key', () => {
-    useAiStore.getState().setApiKey('test-key-123');
-    useAiStore.getState().clearApiKey();
-    expect(useAiStore.getState().apiKey).toBe('');
+  it('clearApiKey removes key for provider', () => {
+    useAiStore.getState().setApiKey('gemini', 'test-key-123');
+    useAiStore.getState().clearApiKey('gemini');
+    expect(useAiStore.getState().apiKeys.gemini).toBeUndefined();
+    expect(useAiStore.getState().getApiKey('gemini')).toBe('');
   });
 
   it('setModel updates model', () => {

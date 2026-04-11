@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import * as Popover from '@radix-ui/react-popover';
+import { useT } from '../../i18n';
 
 interface ColorPickerProps {
   label: string;
   value: string;
   onChange: (value: string) => void;
-  placeholder?: string;
 }
 
 const PRESETS = [
@@ -23,12 +23,8 @@ const PRESETS = [
   '#737373',
 ];
 
-export function ColorPicker({
-  label,
-  value,
-  onChange,
-  placeholder = 'Theme default',
-}: ColorPickerProps) {
+export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
+  const t = useT();
   const [inputValue, setInputValue] = useState(value);
 
   const handleInputChange = (v: string) => {
@@ -101,7 +97,7 @@ export function ColorPicker({
           value={inputValue}
           onChange={(e) => handleInputChange(e.target.value)}
           onBlur={handleInputBlur}
-          placeholder={placeholder}
+          placeholder={t('customize.themeDefault')}
           className="flex-1 px-2 py-1.5 text-xs border border-border-input bg-bg-input text-text rounded-md font-mono outline-none focus:ring-1 focus:ring-accent transition-shadow"
           aria-label={`${label} hex value`}
         />
@@ -113,7 +109,7 @@ export function ColorPicker({
               setInputValue('');
             }}
             className="w-6 h-6 rounded-md flex items-center justify-center text-xs text-text-muted hover:bg-bg-hover hover:text-text-secondary cursor-pointer transition-colors"
-            title="Reset to theme default"
+            title={t('ui.resetDefault')}
             aria-label={`Reset ${label}`}
           >
             &times;

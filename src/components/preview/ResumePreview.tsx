@@ -154,21 +154,21 @@ export function ResumePreview() {
             onClick={zoomOut}
             disabled={zoom <= ZOOM_STEPS[0]}
             className="w-6 h-6 flex items-center justify-center text-xs text-text-muted hover:text-text-secondary hover:bg-bg-hover rounded cursor-pointer disabled:opacity-30 disabled:cursor-default"
-            title="Zoom out"
+            title={t('preview.zoomOut')}
           >
             &minus;
           </button>
           <button
             onClick={() => setZoom(fitZoom())}
             className="px-1.5 py-0.5 text-[10px] text-text-muted hover:text-text-secondary hover:bg-bg-hover rounded cursor-pointer tabular-nums min-w-[3rem] text-center"
-            title="Fit to width"
+            title={t('preview.fitWidth')}
           >
             {Math.round(zoom * 100)}%
           </button>
           <button
             onClick={() => setZoom(1)}
             className={`px-1.5 py-0.5 text-[10px] rounded cursor-pointer ${zoom === 1 ? 'text-accent-text bg-bg-accent' : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'}`}
-            title="Actual size"
+            title={t('preview.actualSize')}
           >
             1:1
           </button>
@@ -176,7 +176,7 @@ export function ResumePreview() {
             onClick={zoomIn}
             disabled={zoom >= ZOOM_STEPS[ZOOM_STEPS.length - 1]}
             className="w-6 h-6 flex items-center justify-center text-xs text-text-muted hover:text-text-secondary hover:bg-bg-hover rounded cursor-pointer disabled:opacity-30 disabled:cursor-default"
-            title="Zoom in"
+            title={t('preview.zoomIn')}
           >
             +
           </button>
@@ -184,7 +184,7 @@ export function ResumePreview() {
           <button
             onClick={handlePrint}
             className="w-7 h-7 flex items-center justify-center bg-accent text-white rounded hover:opacity-90 transition-colors cursor-pointer"
-            title="Print"
+            title={t('preview.print')}
           >
             <Printer size={14} />
           </button>
@@ -221,7 +221,7 @@ export function ResumePreview() {
             >
               <div className="border-t border-dashed border-text-muted opacity-60" />
               <span className="absolute right-2 -top-5 text-[12px] text-text-muted opacity-60 select-none">
-                page break
+                {t('preview.pageBreak')}
               </span>
             </div>
           ))}

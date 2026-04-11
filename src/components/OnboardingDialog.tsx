@@ -3,28 +3,22 @@ import { useSettingsStore } from '../store/settingsStore';
 import { useResumeStore } from '../store/resumeStore';
 import { parseResumeFile } from '../parser';
 import { sampleResume } from '../utils/sample';
+import { useT } from '../i18n';
 
-const slides = [
+const slideKeys = [
+  { title: 'onboarding.editTitle', sub: 'onboarding.editSub', image: '/onboarding/app-editor.jpg' },
   {
-    title: 'Edit & Preview',
-    subtitle: 'Form editor on the left, live preview on the right.',
-    image: '/onboarding/app-editor.jpg',
-  },
-  {
-    title: '12+ Themes',
-    subtitle: 'One click to switch styles. Customize colors, fonts & spacing.',
+    title: 'onboarding.themesTitle',
+    sub: 'onboarding.themesSub',
     image: '/onboarding/app-styles.jpg',
   },
-  {
-    title: 'AI Assistant',
-    subtitle: 'Let AI improve your wording, generate highlights, or tailor for a job.',
-    image: '/onboarding/app-ai.jpg',
-  },
-];
+  { title: 'onboarding.aiTitle', sub: 'onboarding.aiSub', image: '/onboarding/app-ai.jpg' },
+] as const;
 
-const TOTAL_STEPS = slides.length + 1; // slides + upload step
+const TOTAL_STEPS = slideKeys.length + 1;
 
 export function OnboardingDialog() {
+  const t = useT();
   const hasSeenOnboarding = useSettingsStore((s) => s.hasSeenOnboarding);
   const dismiss = useSettingsStore((s) => s.setHasSeenOnboarding);
   const setResume = useResumeStore((s) => s.setResume);
@@ -37,7 +31,7 @@ export function OnboardingDialog() {
 
   if (hasSeenOnboarding) return null;
 
-  const isUploadStep = step === slides.length;
+  const isUploadStep = step === slideKeys.length;
   const close = () => dismiss(true);
 
   const handleFile = async (file: File) => {
@@ -66,19 +60,17 @@ export function OnboardingDialog() {
         className="bg-bg rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Screenshot area */}
         {!isUploadStep && (
           <div className="bg-bg-secondary">
             <img
-              src={slides[step].image}
-              alt={slides[step].title}
+              src={slideKeys[step].image}
+              alt={t(slideKeys[step].title)}
               className="w-full h-56 object-cover object-top"
             />
           </div>
         )}
 
         <div className="p-5">
-          {/* Progress dots */}
           <div className="flex justify-center gap-1.5 mb-4">
             {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
               <div
@@ -92,16 +84,14 @@ export function OnboardingDialog() {
 
           {!isUploadStep ? (
             <div className="text-center mb-4">
-              <h2 className="text-base font-semibold text-text">{slides[step].title}</h2>
-              <p className="text-sm text-text-tertiary mt-1">{slides[step].subtitle}</p>
+              <h2 className="text-base font-semibold text-text">{t(slideKeys[step].title)}</h2>
+              <p className="text-sm text-text-tertiary mt-1">{t(slideKeys[step].sub)}</p>
             </div>
           ) : (
             <>
               <div className="text-center mb-3">
-                <h2 className="text-base font-semibold text-text">Got an existing resume?</h2>
-                <p className="text-sm text-text-tertiary mt-1">
-                  Import it as a starting point, or skip to start fresh.
-                </p>
+                <h2 className="text-base font-semibold text-text">{t('onboarding.importTitle')}</h2>
+                <p className="text-sm text-text-tertiary mt-1">{t('onboarding.importSub')}</p>
               </div>
 
               <input
@@ -128,14 +118,12 @@ export function OnboardingDialog() {
                 }`}
               >
                 {loading ? (
-                  <p className="text-sm text-text-tertiary">Parsing...</p>
+                  <p className="text-sm text-text-tertiary">{t('onboarding.parsing')}</p>
                 ) : (
                   <>
                     <div className="text-2xl text-text-faint mb-1">+</div>
-                    <p className="text-sm text-text-secondary">
-                      Drop a file here or click to browse
-                    </p>
-                    <p className="text-xs text-text-muted mt-1">PDF, DOCX, JSON, YAML</p>
+                    <p className="text-sm text-text-secondary">{t('onboarding.dropText')}</p>
+                    <p className="text-xs text-text-muted mt-1">{t('empty.formats')}</p>
                   </>
                 )}
               </div>
@@ -148,18 +136,17 @@ export function OnboardingDialog() {
                 }}
                 className="w-full text-xs py-1.5 text-text-tertiary hover:text-accent-text cursor-pointer mb-8"
               >
-                Or load a sample resume
+                {t('onboarding.loadSample')}
               </button>
             </>
           )}
 
-          {/* Footer */}
           <div className="flex items-center justify-between">
             <button
               onClick={close}
               className="text-xs text-text-muted hover:text-text-tertiary cursor-pointer"
             >
-              Skip
+              {t('onboarding.skip')}
             </button>
             <div className="flex gap-2">
               {step > 0 && (
@@ -167,7 +154,7 @@ export function OnboardingDialog() {
                   onClick={() => setStep(step - 1)}
                   className="text-xs px-3 py-1.5 border border-border rounded-md hover:bg-bg-hover cursor-pointer text-text-secondary"
                 >
-                  Back
+                  {t('onboarding.back')}
                 </button>
               )}
               {!isUploadStep && (
@@ -175,7 +162,9 @@ export function OnboardingDialog() {
                   onClick={() => setStep(step + 1)}
                   className="text-xs px-4 py-1.5 bg-accent text-white rounded-md hover:opacity-90 cursor-pointer"
                 >
-                  {step === slides.length - 1 ? 'Get Started' : 'Next'}
+                  {step === slideKeys.length - 1
+                    ? t('onboarding.getStarted')
+                    : t('onboarding.next')}
                 </button>
               )}
             </div>

@@ -1,5 +1,5 @@
 export default {
-  'app.title': 'Constructeur de CV',
+  'app.title': 'JSONResume Web',
   'app.subtitle': 'JSON Resume',
   'app.reset': 'Reinitialiser',
   'app.import': 'Importer',

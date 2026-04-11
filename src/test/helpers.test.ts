@@ -51,7 +51,7 @@ describe('dateRange', () => {
 describe('section', () => {
   it('wraps content with section and h2', () => {
     const result = section('Skills', '<p>React</p>');
-    expect(result).toContain('<section class="section">');
+    expect(result).toContain('<section class="section" aria-label="Skills">');
     expect(result).toContain('<h2>Skills</h2>');
     expect(result).toContain('<p>React</p>');
   });

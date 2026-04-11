@@ -120,7 +120,7 @@ export function BasicsForm() {
             rel="noopener noreferrer"
             className="inline-block mt-1 text-[10px] text-text-muted hover:text-accent-text"
           >
-            Upload at imgbb.com &rarr;
+            {t('url.uploadImage')} &rarr;
           </a>
         </div>
       </div>

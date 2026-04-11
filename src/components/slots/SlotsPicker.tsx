@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useResumeStore, activeSlot, slotDisplayName } from '../../store/resumeStore';
+import { useResumeStore, slotDisplayName } from '../../store/resumeStore';
 import { useAiStore } from '../../store/aiStore';
 import { useUndoStore } from '../../store/undoStore';
 import { useT } from '../../i18n';

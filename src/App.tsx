@@ -144,6 +144,7 @@ function SplitPane({
   setMobileView: (v: 'editor' | 'preview') => void;
   children: React.ReactNode;
 }) {
+  const t = useT();
   const splitPct = useSettingsStore((s) => s.splitPct);
   const setSplitPct = useSettingsStore((s) => s.setSplitPct);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -206,7 +207,7 @@ function SplitPane({
           onClick={() => setMobileView('editor')}
           className="sm:hidden flex items-center gap-1 px-3 py-1.5 text-xs text-accent-text border-b border-border shrink-0 cursor-pointer hover:bg-bg-hover"
         >
-          &larr; Editor
+          &larr; {t('app.editor')}
         </button>
         {children}
       </div>

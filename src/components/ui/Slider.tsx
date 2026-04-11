@@ -1,4 +1,5 @@
 import * as RadixSlider from '@radix-ui/react-slider';
+import { useT } from '../../i18n';
 
 interface SliderProps {
   label: string;
@@ -21,6 +22,7 @@ export function Slider({
   defaultValue,
   formatValue = (v) => v.toFixed(2),
 }: SliderProps) {
+  const t = useT();
   const isDefault = value === defaultValue;
   const pct = ((value - min) / (max - min)) * 100;
 
@@ -36,7 +38,7 @@ export function Slider({
             <button
               onClick={() => onChange(defaultValue)}
               className="w-4 h-4 rounded-full flex items-center justify-center text-[9px] text-text-muted hover:bg-bg-hover hover:text-text-secondary cursor-pointer transition-colors"
-              title="Reset to default"
+              title={t('ui.resetDefault')}
               aria-label={`Reset ${label} to default`}
             >
               &times;

@@ -160,12 +160,12 @@ export default function AiChat() {
     return (
       <div className="flex flex-col h-full">
         <div className="flex items-center justify-between px-4 py-2 border-b border-border shrink-0">
-          <span className="text-xs font-medium text-text">AI Settings</span>
+          <span className="text-xs font-medium text-text">{t('ai.settings')}</span>
           <button
             onClick={() => setShowSettings(false)}
             className="text-xs text-accent hover:underline cursor-pointer"
           >
-            {apiKey ? 'Back to chat' : 'Back'}
+            {apiKey ? t('ai.backToChat') : t('ai.back')}
           </button>
         </div>
         <AiProviderSettings />

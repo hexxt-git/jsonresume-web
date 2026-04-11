@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAiStore } from '../../store/aiStore';
 import { PROVIDERS, getProvider } from '../../lib/ai';
 import { useT } from '../../i18n';
-import { Eye, EyeOff, Check, Settings, ExternalLink } from 'lucide-react';
+import { Eye, EyeOff, Settings, ExternalLink } from 'lucide-react';
 
 /* ── Provider settings ───────────────────────────────── */
 
@@ -19,10 +19,8 @@ export function AiProviderSettings() {
     <div className="h-full overflow-y-auto p-4">
       <div className="space-y-4">
         <div>
-          <h3 className="text-sm font-semibold text-text">AI Providers</h3>
-          <p className="text-[11px] text-text-muted mt-0.5">
-            Keys stay in your browser. Never sent to us.
-          </p>
+          <h3 className="text-sm font-semibold text-text">{t('ai.providersTitle')}</h3>
+          <p className="text-[11px] text-text-muted mt-0.5">{t('ai.providersDesc')}</p>
         </div>
 
         <div className="space-y-3">
@@ -37,7 +35,6 @@ export function AiProviderSettings() {
               hasKey={!!apiKeys[p.id]}
               maskedKey={apiKeys[p.id] ? `${'•'.repeat(8)}${apiKeys[p.id].slice(-4)}` : ''}
               isActive={provider === p.id && !!apiKeys[p.id]}
-              models={p.provider.models}
               onSave={async (key) => {
                 const ok = await getProvider(p.id).validateKey(key);
                 if (!ok) return false;
@@ -64,7 +61,7 @@ export function AiProviderSettings() {
 /* ── Single provider row ─────────────────────────────── */
 
 function ProviderRow({
-  id,
+  id: _id,
   name,
   placeholder,
   keyLink,
@@ -72,7 +69,6 @@ function ProviderRow({
   hasKey,
   maskedKey,
   isActive,
-  models,
   onSave,
   onRemove,
   onActivate,
@@ -85,7 +81,6 @@ function ProviderRow({
   hasKey: boolean;
   maskedKey: string;
   isActive: boolean;
-  models: { id: string; label: string }[];
   onSave: (key: string) => Promise<boolean>;
   onRemove: () => void;
   onActivate: () => void;
@@ -114,11 +109,12 @@ function ProviderRow({
 
   return (
     <div className="border border-border rounded-lg p-3 space-y-3">
-      {/* Name + status */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium text-text">{name}</span>
-          {isActive && <span className="text-[10px] text-accent-text font-medium">active</span>}
+          {isActive && (
+            <span className="text-[10px] text-accent-text font-medium">{t('ai.active')}</span>
+          )}
         </div>
         {hasKey && (
           <div className="flex items-center gap-2">
@@ -127,20 +123,19 @@ function ProviderRow({
                 onClick={onActivate}
                 className="text-[10px] text-accent hover:underline cursor-pointer"
               >
-                Use
+                {t('ai.use')}
               </button>
             )}
             <button
               onClick={onRemove}
               className="text-[10px] text-text-muted hover:text-danger cursor-pointer"
             >
-              Remove
+              {t('ai.remove')}
             </button>
           </div>
         )}
       </div>
 
-      {/* Connected: show masked key + edit option */}
       {hasKey && !editing && (
         <div className="flex items-center gap-2">
           <span className="flex-1 text-xs font-mono text-text-muted bg-bg-secondary px-2.5 py-1.5 rounded">
@@ -150,12 +145,11 @@ function ProviderRow({
             onClick={() => setEditing(true)}
             className="text-[10px] text-text-muted hover:text-text-secondary cursor-pointer shrink-0"
           >
-            Change
+            {t('ai.change')}
           </button>
         </div>
       )}
 
-      {/* Key input */}
       {(!hasKey || editing) && (
         <div className="space-y-2">
           <div className="relative">
@@ -184,7 +178,7 @@ function ProviderRow({
               rel="noopener noreferrer"
               className="flex items-center gap-1 text-[10px] text-accent hover:underline"
             >
-              Get key from {keyLinkLabel} <ExternalLink size={9} />
+              {t('ai.getKey')} {keyLinkLabel} <ExternalLink size={9} />
             </a>
             <div className="flex gap-1.5">
               {editing && (
@@ -196,7 +190,7 @@ function ProviderRow({
                   }}
                   className="text-xs text-text-muted hover:text-text-secondary cursor-pointer"
                 >
-                  Cancel
+                  {t('ai.cancel')}
                 </button>
               )}
               <button
@@ -204,7 +198,7 @@ function ProviderRow({
                 disabled={validating || !input.trim()}
                 className="text-xs px-3 py-1 bg-accent text-white rounded-md hover:opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {validating ? t('ai.keyValidating') : 'Save'}
+                {validating ? t('ai.keyValidating') : t('ai.save')}
               </button>
             </div>
           </div>
@@ -217,29 +211,29 @@ function ProviderRow({
 /* ── Setup prompt (centered, reusable) ───────────────── */
 
 export function AiSetupPrompt({ onSetup }: { onSetup: () => void }) {
+  const t = useT();
   return (
     <div className="h-full flex items-center justify-center p-8">
       <div className="text-center space-y-3 max-w-sm">
         <Settings size={24} className="mx-auto text-text-faint" />
-        <h3 className="text-sm font-semibold text-text">Set up an AI provider</h3>
+        <h3 className="text-sm font-semibold text-text">{t('ai.setupTitle')}</h3>
         <p className="text-xs text-text-muted leading-relaxed">
-          This project is{' '}
+          {t('ai.setupDesc').split(t('ai.setupOpenSource'))[0]}
           <a
             href="https://github.com/hexxt-git/jsonresume-web/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-accent hover:underline"
           >
-            open source
-          </a>{' '}
-          and hosted for free. Your API keys are stored only in your browser's local storage and are
-          sent directly to the provider's API — never to us.
+            {t('ai.setupOpenSource')}
+          </a>
+          {t('ai.setupDesc').split(t('ai.setupOpenSource'))[1]}
         </p>
         <button
           onClick={onSetup}
           className="text-xs px-4 py-2 bg-accent text-white rounded-md hover:opacity-90 cursor-pointer"
         >
-          Configure providers
+          {t('ai.setupButton')}
         </button>
       </div>
     </div>
@@ -258,11 +252,12 @@ export function AiGate({ children, onSetup }: { children: React.ReactNode; onSet
 /* ── Settings button for chat header ─────────────────── */
 
 export function AiSettingsButton({ onClick }: { onClick: () => void }) {
+  const t = useT();
   return (
     <button
       onClick={onClick}
       className="text-text-muted hover:text-text-secondary transition-colors cursor-pointer p-1 rounded hover:bg-bg-hover"
-      title="AI Settings"
+      title={t('ai.settings')}
     >
       <Settings size={14} />
     </button>

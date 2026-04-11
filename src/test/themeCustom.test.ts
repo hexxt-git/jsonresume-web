@@ -1,14 +1,15 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useResumeStore } from '../store/resumeStore';
+import { useResumeStore, activeSlot } from '../store/resumeStore';
 import { buildCustomCss, defaultCustomization } from '../store/themeCustomStore';
 
 describe('theme customization in resume store', () => {
   beforeEach(() => {
+    useResumeStore.getState().saveSlot('');
     useResumeStore.getState().resetCustomization();
   });
 
   it('starts with multiplier defaults (all 1.0)', () => {
-    const { customization } = useResumeStore.getState();
+    const { customization } = activeSlot(useResumeStore.getState());
     expect(customization.accentColor).toBe('');
     expect(customization.fontFamily).toBe('');
     expect(customization.fontSizeMultiplier).toBe(1);
@@ -18,21 +19,21 @@ describe('theme customization in resume store', () => {
 
   it('setCustomization updates a single field', () => {
     useResumeStore.getState().setCustomization('accentColor', '#ff0000');
-    expect(useResumeStore.getState().customization.accentColor).toBe('#ff0000');
+    expect(activeSlot(useResumeStore.getState()).customization.accentColor).toBe('#ff0000');
   });
 
   it('setCustomization preserves other fields', () => {
     useResumeStore.getState().setCustomization('fontSizeMultiplier', 1.2);
     useResumeStore.getState().setCustomization('lineHeightMultiplier', 0.9);
-    expect(useResumeStore.getState().customization.fontSizeMultiplier).toBe(1.2);
-    expect(useResumeStore.getState().customization.lineHeightMultiplier).toBe(0.9);
+    expect(activeSlot(useResumeStore.getState()).customization.fontSizeMultiplier).toBe(1.2);
+    expect(activeSlot(useResumeStore.getState()).customization.lineHeightMultiplier).toBe(0.9);
   });
 
   it('resetCustomization clears all fields to defaults', () => {
     useResumeStore.getState().setCustomization('accentColor', '#ff0000');
     useResumeStore.getState().setCustomization('fontSizeMultiplier', 1.5);
     useResumeStore.getState().resetCustomization();
-    const { customization } = useResumeStore.getState();
+    const { customization } = activeSlot(useResumeStore.getState());
     expect(customization.accentColor).toBe('');
     expect(customization.fontSizeMultiplier).toBe(1);
   });
@@ -47,7 +48,7 @@ describe('theme customization in resume store', () => {
       sectionSpacingMultiplier: 1,
       rtl: false,
     });
-    const { customization } = useResumeStore.getState();
+    const { customization } = activeSlot(useResumeStore.getState());
     expect(customization.accentColor).toBe('#00ff00');
     expect(customization.fontSizeMultiplier).toBe(0.8);
     expect(customization.paddingMultiplier).toBe(0.5);
@@ -56,7 +57,7 @@ describe('theme customization in resume store', () => {
   it('reset clears customization along with resume', () => {
     useResumeStore.getState().setCustomization('accentColor', '#ff0000');
     useResumeStore.getState().reset();
-    expect(useResumeStore.getState().customization.accentColor).toBe('');
+    expect(activeSlot(useResumeStore.getState()).customization.accentColor).toBe('');
   });
 });
 

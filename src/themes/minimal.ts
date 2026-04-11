@@ -1,6 +1,6 @@
 import type { ResumeSchema } from '../types/resume';
 import type { ThemeDefinition } from './types';
-import { esc, md, dateRange, section, link } from './helpers';
+import { esc, md, dateRange, section, link, safeSrc } from './helpers';
 
 function render(resume: ResumeSchema, customCss?: string): string {
   const b = resume.basics;
@@ -24,11 +24,14 @@ li{margin-bottom:2px;color:#444}
 .skills-inline strong{color:#222;font-weight:600}
 @media print{body{padding:20px 24px;font-size:calc(12.5px * var(--fs-mult, 1))}h2{margin:16px 0 8px}}
 ${customCss || ''}</style></head><body>
-${b?.image ? `<img src="${esc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px">` : ''}
+<header role="banner">
+${b?.image ? `<img src="${safeSrc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px">` : ''}
 ${b?.name ? `<h1>${esc(b.name)}</h1>` : ''}
 ${b?.label ? `<div class="meta">${esc(b.label)}</div>` : ''}
-<div class="contact">${[b?.email, b?.phone, b?.location?.city ? `${b.location.city}${b.location.region ? ', ' + b.location.region : ''}` : '', b?.url ? link(b.url, b.url.replace(/^https?:\/\//, '')) : '', ...(b?.profiles || []).map((p) => (p.url ? `<a href="${esc(p.url)}">${esc(p.network || p.username || '')}</a>` : ''))].filter(Boolean).join(' / ')}</div>
+<address class="contact" aria-label="Contact information">${[b?.email, b?.phone, b?.location?.city ? `${b.location.city}${b.location.region ? ', ' + b.location.region : ''}` : '', b?.url ? link(b.url, b.url.replace(/^https?:\/\//, '')) : '', ...(b?.profiles || []).map((p) => (p.url ? `<a href="${esc(p.url)}">${esc(p.network || p.username || '')}</a>` : ''))].filter(Boolean).join(' / ')}</address>
 ${b?.summary ? `<p class="summary">${md(b.summary)}</p>` : ''}
+</header>
+<main role="main">
 ${section(
   'Experience',
   (resume.work || [])
@@ -77,6 +80,7 @@ ${section('Certificates', (resume.certificates || []).map((c) => `<div class="en
 ${section('Publications', (resume.publications || []).map((p) => `<div class="entry"><div class="entry-row"><h3>${link(p.url, p.name || '')}</h3><span class="meta">${p.releaseDate || ''}</span></div>${p.publisher ? `<div class="sub">${esc(p.publisher)}</div>` : ''}${p.summary ? `<div class="sub">${md(p.summary)}</div>` : ''}</div>`).join(''))}
 ${section('Interests', (resume.interests || []).map((i) => `<p class="skills-inline"><strong>${esc(i.name)}:</strong> ${(i.keywords || []).map((k) => esc(k)).join(', ')}</p>`).join(''))}
 ${section('References', (resume.references || []).map((r) => `<div class="entry"><h3>${esc(r.name)}</h3>${r.reference ? `<p class="sub" style="font-style:italic;margin-top:2px">"${md(r.reference)}"</p>` : ''}</div>`).join(''))}
+</main>
 </body></html>`;
 }
 

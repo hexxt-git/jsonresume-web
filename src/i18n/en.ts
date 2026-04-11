@@ -1,6 +1,6 @@
 export default {
   // Header
-  'app.title': 'Resume Builder',
+  'app.title': 'JSONResume Web',
   'app.subtitle': 'JSON Resume',
   'app.reset': 'Reset',
   'app.import': 'Import',
@@ -183,14 +183,25 @@ export default {
   'editor.ai': 'AI',
   'editor.auto': 'Automation',
   'auto.placeholder': 'Automation features coming soon.',
-  'ai.keyTitle': 'Enter Gemini API Key',
-  'ai.keyDesc': 'Your key is stored locally. Calls go directly to Google.',
-  'ai.keyPlaceholder': 'AIza...',
-  'ai.keyLink': 'Get a key from Google AI Studio',
-  'ai.keySave': 'Save Key',
+  'ai.settings': 'AI Settings',
+  'ai.backToChat': 'Back to chat',
+  'ai.back': 'Back',
+  'ai.providersTitle': 'AI Providers',
+  'ai.providersDesc': 'Keys stay in your browser. Never sent to us.',
+  'ai.setupTitle': 'Set up an AI provider',
+  'ai.setupDesc':
+    'This project is open source and hosted for free. Your API keys are stored only in your browser\u2019s local storage and are sent directly to the provider\u2019s API \u2014 never to us.',
+  'ai.setupOpenSource': 'open source',
+  'ai.setupButton': 'Configure providers',
+  'ai.active': 'active',
+  'ai.use': 'Use',
+  'ai.remove': 'Remove',
+  'ai.change': 'Change',
+  'ai.cancel': 'Cancel',
+  'ai.save': 'Save',
+  'ai.getKey': 'Get key from',
   'ai.keyInvalid': 'Invalid API key',
   'ai.keyValidating': 'Validating...',
-  'ai.keyRemove': 'Remove Key',
   'ai.clearChat': 'Clear',
   'ai.placeholder': 'Ask about your resume...',
   'ai.send': 'Send',
@@ -204,6 +215,52 @@ export default {
   'ai.undo': 'Undo',
   'ai.redo': 'Redo',
   'ai.model': 'Model',
+  'ai.copy': 'Copy',
+  'ai.clickDismiss': 'Click to dismiss',
+
+  // Onboarding
+  'onboarding.editTitle': 'Edit & Preview',
+  'onboarding.editSub': 'Form editor on the left, live preview on the right.',
+  'onboarding.themesTitle': '12+ Themes',
+  'onboarding.themesSub': 'One click to switch styles. Customize colors, fonts & spacing.',
+  'onboarding.aiTitle': 'AI Assistant',
+  'onboarding.aiSub': 'Let AI improve your wording, generate highlights, or tailor for a job.',
+  'onboarding.importTitle': 'Got an existing resume?',
+  'onboarding.importSub': 'Import it as a starting point, or skip to start fresh.',
+  'onboarding.dropText': 'Drop a file here or click to browse',
+  'onboarding.parsing': 'Parsing...',
+  'onboarding.loadSample': 'Or load a sample resume',
+  'onboarding.skip': 'Skip',
+  'onboarding.back': 'Back',
+  'onboarding.next': 'Next',
+  'onboarding.getStarted': 'Get Started',
+
+  // Undo/redo
+  'undo.undo': 'Undo',
+  'undo.redo': 'Redo',
+
+  // Preview
+  'preview.zoomOut': 'Zoom out',
+  'preview.fitWidth': 'Fit to width',
+  'preview.actualSize': 'Actual size',
+  'preview.zoomIn': 'Zoom in',
+  'preview.print': 'Print',
+  'preview.pageBreak': 'page break',
+
+  // Combo / pickers
+  'combo.search': 'Search or type custom...',
+  'combo.use': 'Use',
+  'combo.noOptions': 'No options',
+
+  // URL field
+  'url.prefix': 'https://',
+  'url.uploadImage': 'Upload at imgbb.com',
+
+  // Misc UI
+  'ui.loading': 'Loading...',
+  'ui.noResults': 'No results',
+  'ui.searchCountries': 'Search countries...',
+  'ui.resetDefault': 'Reset to theme default',
 
   // Font options
   'font.systemSans': 'System Sans',

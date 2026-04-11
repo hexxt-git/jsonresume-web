@@ -67,6 +67,7 @@ function escHtml(s: string): string {
 /* ── Copy button ──────────────────────────────────────── */
 
 function CopyButton({ text }: { text: string }) {
+  const t = useT();
   const [copied, setCopied] = useState(false);
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(text).then(() => {
@@ -79,7 +80,7 @@ function CopyButton({ text }: { text: string }) {
     <button
       onClick={handleCopy}
       className="opacity-0 group-hover:opacity-100 text-[10px] text-text-muted hover:text-text transition-all cursor-pointer px-1"
-      title="Copy"
+      title={t('ai.copy')}
     >
       {copied ? (
         <CheckCheck size={16} color="currentColor" />
@@ -140,6 +141,7 @@ function ToolResultBadge({ msg }: { msg: ToolResultMessage }) {
 /* ── Message list ─────────────────────────────────────── */
 
 export function AiMessageList() {
+  const t = useT();
   const messages = useAiStore((s) => s.messages);
   const error = useAiStore((s) => s.error);
   const setError = useAiStore((s) => s.setError);
@@ -159,7 +161,7 @@ export function AiMessageList() {
           <div
             className="max-w-[85%] rounded-lg px-3 py-2 text-xs bg-danger/10 text-danger cursor-pointer"
             onClick={() => setError(null)}
-            title="Click to dismiss"
+            title={t('ai.clickDismiss')}
           >
             {error}
           </div>

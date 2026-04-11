@@ -1,6 +1,6 @@
 import type { ResumeSchema } from '../types/resume';
 import type { ThemeDefinition } from './types';
-import { esc, md, dateRange, section, link } from './helpers';
+import { esc, md, dateRange, section, link, safeSrc } from './helpers';
 
 function render(resume: ResumeSchema, customCss?: string): string {
   const b = resume.basics;
@@ -34,10 +34,10 @@ li::marker{color:#666}
 .languages{color:#999;font-size:calc(13px * var(--fs-mult, 1))}
 @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 ${customCss || ''}</style></head><body>
-${b?.image ? `<img src="${esc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 12px;border:2px solid #404040">` : ''}
+${b?.image ? `<img src="${safeSrc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 12px;border:2px solid #404040">` : ''}
 ${b?.name ? `<h1>${esc(b.name)}</h1>` : ''}
 ${b?.label ? `<p class="label">${esc(b.label)}</p>` : ''}
-<div class="contact">
+<div class="contact" aria-label="Contact information">
 ${[
   b?.email,
   b?.phone,

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useResumeStore } from '../store/resumeStore';
+import { useResumeStore, activeSlot } from '../store/resumeStore';
 import {
   resumeToolDeclarations,
   executeResumeTool,
@@ -43,22 +43,24 @@ describe('getAtPath', () => {
 
 describe('setAtPath', () => {
   beforeEach(() => {
+    useResumeStore.getState().saveSlot('');
     useResumeStore.getState().reset();
   });
 
   it('sets basics fields', () => {
     setAtPath(['basics', 'summary'], 'new summary');
-    expect(useResumeStore.getState().resume.basics?.summary).toBe('new summary');
+    expect(activeSlot(useResumeStore.getState()).resume.basics?.summary).toBe('new summary');
   });
 
   it('sets array sections', () => {
     setAtPath(['skills'], [{ name: 'React' }]);
-    expect(useResumeStore.getState().resume.skills).toEqual([{ name: 'React' }]);
+    expect(activeSlot(useResumeStore.getState()).resume.skills).toEqual([{ name: 'React' }]);
   });
 });
 
 describe('executeResumeTool', () => {
   beforeEach(() => {
+    useResumeStore.getState().saveSlot('');
     useResumeStore.getState().reset();
   });
 
@@ -73,7 +75,9 @@ describe('executeResumeTool', () => {
     expect(result.success).toBe(true);
     expect(result.path).toEqual(['basics', 'summary']);
     expect(result.before).toBe('Old summary');
-    expect(useResumeStore.getState().resume.basics?.summary).toBe('A talented engineer');
+    expect(activeSlot(useResumeStore.getState()).resume.basics?.summary).toBe(
+      'A talented engineer',
+    );
   });
 
   it('update_basics_field updates name and captures before', () => {
@@ -87,7 +91,7 @@ describe('executeResumeTool', () => {
     expect(result.success).toBe(true);
     expect(result.path).toEqual(['basics', 'name']);
     expect(result.before).toBe('Old Name');
-    expect(useResumeStore.getState().resume.basics?.name).toBe('Jane Doe');
+    expect(activeSlot(useResumeStore.getState()).resume.basics?.name).toBe('Jane Doe');
   });
 
   it('replace_section replaces skills and captures before', () => {
@@ -107,7 +111,7 @@ describe('executeResumeTool', () => {
     expect(result.success).toBe(true);
     expect(result.path).toEqual(['skills']);
     expect(result.before).toEqual(oldSkills);
-    expect(useResumeStore.getState().resume.skills).toEqual(newSkills);
+    expect(activeSlot(useResumeStore.getState()).resume.skills).toEqual(newSkills);
   });
 
   it('add_section_entry appends and captures before', () => {
@@ -123,7 +127,7 @@ describe('executeResumeTool', () => {
     expect(result.success).toBe(true);
     expect(result.path).toEqual(['skills']);
     expect(result.before).toEqual(existing);
-    expect(useResumeStore.getState().resume.skills).toHaveLength(2);
+    expect(activeSlot(useResumeStore.getState()).resume.skills).toHaveLength(2);
   });
 
   it('unknown tool returns failure with empty path', () => {
@@ -136,6 +140,7 @@ describe('executeResumeTool', () => {
 
 describe('undo/redo via setAtPath', () => {
   beforeEach(() => {
+    useResumeStore.getState().saveSlot('');
     useResumeStore.getState().reset();
   });
 
@@ -147,15 +152,15 @@ describe('undo/redo via setAtPath', () => {
       args: { summary: 'Improved' },
     };
     const { path, before } = executeResumeTool(call);
-    expect(useResumeStore.getState().resume.basics?.summary).toBe('Improved');
+    expect(activeSlot(useResumeStore.getState()).resume.basics?.summary).toBe('Improved');
 
     // Undo: capture current (after), restore before
-    const after = getAtPath(useResumeStore.getState().resume, path);
+    const after = getAtPath(activeSlot(useResumeStore.getState()).resume, path);
     setAtPath(path, before);
-    expect(useResumeStore.getState().resume.basics?.summary).toBe('Original');
+    expect(activeSlot(useResumeStore.getState()).resume.basics?.summary).toBe('Original');
 
     // Redo: restore after
     setAtPath(path, after);
-    expect(useResumeStore.getState().resume.basics?.summary).toBe('Improved');
+    expect(activeSlot(useResumeStore.getState()).resume.basics?.summary).toBe('Improved');
   });
 });

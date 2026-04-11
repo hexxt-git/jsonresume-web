@@ -120,7 +120,7 @@ export const openaiProvider: AiProvider = {
   async validateKey(apiKey) {
     try {
       const client = new OpenAI({ apiKey, dangerouslyAllowBrowser: true });
-      await client.models.list({ limit: 1 });
+      await client.models.list();
       return true;
     } catch {
       return false;

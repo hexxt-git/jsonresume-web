@@ -1,6 +1,6 @@
 import type { ResumeSchema } from '../types/resume';
 import type { ThemeDefinition } from './types';
-import { esc, md, dateRange, section, link } from './helpers';
+import { esc, md, dateRange, section, link, safeSrc } from './helpers';
 
 function render(resume: ResumeSchema, customCss?: string): string {
   const b = resume.basics;
@@ -32,10 +32,11 @@ li{margin-bottom:3px;color:#444}
 .languages{color:#555;font-size:calc(13px * var(--fs-mult, 1))}
 @media print{body{padding:16px 20px;font-size:calc(12px * var(--fs-mult, 1))}.section{margin-bottom:14px}.entry{margin-bottom:10px}}
 ${customCss || ''}</style></head><body>
-${b?.image ? `<img src="${esc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 12px">` : ''}
+<header role="banner">
+${b?.image ? `<img src="${safeSrc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 12px">` : ''}
 ${b?.name ? `<h1>${esc(b.name)}</h1>` : ''}
 ${b?.label ? `<p class="label">${esc(b.label)}</p>` : ''}
-<div class="contact">
+<address class="contact" aria-label="Contact information">
 ${[
   b?.email,
   b?.phone,
@@ -50,9 +51,11 @@ ${[
   .filter(Boolean)
   .map((s) => `<span>${s}</span>`)
   .join('')}
-</div>
+</address>
 <hr class="divider">
 ${b?.summary ? `<p class="summary">${md(b.summary)}</p>` : ''}
+</header>
+<main role="main">
 ${section(
   'Professional Experience',
   (resume.work || [])
@@ -101,6 +104,7 @@ ${section('Certificates', (resume.certificates || []).map((c) => `<div class="en
 ${section('Publications', (resume.publications || []).map((p) => `<div class="entry"><div class="entry-header"><h3>${link(p.url, p.name || '')}</h3><span class="entry-meta">${p.releaseDate || ''}</span></div>${p.publisher ? `<div class="entry-org">${esc(p.publisher)}</div>` : ''}${p.summary ? `<p style="color:#444;margin-top:4px">${md(p.summary)}</p>` : ''}</div>`).join(''))}
 ${section('Interests', (resume.interests || []).map((i) => `<div class="entry"><h3>${esc(i.name)}</h3>${i.keywords?.length ? `<p style="color:#555;font-size:calc(13px * var(--fs-mult, 1))">${i.keywords.map((k) => esc(k)).join(', ')}</p>` : ''}</div>`).join(''))}
 ${section('References', (resume.references || []).map((r) => `<div class="entry"><h3>${esc(r.name)}</h3>${r.reference ? `<p style="color:#444;font-style:italic;margin-top:4px">"${md(r.reference)}"</p>` : ''}</div>`).join(''))}
+</main>
 </body></html>`;
 }
 
