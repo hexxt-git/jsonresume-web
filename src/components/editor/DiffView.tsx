@@ -7,6 +7,41 @@
 
 import { useState } from 'react';
 
+/* ── Key sorting for stable diffs ─────────────────────── */
+
+function deepSortKeys(v: unknown): unknown {
+  if (Array.isArray(v)) return v.map(deepSortKeys);
+  if (v && typeof v === 'object') {
+    const sorted: Record<string, unknown> = {};
+    for (const k of Object.keys(v as Record<string, unknown>).sort())
+      sorted[k] = deepSortKeys((v as Record<string, unknown>)[k]);
+    return sorted;
+  }
+  return v;
+}
+
+/** Normalize a value to a string for diffing. Objects get sorted keys. */
+export function normalizeDiffText(v: unknown): string {
+  if (typeof v === 'string') return v;
+  return JSON.stringify(deepSortKeys(v), null, 2);
+}
+
+/** If text looks like JSON, parse → sort keys → re-stringify to eliminate key-order noise. */
+function tryNormalize(text: string): string {
+  const trimmed = text.trim();
+  if (
+    (trimmed.startsWith('{') || trimmed.startsWith('[')) &&
+    (trimmed.endsWith('}') || trimmed.endsWith(']'))
+  ) {
+    try {
+      return JSON.stringify(deepSortKeys(JSON.parse(trimmed)), null, 2);
+    } catch {
+      /* not valid JSON */
+    }
+  }
+  return text;
+}
+
 /* ── Tokenizer ───────────────────────────────────────── */
 
 function tokenize(text: string): string[] {
@@ -236,7 +271,7 @@ function groupLines(lines: LineDiff[]): DisplayItem[] {
 
 export function InlineDiffView({ oldText, newText }: { oldText: string; newText: string }) {
   ensureStyles();
-  const lines = lineDiff(oldText, newText);
+  const lines = lineDiff(tryNormalize(oldText), tryNormalize(newText));
   const groups = groupLines(lines);
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
 
@@ -307,7 +342,7 @@ export function InlineDiffView({ oldText, newText }: { oldText: string; newText:
 
 export function BlockDiffView({ oldText, newText }: { oldText: string; newText: string }) {
   ensureStyles();
-  const lines = lineDiff(oldText, newText);
+  const lines = lineDiff(tryNormalize(oldText), tryNormalize(newText));
   const groups = groupLines(lines);
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
 

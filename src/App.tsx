@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect, type ReactNode } from 'react';
 import { ResumeEditor } from './components/editor/ResumeEditor';
 import { ResumePreview } from './components/preview/ResumePreview';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { ImportDialog } from './components/import-export/ImportDialog';
 import { ExportDialog } from './components/import-export/ExportDialog';
 import { useResumeStore, activeSlot } from './store/resumeStore';
@@ -345,7 +346,9 @@ function App() {
             }}
           />
         ) : (
-          <ResumePreview />
+          <ErrorBoundary label="preview">
+            <ResumePreview />
+          </ErrorBoundary>
         )}
       </SplitPane>
 
