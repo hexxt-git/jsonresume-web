@@ -1,8 +1,11 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage, type StateStorage } from 'zustand/middleware';
 import type { ResumeSchema } from '../types/resume';
+import type { AnyMessage } from '../lib/ai';
 import { sampleResume } from '../utils/sample';
 import { defaultCustomization, type ThemeCustomization } from './themeCustomStore';
+
+/* ── Types ───────────────────────────────────────────────── */
 
 export type EditorSection =
   | 'basics'
@@ -18,12 +21,68 @@ export type EditorSection =
   | 'interests'
   | 'references';
 
-interface ResumeStore {
+export interface ResumeSlot {
+  id: string;
+  name: string;
   resume: ResumeSchema;
-  selectedThemeId: string;
-  activeSection: EditorSection;
+  themeId: string;
   customization: ThemeCustomization;
+  chatHistory: AnyMessage[];
+  updatedAt: number;
+}
 
+export function slotDisplayName(slot: ResumeSlot): string {
+  return slot.name
+    ? slot.name
+    : slot.resume.basics?.name
+      ? `${slot.resume.basics.name}'s Resume`
+      : 'Untitled';
+}
+
+const EMPTY_RESUME: ResumeSchema = { basics: { name: '', label: '', summary: '' } };
+
+function genId(): string {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+/* ── Debounced localStorage ──────────────────────────────── */
+
+let debounceTimer: ReturnType<typeof setTimeout>;
+let pendingWrite: { name: string; value: string } | null = null;
+
+const debouncedStorage: StateStorage = {
+  getItem: (name) => localStorage.getItem(name),
+  setItem: (name, value) => {
+    pendingWrite = { name, value };
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      if (pendingWrite) {
+        localStorage.setItem(pendingWrite.name, pendingWrite.value);
+        pendingWrite = null;
+      }
+    }, 500);
+  },
+  removeItem: (name) => localStorage.removeItem(name),
+};
+
+// Flush pending writes on page unload
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
+    if (pendingWrite) {
+      localStorage.setItem(pendingWrite.name, pendingWrite.value);
+      pendingWrite = null;
+    }
+  });
+}
+
+/* ── Store interface ─────────────────────────────────────── */
+
+interface ResumeStore {
+  slots: ResumeSlot[];
+  activeSlotId: string | null;
+  activeSection: EditorSection;
+
+  // Resume mutations (operate on active slot)
   setResume: (resume: ResumeSchema) => void;
   updateBasics: (field: string, value: unknown) => void;
   updateBasicsLocation: (field: string, value: unknown) => void;
@@ -35,61 +94,195 @@ interface ResumeStore {
   resetCustomization: () => void;
   loadSample: () => void;
   reset: () => void;
+
+  // Slot management
+  saveSlot: (
+    name: string,
+    resume?: ResumeSchema,
+    themeId?: string,
+    customization?: ThemeCustomization,
+    chatHistory?: AnyMessage[],
+  ) => string;
+  duplicateSlot: (chatHistory?: AnyMessage[]) => void;
+  deleteSlot: (id: string) => void;
+  renameSlot: (id: string, name: string) => void;
+  setActiveSlotId: (id: string | null) => void;
+  getSlot: (id: string) => ResumeSlot | undefined;
+  updateSlotChatHistory: (id: string, chatHistory: AnyMessage[]) => void;
 }
+
+/* ── Helper: immutably update the active slot ────────────── */
+
+function updateActive(
+  state: Pick<ResumeStore, 'slots' | 'activeSlotId'>,
+  updater: (slot: ResumeSlot) => Partial<ResumeSlot>,
+): { slots: ResumeSlot[] } {
+  return {
+    slots: state.slots.map((slot) =>
+      slot.id === state.activeSlotId ? { ...slot, ...updater(slot), updatedAt: Date.now() } : slot,
+    ),
+  };
+}
+
+/* ── Selector helper: get active slot (with safe fallback) ─ */
+
+const EMPTY_SLOT: ResumeSlot = {
+  id: '',
+  name: '',
+  resume: { ...EMPTY_RESUME },
+  themeId: 'modern',
+  customization: { ...defaultCustomization },
+  chatHistory: [],
+  updatedAt: 0,
+};
+
+export function activeSlot(state: Pick<ResumeStore, 'slots' | 'activeSlotId'>): ResumeSlot {
+  return state.slots.find((s) => s.id === state.activeSlotId) ?? EMPTY_SLOT;
+}
+
+/* ── Store ───────────────────────────────────────────────── */
 
 export const useResumeStore = create<ResumeStore>()(
   persist(
-    (set) => ({
-      resume: { basics: { name: '', label: '', summary: '' } },
-      selectedThemeId: 'modern',
+    (set, get) => ({
+      slots: [],
+      activeSlotId: null,
       activeSection: 'basics',
-      customization: { ...defaultCustomization },
 
-      setResume: (resume) => set({ resume }),
+      // ── Resume mutations (target active slot) ──
+
+      setResume: (resume) => set((s) => updateActive(s, () => ({ resume }))),
 
       updateBasics: (field, value) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            basics: { ...state.resume.basics, [field]: value },
-          },
-        })),
+        set((s) =>
+          updateActive(s, (slot) => ({
+            resume: {
+              ...slot.resume,
+              basics: { ...slot.resume.basics, [field]: value },
+            },
+          })),
+        ),
 
       updateBasicsLocation: (field, value) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            basics: {
-              ...state.resume.basics,
-              location: { ...state.resume.basics?.location, [field]: value },
+        set((s) =>
+          updateActive(s, (slot) => ({
+            resume: {
+              ...slot.resume,
+              basics: {
+                ...slot.resume.basics,
+                location: { ...slot.resume.basics?.location, [field]: value },
+              },
             },
-          },
-        })),
+          })),
+        ),
 
       updateArraySection: (section, items) =>
-        set((state) => ({
-          resume: { ...state.resume, [section]: items },
+        set((s) =>
+          updateActive(s, (slot) => ({
+            resume: { ...slot.resume, [section]: items },
+          })),
+        ),
+
+      setTheme: (themeId) => set((s) => updateActive(s, () => ({ themeId }))),
+
+      setActiveSection: (section) => set({ activeSection: section }),
+
+      setCustomization: (field, value) =>
+        set((s) =>
+          updateActive(s, (slot) => ({
+            customization: { ...slot.customization, [field]: value },
+          })),
+        ),
+
+      setFullCustomization: (c) => set((s) => updateActive(s, () => ({ customization: c }))),
+
+      resetCustomization: () =>
+        set((s) => updateActive(s, () => ({ customization: { ...defaultCustomization } }))),
+
+      loadSample: () => set((s) => updateActive(s, () => ({ resume: sampleResume }))),
+
+      reset: () =>
+        set((s) => ({
+          ...updateActive(s, () => ({
+            resume: { basics: { name: '', label: '', summary: '' } },
+            themeId: 'modern',
+            customization: { ...defaultCustomization },
+          })),
+          activeSection: 'basics' as EditorSection,
         })),
 
-      setTheme: (themeId) => set({ selectedThemeId: themeId }),
-      setActiveSection: (section) => set({ activeSection: section }),
-      setCustomization: (field, value) =>
+      // ── Slot management ──
+
+      saveSlot: (name, resume, themeId, customization, chatHistory) => {
+        const id = genId();
         set((s) => ({
-          customization: { ...s.customization, [field]: value },
-        })),
-      setFullCustomization: (c) => set({ customization: c }),
-      resetCustomization: () => set({ customization: { ...defaultCustomization } }),
-      loadSample: () => set({ resume: sampleResume }),
-      reset: () =>
-        set({
-          resume: { basics: { name: '', label: '', summary: '' } },
-          selectedThemeId: 'modern',
-          activeSection: 'basics',
-          customization: { ...defaultCustomization },
+          slots: [
+            ...s.slots,
+            {
+              id,
+              name,
+              resume: resume ?? { basics: { name: '', label: '', summary: '' } },
+              themeId: themeId ?? 'modern',
+              customization: customization ?? { ...defaultCustomization },
+              chatHistory: chatHistory ?? [],
+              updatedAt: Date.now(),
+            },
+          ],
+          activeSlotId: id,
+        }));
+        return id;
+      },
+
+      duplicateSlot: (chatHistory) => {
+        const slot = activeSlot(get());
+        if (!slot.id) return;
+        const id = genId();
+        set((s) => ({
+          slots: [
+            ...s.slots,
+            {
+              ...structuredClone(slot),
+              id,
+              name: '',
+              chatHistory: chatHistory ? structuredClone(chatHistory) : [],
+              updatedAt: Date.now(),
+            },
+          ],
+          activeSlotId: id,
+        }));
+      },
+
+      deleteSlot: (id) =>
+        set((s) => {
+          const remaining = s.slots.filter((slot) => slot.id !== id);
+          let nextActiveId = s.activeSlotId;
+          if (s.activeSlotId === id) {
+            nextActiveId = remaining.length
+              ? remaining.reduce((a, b) => (a.updatedAt > b.updatedAt ? a : b)).id
+              : null;
+          }
+          return { slots: remaining, activeSlotId: nextActiveId };
         }),
+
+      renameSlot: (id, name) =>
+        set((s) => ({
+          slots: s.slots.map((slot) => (slot.id === id ? { ...slot, name } : slot)),
+        })),
+
+      setActiveSlotId: (id) => set({ activeSlotId: id }),
+
+      getSlot: (id) => get().slots.find((s) => s.id === id),
+
+      updateSlotChatHistory: (id, chatHistory) =>
+        set((s) => ({
+          slots: s.slots.map((slot) =>
+            slot.id === id ? { ...slot, chatHistory, updatedAt: Date.now() } : slot,
+          ),
+        })),
     }),
     {
-      name: 'resume-store',
+      name: 'resume-slots',
+      storage: createJSONStorage(() => debouncedStorage),
     },
   ),
 );

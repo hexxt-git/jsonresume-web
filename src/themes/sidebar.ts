@@ -17,7 +17,7 @@ function render(resume: ResumeSchema): string {
       ? `<div class="sb-section"><h3>Profiles</h3>${b.profiles.map((p) => `<p>${link(p.url, p.network || p.username || '')}</p>`).join('')}</div>`
       : '',
     resume.skills?.length
-      ? `<div class="sb-section"><h3>Skills</h3>${(resume.skills || []).map((s) => `<div class="sb-skill"><strong>${esc(s.name)}${s.level ? ` <span style="font-weight:normal;color:#94a3b8;font-size:smaller">- ${esc(s.level)}</span>` : ''}</strong><div class="sb-tags">${(s.keywords || []).map((k) => `<span class="sb-tag">${esc(k)}</span>`).join('')}</div></div>`).join('')}</div>`
+      ? `<div class="sb-section"><h3>Skills</h3>${(resume.skills || []).map((s) => `<div class="sb-skill"><strong>${esc(s.name)}${s.level ? ` <span style="font-weight:normal;color:#94a3b8;font-size:calc(0.833em * var(--fs-mult, 1))">- ${esc(s.level)}</span>` : ''}</strong><div class="sb-tags">${(s.keywords || []).map((k) => `<span class="sb-tag">${esc(k)}</span>`).join('')}</div></div>`).join('')}</div>`
       : '',
     resume.languages?.length
       ? `<div class="sb-section"><h3>Languages</h3>${(resume.languages || []).map((l) => `<p>${esc(l.language)}${l.fluency ? ` <span style="opacity:.7">- ${esc(l.fluency)}</span>` : ''}</p>`).join('')}</div>`
@@ -32,28 +32,28 @@ function render(resume: ResumeSchema): string {
   return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(b?.name)} - ${esc(b?.label || 'Resume')}</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#333;line-height:1.6;font-size:14px;display:flex;min-height:100vh}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#333;line-height:1.6;font-size:calc(14px * var(--fs-mult, 1));display:flex;min-height:100vh}
 .sidebar{width:280px;min-width:280px;background:#1e293b;color:#e2e8f0;padding:36px 24px}
-.sidebar h1{font-size:22px;font-weight:700;color:#fff;margin-bottom:4px}
-.sidebar .label{color:#94a3b8;font-size:14px;margin-bottom:24px}
+.sidebar h1{font-size:calc(22px * var(--fs-mult, 1));font-weight:700;color:#fff;margin-bottom:4px}
+.sidebar .label{color:#94a3b8;font-size:calc(14px * var(--fs-mult, 1));margin-bottom:24px}
 .sb-section{margin-bottom:20px}
-.sb-section h3{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:#64748b;margin-bottom:6px}
-.sb-section p{font-size:13px;color:#cbd5e1;margin-bottom:2px}
+.sb-section h3{font-size:calc(11px * var(--fs-mult, 1));text-transform:uppercase;letter-spacing:1.2px;color:#64748b;margin-bottom:6px}
+.sb-section p{font-size:calc(13px * var(--fs-mult, 1));color:#cbd5e1;margin-bottom:2px}
 .sb-section a{color:#38bdf8;text-decoration:none}
 .sb-skill{margin-bottom:8px}
-.sb-skill strong{font-size:13px;color:#e2e8f0;display:block;margin-bottom:4px}
+.sb-skill strong{font-size:calc(13px * var(--fs-mult, 1));color:#e2e8f0;display:block;margin-bottom:4px}
 .sb-tags{display:flex;flex-wrap:wrap;gap:4px}
-.sb-tag{background:#334155;color:#cbd5e1;padding:2px 8px;border-radius:3px;font-size:11px}
+.sb-tag{background:#334155;color:#cbd5e1;padding:2px 8px;border-radius:3px;font-size:calc(11px * var(--fs-mult, 1))}
 .main{flex:1;padding:36px 40px;max-width:calc(100% - 280px)}
-h2{font-size:14px;font-weight:700;color:#1e293b;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #e2e8f0}
-h3{font-size:15px;font-weight:600;color:#1e293b}
+h2{font-size:calc(14px * var(--fs-mult, 1));font-weight:700;color:#1e293b;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #e2e8f0}
+h3{font-size:calc(15px * var(--fs-mult, 1));font-weight:600;color:#1e293b}
 a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}
 .summary{color:#6b7280;margin-bottom:24px}
 .section{margin-bottom:22px}
 .entry{margin-bottom:16px}
 .entry-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap}
-.entry-meta{color:#9ca3af;font-size:13px}
-.entry-org{color:#6b7280;font-size:13px}
+.entry-meta{color:#9ca3af;font-size:calc(13px * var(--fs-mult, 1))}
+.entry-org{color:#6b7280;font-size:calc(13px * var(--fs-mult, 1))}
 ul{padding-left:18px;margin-top:6px}
 li{margin-bottom:3px;color:#4b5563}
 @media print{body{display:flex}.sidebar{width:240px;min-width:240px;background:#1e293b;-webkit-print-color-adjust:exact;print-color-adjust:exact}.main{padding:24px 28px}}
@@ -73,7 +73,7 @@ ${section(
       (w) => `<div class="entry">
 <div class="entry-header"><h3>${esc(w.position)}</h3><span class="entry-meta">${dateRange(w.startDate, w.endDate)}</span></div>
 <div class="entry-org">${link(w.url, w.name || '')}${w.location ? ` - ${esc(w.location)}` : ''}</div>
-${w.description ? `<div style="font-size:12px;color:#9ca3af;font-style:italic">${md(w.description)}</div>` : ''}
+${w.description ? `<div style="font-size:calc(12px * var(--fs-mult, 1));color:#9ca3af;font-style:italic">${md(w.description)}</div>` : ''}
 ${w.summary ? `<p style="color:#6b7280;margin-top:4px">${md(w.summary)}</p>` : ''}
 ${w.highlights?.length ? `<ul>${w.highlights.map((h) => `<li>${md(h)}</li>`).join('')}</ul>` : ''}
 </div>`,
@@ -85,8 +85,8 @@ ${section(
   (resume.projects || [])
     .map(
       (p) => `<div class="entry">
-<div class="entry-header"><h3>${link(p.url, p.name || '')}${p.entity ? `<span style="color:#9ca3af;font-size:13px"> - ${esc(p.entity)}</span>` : ''}${p.type ? `<span style="color:#9ca3af;font-size:12px"> (${esc(p.type)})</span>` : ''}</h3>${p.startDate ? `<span class="entry-meta">${dateRange(p.startDate, p.endDate)}</span>` : ''}</div>
-${p.roles?.length ? `<div style="font-size:12px;color:#9ca3af">Role: ${p.roles.map((r) => esc(r)).join(', ')}</div>` : ''}
+<div class="entry-header"><h3>${link(p.url, p.name || '')}${p.entity ? `<span style="color:#9ca3af;font-size:calc(13px * var(--fs-mult, 1))"> - ${esc(p.entity)}</span>` : ''}${p.type ? `<span style="color:#9ca3af;font-size:calc(12px * var(--fs-mult, 1))"> (${esc(p.type)})</span>` : ''}</h3>${p.startDate ? `<span class="entry-meta">${dateRange(p.startDate, p.endDate)}</span>` : ''}</div>
+${p.roles?.length ? `<div style="font-size:calc(12px * var(--fs-mult, 1));color:#9ca3af">Role: ${p.roles.map((r) => esc(r)).join(', ')}</div>` : ''}
 ${p.description ? `<p style="color:#6b7280;margin-top:4px">${md(p.description)}</p>` : ''}
 ${p.highlights?.length ? `<ul>${p.highlights.map((h) => `<li>${md(h)}</li>`).join('')}</ul>` : ''}
 ${p.keywords?.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${p.keywords.map((k) => `<span class="sb-tag">${esc(k)}</span>`).join('')}</div>` : ''}
@@ -101,7 +101,7 @@ ${section(
       (e) => `<div class="entry">
 <div class="entry-header"><h3>${link(e.url, e.institution || '')}</h3><span class="entry-meta">${dateRange(e.startDate, e.endDate)}</span></div>
 ${e.studyType || e.area || e.score ? `<div class="entry-org">${esc(e.studyType)}${e.area ? ` in ${esc(e.area)}` : ''}${e.score ? ` (${esc(e.score)})` : ''}</div>` : ''}
-${e.courses?.length ? `<div style="margin-top:4px;font-size:12px;color:#9ca3af">Courses: ${e.courses.map((c) => esc(c)).join(', ')}</div>` : ''}
+${e.courses?.length ? `<div style="margin-top:4px;font-size:calc(12px * var(--fs-mult, 1));color:#9ca3af">Courses: ${e.courses.map((c) => esc(c)).join(', ')}</div>` : ''}
 </div>`,
     )
     .join(''),

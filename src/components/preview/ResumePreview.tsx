@@ -1,5 +1,5 @@
 import { useMemo, useRef, useCallback, useState, useEffect } from 'react';
-import { useResumeStore } from '../../store/resumeStore';
+import { useResumeStore, activeSlot } from '../../store/resumeStore';
 import { getThemeById } from '../../themes';
 import { buildCustomCss } from '../../store/themeCustomStore';
 import { useT } from '../../i18n';
@@ -10,9 +10,9 @@ const ZOOM_STEPS = [0.5, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 2];
 
 export function ResumePreview() {
   const t = useT();
-  const resume = useResumeStore((s) => s.resume);
-  const themeId = useResumeStore((s) => s.selectedThemeId);
-  const custom = useResumeStore((s) => s.customization);
+  const resume = useResumeStore((s) => activeSlot(s).resume);
+  const themeId = useResumeStore((s) => activeSlot(s).themeId);
+  const custom = useResumeStore((s) => activeSlot(s).customization);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [pageCount, setPageCount] = useState(1);

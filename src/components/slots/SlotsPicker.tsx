@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useSlotsStore, slotDisplayName } from '../../store/slotsStore';
-import { useResumeStore } from '../../store/resumeStore';
+import { useResumeStore, activeSlot, slotDisplayName } from '../../store/resumeStore';
 import { useAiStore } from '../../store/aiStore';
+import { useUndoStore } from '../../store/undoStore';
 import { useT } from '../../i18n';
 
 function formatDate(ts: number): string {
@@ -16,86 +16,62 @@ function formatDate(ts: number): string {
 
 export function SlotsPicker() {
   const t = useT();
-  const slots = useSlotsStore((s) => s.slots);
-  const activeSlotId = useSlotsStore((s) => s.activeSlotId);
-  const saveSlot = useSlotsStore((s) => s.saveSlot);
-  const updateSlot = useSlotsStore((s) => s.updateSlot);
-  const deleteSlot = useSlotsStore((s) => s.deleteSlot);
-  const renameSlot = useSlotsStore((s) => s.renameSlot);
-  const setActiveSlotId = useSlotsStore((s) => s.setActiveSlotId);
+  const slots = useResumeStore((s) => s.slots);
+  const activeSlotId = useResumeStore((s) => s.activeSlotId);
+  const saveSlot = useResumeStore((s) => s.saveSlot);
+  const duplicateSlot = useResumeStore((s) => s.duplicateSlot);
+  const deleteSlot = useResumeStore((s) => s.deleteSlot);
+  const renameSlot = useResumeStore((s) => s.renameSlot);
+  const setActiveSlotId = useResumeStore((s) => s.setActiveSlotId);
+  const updateSlotChatHistory = useResumeStore((s) => s.updateSlotChatHistory);
 
-  const resume = useResumeStore((s) => s.resume);
-  const themeId = useResumeStore((s) => s.selectedThemeId);
-  const customization = useResumeStore((s) => s.customization);
-  const setResume = useResumeStore((s) => s.setResume);
-  const setTheme = useResumeStore((s) => s.setTheme);
-  const setFullCustomization = useResumeStore((s) => s.setFullCustomization);
-  const resetCustomization = useResumeStore((s) => s.resetCustomization);
   const [open, setOpen] = useState(false);
   const [renaming, setRenaming] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
 
   const handleNew = () => {
-    // Save current slot before switching (including chat history)
+    // Save current chat history before switching
     if (activeSlotId) {
-      const chatHistory = useAiStore.getState().messages;
-      updateSlot(activeSlotId, resume, themeId, customization, chatHistory);
+      updateSlotChatHistory(activeSlotId, useAiStore.getState().messages);
     }
-    const emptyResume = { basics: { name: '', label: '', summary: '' } };
-    saveSlot('', emptyResume, 'modern');
-    setResume(emptyResume);
-    setTheme('modern');
-    resetCustomization();
+    saveSlot('');
     useAiStore.getState().clearMessages();
     setOpen(false);
   };
 
   const handleDuplicate = () => {
-    // Save current first
     if (activeSlotId) {
-      const chatHistory = useAiStore.getState().messages;
-      updateSlot(activeSlotId, resume, themeId, customization, chatHistory);
+      updateSlotChatHistory(activeSlotId, useAiStore.getState().messages);
     }
-    const chatHistory = structuredClone(useAiStore.getState().messages);
-    saveSlot('', structuredClone(resume), themeId, { ...customization }, chatHistory);
+    duplicateSlot(useAiStore.getState().messages);
     setOpen(false);
   };
 
   const handleLoad = (id: string) => {
     if (id === activeSlotId) return;
-    // Auto-save current slot before switching (including chat history)
+    // Save current chat before switching
     if (activeSlotId) {
-      const chatHistory = useAiStore.getState().messages;
-      updateSlot(activeSlotId, resume, themeId, customization, chatHistory);
+      updateSlotChatHistory(activeSlotId, useAiStore.getState().messages);
     }
-    const slot = useSlotsStore.getState().getSlot(id);
-    if (slot) {
-      setResume(slot.resume);
-      setTheme(slot.themeId);
-      setFullCustomization(slot.customization);
-      useAiStore.getState().setMessages(slot.chatHistory || []);
-      setActiveSlotId(id);
-    }
+    // Switch slot — resume data is already in the slot
+    setActiveSlotId(id);
+    // Load chat history for new slot
+    const slot = useResumeStore.getState().getSlot(id);
+    useAiStore.getState().setMessages(slot?.chatHistory || []);
     setOpen(false);
   };
 
   const handleDelete = (id: string) => {
     const wasActive = id === activeSlotId;
     deleteSlot(id);
+    useUndoStore.getState().deleteSlotHistory(id);
     if (wasActive) {
-      const state = useSlotsStore.getState();
+      const state = useResumeStore.getState();
       if (state.activeSlotId) {
         const next = state.getSlot(state.activeSlotId);
-        if (next) {
-          setResume(next.resume);
-          setTheme(next.themeId);
-          useAiStore.getState().setMessages(next.chatHistory || []);
-        }
+        useAiStore.getState().setMessages(next?.chatHistory || []);
       } else {
-        const emptyResume = { basics: { name: '', label: '', summary: '' } };
-        saveSlot('', emptyResume, 'modern');
-        setResume(emptyResume);
-        setTheme('modern');
+        saveSlot('');
         useAiStore.getState().clearMessages();
       }
     }
@@ -113,7 +89,7 @@ export function SlotsPicker() {
     setRenaming(null);
   };
 
-  const activeSlot = activeSlotId ? slots.find((s) => s.id === activeSlotId) : null;
+  const currentSlot = activeSlotId ? slots.find((s) => s.id === activeSlotId) : null;
 
   return (
     <div className="relative">
@@ -122,7 +98,7 @@ export function SlotsPicker() {
         className="text-xs px-2 py-1 border border-border rounded hover:bg-bg-hover transition-colors cursor-pointer text-text flex items-center gap-1 max-w-[100px] sm:max-w-[160px]"
       >
         <span className="truncate">
-          {activeSlot ? slotDisplayName(activeSlot) : t('slots.resumes')}
+          {currentSlot ? slotDisplayName(currentSlot) : t('slots.resumes')}
         </span>
         <span className="text-text-muted shrink-0">({slots.length})</span>
       </button>

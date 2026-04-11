@@ -3,6 +3,8 @@ import { useResumeStore } from '../../store/resumeStore';
 import type { EditorSection } from '../../store/resumeStore';
 import { useSettingsStore } from '../../store/settingsStore';
 import { useT } from '../../i18n';
+import { useUndoRedo } from '../../hooks/useUndoRedo';
+import { Undo2, Redo2 } from 'lucide-react';
 
 const AiChat = lazy(() => import('./AiChat'));
 import { BasicsForm } from './BasicsForm';
@@ -160,15 +162,25 @@ function DesktopTabBar({
   tab,
   setTab,
   t,
+  undo,
+  redo,
+  canUndo,
+  canRedo,
 }: {
   tab: Tab;
   setTab: (t: Tab) => void;
   t: ReturnType<typeof useT>;
+  undo: () => void;
+  redo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
 }) {
   const cls = (active: boolean) =>
     `px-4 py-2 text-xs font-medium cursor-pointer ${
       active ? 'text-accent-text border-b-2 border-accent' : 'text-text-tertiary hover:text-text'
     }`;
+  const undoCls =
+    'p-1.5 rounded hover:bg-bg-hover transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-default';
   return (
     <div className="hidden sm:flex border-b border-border shrink-0">
       <button onClick={() => setTab('form')} className={cls(tab === 'form')}>
@@ -186,6 +198,15 @@ function DesktopTabBar({
       <button onClick={() => setTab('auto')} className={cls(tab === 'auto')}>
         {t('editor.auto')}
       </button>
+      <div className="flex-1" />
+      <div className="flex items-center gap-0.5 pr-2">
+        <button onClick={undo} disabled={!canUndo} className={undoCls} title="Undo (Cmd+Z)">
+          <Undo2 size={14} className="text-text-muted" />
+        </button>
+        <button onClick={redo} disabled={!canRedo} className={undoCls} title="Redo (Cmd+Shift+Z)">
+          <Redo2 size={14} className="text-text-muted" />
+        </button>
+      </div>
     </div>
   );
 }
@@ -305,6 +326,7 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
   const [tab, setTab] = useState<Tab>('form');
   const [customizeOpen, setCustomizeOpen] = useState(false);
   const ActiveForm = formMap[activeSection];
+  const { undo, redo, canUndo, canRedo } = useUndoRedo();
 
   return (
     <div className="flex flex-col h-full">
@@ -316,7 +338,15 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
         onShowPreview={onShowPreview}
         t={t}
       />
-      <DesktopTabBar tab={tab} setTab={setTab} t={t} />
+      <DesktopTabBar
+        tab={tab}
+        setTab={setTab}
+        t={t}
+        undo={undo}
+        redo={redo}
+        canUndo={canUndo}
+        canRedo={canRedo}
+      />
 
       {tab === 'auto' ? (
         <div className="flex-1 flex items-center justify-center p-8">

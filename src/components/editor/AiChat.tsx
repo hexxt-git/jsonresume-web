@@ -1,9 +1,10 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useAiStore } from '../../store/aiStore';
-import { useResumeStore } from '../../store/resumeStore';
+import { useResumeStore, activeSlot } from '../../store/resumeStore';
 import { getProvider } from '../../lib/ai';
 import type { ToolCall } from '../../lib/ai';
 import { resumeToolDeclarations, executeResumeTool } from '../../lib/ai/resume-tools';
+import { captureBeforeDiscreteMutation } from '../../hooks/useUndoRedo';
 import { useT } from '../../i18n';
 import { AiKeyGate } from './AiKeyGate';
 import { AiMessageList } from './AiMessageList';
@@ -77,7 +78,7 @@ export default function AiChat() {
         const MAX_LOOPS = 10;
 
         for (let loop = 0; loop < MAX_LOOPS; loop++) {
-          const resume = useResumeStore.getState().resume;
+          const resume = activeSlot(useResumeStore.getState()).resume;
           // Always exclude the trailing empty assistant placeholder from API messages
           const allMessages = useAiStore.getState().messages;
           const apiMessages = allMessages.slice(0, -1);
@@ -109,6 +110,9 @@ export default function AiChat() {
 
           // Attach tool calls to the current assistant message
           useAiStore.getState().addToolCallsToLastAssistant(toolCalls);
+
+          // Capture snapshot before AI mutations so undo reverts the whole batch
+          captureBeforeDiscreteMutation();
 
           // Auto-execute each tool call
           for (const call of toolCalls) {
@@ -202,7 +206,7 @@ export default function AiChat() {
           {isStreaming ? (
             <button
               onClick={handleStop}
-              className="shrink-0 text-xs px-4 py-1.5 bg-danger text-white rounded-md hover:opacity-90 transition-colors cursor-pointer"
+              className="shrink-0 text-xs px-4 h-8 bg-danger text-white rounded-md hover:opacity-90 transition-colors cursor-pointer"
             >
               {t('ai.stop')}
             </button>
@@ -210,7 +214,7 @@ export default function AiChat() {
             <button
               onClick={() => handleSend(input)}
               disabled={!input.trim()}
-              className="shrink-0 text-xs px-4 py-1.5 bg-accent text-white rounded-md hover:opacity-90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="shrink-0 text-xs px-4 h-8 bg-accent text-white rounded-md hover:opacity-90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {t('ai.send')}
             </button>

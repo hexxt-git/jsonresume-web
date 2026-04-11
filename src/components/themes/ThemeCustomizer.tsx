@@ -1,4 +1,4 @@
-import { useResumeStore } from '../../store/resumeStore';
+import { useResumeStore, activeSlot } from '../../store/resumeStore';
 import { useT } from '../../i18n';
 import { Slider } from '../ui/Slider';
 import { ColorPicker } from '../ui/ColorPicker';
@@ -23,7 +23,7 @@ const FONT_OPTIONS = [
 
 export function ThemeCustomizer() {
   const t = useT();
-  const custom = useResumeStore((s) => s.customization);
+  const custom = useResumeStore((s) => activeSlot(s).customization);
   const setCustom = useResumeStore((s) => s.setCustomization);
   const resetCustom = useResumeStore((s) => s.resetCustomization);
 

@@ -1,4 +1,4 @@
-import { useResumeStore } from '../../store/resumeStore';
+import { useResumeStore, activeSlot } from '../../store/resumeStore';
 import { useT } from '../../i18n';
 import { FormField } from './FormField';
 import { ChipInput } from './ChipInput';
@@ -6,7 +6,7 @@ import { RepeatableSection } from './RepeatableSection';
 
 export function ProjectsForm() {
   const t = useT();
-  const projects = useResumeStore((s) => s.resume.projects) || [];
+  const projects = useResumeStore((s) => activeSlot(s).resume.projects) ?? [];
   const updateArraySection = useResumeStore((s) => s.updateArraySection);
 
   return (

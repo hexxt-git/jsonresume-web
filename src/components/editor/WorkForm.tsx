@@ -1,4 +1,4 @@
-import { useResumeStore } from '../../store/resumeStore';
+import { useResumeStore, activeSlot } from '../../store/resumeStore';
 import { useT } from '../../i18n';
 import { FormField } from './FormField';
 import { ChipInput } from './ChipInput';
@@ -6,7 +6,7 @@ import { RepeatableSection } from './RepeatableSection';
 
 export function WorkForm() {
   const t = useT();
-  const work = useResumeStore((s) => s.resume.work) || [];
+  const work = useResumeStore((s) => activeSlot(s).resume.work) ?? [];
   const updateArraySection = useResumeStore((s) => s.updateArraySection);
 
   return (
@@ -38,7 +38,7 @@ export function WorkForm() {
               placeholder={t('ph.company')}
             />
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <FormField
               label={t('work.startDate')}
               value={item.startDate || ''}

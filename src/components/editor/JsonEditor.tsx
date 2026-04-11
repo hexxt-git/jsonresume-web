@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import Editor, { type OnMount, type BeforeMount } from '@monaco-editor/react';
-import { useResumeStore } from '../../store/resumeStore';
+import { useResumeStore, activeSlot } from '../../store/resumeStore';
 import { useSettingsStore } from '../../store/settingsStore';
 import { useT } from '../../i18n';
 import resumeSchema from '../../utils/resumeSchema.json';
@@ -14,7 +14,7 @@ export function JsonEditor() {
     (darkMode === 'system' &&
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-color-scheme: dark)').matches);
-  const resume = useResumeStore((s) => s.resume);
+  const resume = useResumeStore((s) => activeSlot(s).resume);
   const setResume = useResumeStore((s) => s.setResume);
   const [error, setError] = useState<string | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);

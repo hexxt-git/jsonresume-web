@@ -3,15 +3,15 @@ import { ResumeEditor } from './components/editor/ResumeEditor';
 import { ResumePreview } from './components/preview/ResumePreview';
 import { ImportDialog } from './components/import-export/ImportDialog';
 import { ExportDialog } from './components/import-export/ExportDialog';
-import { useResumeStore } from './store/resumeStore';
+import { useResumeStore, activeSlot } from './store/resumeStore';
 import { useAiStore } from './store/aiStore';
 import { SlotsPicker } from './components/slots/SlotsPicker';
 import { sampleResume } from './utils/sample';
 import { parseResumeFile } from './parser';
-import { useSlotsStore } from './store/slotsStore';
 import { useSettingsStore, type ColorMode } from './store/settingsStore';
 import { useT, locales, type Locale } from './i18n';
 import { Select } from './components/ui/Select';
+import { OnboardingDialog } from './components/OnboardingDialog';
 
 const colorModeOptions = [
   { value: 'light', label: '\u2600 Light' },
@@ -217,47 +217,34 @@ function SplitPane({
 function App() {
   const [importOpen, setImportOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
-  const [mobileView, setMobileView] = useState<'editor' | 'preview'>('editor');
+  const [mobileView, setMobileView] = useState<'editor' | 'preview'>('preview');
   const t = useT();
-  const resume = useResumeStore((s) => s.resume);
+  const slot = useResumeStore((s) => activeSlot(s));
+  const resume = slot.resume;
   const setResume = useResumeStore((s) => s.setResume);
-  const themeId = useResumeStore((s) => s.selectedThemeId);
   const reset = useResumeStore((s) => s.reset);
-  const custom = useResumeStore((s) => s.customization);
-  const activeSlotId = useSlotsStore((s) => s.activeSlotId);
-  const updateSlot = useSlotsStore((s) => s.updateSlot);
-  const saveSlot = useSlotsStore((s) => s.saveSlot);
-  const slots = useSlotsStore((s) => s.slots);
+  const slots = useResumeStore((s) => s.slots);
+  const saveSlot = useResumeStore((s) => s.saveSlot);
+  const activeSlotId = useResumeStore((s) => s.activeSlotId);
+  const updateSlotChatHistory = useResumeStore((s) => s.updateSlotChatHistory);
 
   // Bootstrap: ensure at least one slot always exists
   useEffect(() => {
-    if (useSlotsStore.getState().slots.length === 0) {
-      saveSlot('', resume, themeId);
+    if (useResumeStore.getState().slots.length === 0) {
+      saveSlot('');
     }
-  }, [slots.length, saveSlot, resume, themeId]);
+  }, [slots.length, saveSlot]);
 
-  // Auto-save resume + chat history to active slot (500ms debounce).
-  // Messages read imperatively — NOT subscribed — to avoid re-renders on every streaming chunk.
-  useEffect(() => {
-    if (!activeSlotId) return;
-    const timer = setTimeout(() => {
-      const chatHistory = useAiStore.getState().messages;
-      updateSlot(activeSlotId, resume, themeId, custom, chatHistory);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [resume, themeId, custom, activeSlotId, updateSlot]);
-
-  // Save chat history when streaming ends (covers chat-only interactions that don't change the resume).
+  // Save chat history to slot when AI streaming ends
   const isStreaming = useAiStore((s) => s.isStreaming);
   const wasStreamingRef = useRef(false);
   useEffect(() => {
     if (wasStreamingRef.current && !isStreaming && activeSlotId) {
       const chatHistory = useAiStore.getState().messages;
-      const r = useResumeStore.getState();
-      updateSlot(activeSlotId, r.resume, r.selectedThemeId, r.customization, chatHistory);
+      updateSlotChatHistory(activeSlotId, chatHistory);
     }
     wasStreamingRef.current = isStreaming;
-  }, [isStreaming, activeSlotId, updateSlot]);
+  }, [isStreaming, activeSlotId, updateSlotChatHistory]);
 
   const isEmpty =
     !resume.basics?.name &&
@@ -327,6 +314,7 @@ function App() {
       </SplitPane>
 
       <ImportDialog open={importOpen} onClose={() => setImportOpen(false)} />
+      <OnboardingDialog />
     </div>
   );
 }

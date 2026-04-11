@@ -19,6 +19,11 @@ export const sampleResume: ResumeSchema = {
         username: 'zeghdani',
         url: 'https://www.linkedin.com/in/zeghdani',
       },
+      {
+        network: 'GitHub',
+        username: 'hexxt-git',
+        url: 'https://github.com/hexxt-git',
+      },
     ],
   },
   work: [

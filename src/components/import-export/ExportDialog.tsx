@@ -1,4 +1,4 @@
-import { useResumeStore } from '../../store/resumeStore';
+import { useResumeStore, activeSlot } from '../../store/resumeStore';
 import { buildCustomCss } from '../../store/themeCustomStore';
 import { useT } from '../../i18n';
 import { getThemeById } from '../../themes';
@@ -20,9 +20,9 @@ const EXT_ICONS: Record<string, string> = {
 
 export function ExportDialog({ open, onClose, onPrint }: ExportDialogProps) {
   const t = useT();
-  const resume = useResumeStore((s) => s.resume);
-  const themeId = useResumeStore((s) => s.selectedThemeId);
-  const custom = useResumeStore((s) => s.customization);
+  const resume = useResumeStore((s) => activeSlot(s).resume);
+  const themeId = useResumeStore((s) => activeSlot(s).themeId);
+  const custom = useResumeStore((s) => activeSlot(s).customization);
 
   if (!open) return null;
 

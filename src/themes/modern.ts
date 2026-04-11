@@ -7,29 +7,29 @@ function render(resume: ResumeSchema): string {
   return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(b?.name)} - ${esc(b?.label || 'Resume')}</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#333;line-height:1.6;max-width:800px;margin:0 auto;padding:48px 40px;font-size:14px}
-h1{font-size:28px;font-weight:600;color:#111;margin-bottom:4px}
-h2{font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:#999;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #eee}
-h3{font-size:15px;font-weight:600;color:#111}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#333;line-height:1.6;max-width:800px;margin:0 auto;padding:48px 40px;font-size:calc(14px * var(--fs-mult, 1))}
+h1{font-size:calc(28px * var(--fs-mult, 1));font-weight:600;color:#111;margin-bottom:4px}
+h2{font-size:calc(14px * var(--fs-mult, 1));font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:#999;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #eee}
+h3{font-size:calc(15px * var(--fs-mult, 1));font-weight:600;color:#111}
 a{color:#333;text-decoration:none}a:hover{text-decoration:underline}
-.label{color:#666;font-size:16px;margin-bottom:16px}
-.contact{display:flex;flex-wrap:wrap;gap:16px;color:#666;font-size:13px;margin-bottom:32px}
+.label{color:#666;font-size:calc(16px * var(--fs-mult, 1));margin-bottom:16px}
+.contact{display:flex;flex-wrap:wrap;gap:16px;color:#666;font-size:calc(13px * var(--fs-mult, 1));margin-bottom:32px}
 .contact a{color:#666}
 .summary{color:#555;margin-bottom:32px;line-height:1.7}
 .section{margin-bottom:28px}
 .entry{margin-bottom:20px}
 .entry-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:4px}
-.entry-meta{color:#999;font-size:13px;white-space:nowrap}
-.entry-org{color:#666;font-size:13px}
+.entry-meta{color:#999;font-size:calc(13px * var(--fs-mult, 1));white-space:nowrap}
+.entry-org{color:#666;font-size:calc(13px * var(--fs-mult, 1))}
 ul{padding-left:18px;margin-top:6px}
 li{margin-bottom:4px;color:#555}
 .skills-grid{display:flex;flex-wrap:wrap;gap:20px}
-.skill-group h3{font-size:13px;margin-bottom:6px}
+.skill-group h3{font-size:calc(13px * var(--fs-mult, 1));margin-bottom:6px}
 .skill-keywords{display:flex;flex-wrap:wrap;gap:6px}
-.skill-tag{background:#f5f5f5;padding:3px 10px;border-radius:3px;font-size:12px;color:#555}
+.skill-tag{background:#f5f5f5;padding:3px 10px;border-radius:3px;font-size:calc(12px * var(--fs-mult, 1));color:#555}
 .languages{display:flex;flex-wrap:wrap;gap:16px}
-.lang{font-size:13px;color:#555}
-@media print{body{padding:20px 24px;font-size:12px}h1{font-size:22px}.section{margin-bottom:16px}.entry{margin-bottom:12px}}
+.lang{font-size:calc(13px * var(--fs-mult, 1));color:#555}
+@media print{body{padding:20px 24px;font-size:calc(12px * var(--fs-mult, 1))}h1{font-size:calc(22px * var(--fs-mult, 1))}.section{margin-bottom:16px}.entry{margin-bottom:12px}}
 </style></head><body>
 ${b?.image ? `<img src="${esc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px">` : ''}
 ${b?.name ? `<h1>${esc(b.name)}</h1>` : ''}
@@ -49,7 +49,7 @@ ${section(
       (w) => `<div class="entry">
 <div class="entry-header"><h3>${esc(w.position)}</h3><span class="entry-meta">${dateRange(w.startDate, w.endDate)}</span></div>
 <div class="entry-org">${link(w.url, w.name || '')}${w.location ? ` - ${esc(w.location)}` : ''}</div>
-${w.description ? `<div style="font-size:12px;color:#888;font-style:italic">${md(w.description)}</div>` : ''}
+${w.description ? `<div style="font-size:calc(12px * var(--fs-mult, 1));color:#888;font-style:italic">${md(w.description)}</div>` : ''}
 ${w.summary ? `<p style="margin-top:6px;color:#555">${md(w.summary)}</p>` : ''}
 ${w.highlights?.length ? `<ul>${w.highlights.map((h) => `<li>${md(h)}</li>`).join('')}</ul>` : ''}
 </div>`,
@@ -61,8 +61,8 @@ ${section(
   (resume.projects || [])
     .map(
       (p) => `<div class="entry">
-<div class="entry-header"><h3>${link(p.url, p.name || '')}${p.entity ? `<span style="color:#888;font-size:13px"> - ${esc(p.entity)}</span>` : ''}${p.type ? `<span style="color:#999;font-size:12px"> (${esc(p.type)})</span>` : ''}</h3>${p.startDate ? `<span class="entry-meta">${dateRange(p.startDate, p.endDate)}</span>` : ''}</div>
-${p.roles?.length ? `<div style="font-size:12px;color:#888">Role: ${p.roles.map((r) => esc(r)).join(', ')}</div>` : ''}
+<div class="entry-header"><h3>${link(p.url, p.name || '')}${p.entity ? `<span style="color:#888;font-size:calc(13px * var(--fs-mult, 1))"> - ${esc(p.entity)}</span>` : ''}${p.type ? `<span style="color:#999;font-size:calc(12px * var(--fs-mult, 1))"> (${esc(p.type)})</span>` : ''}</h3>${p.startDate ? `<span class="entry-meta">${dateRange(p.startDate, p.endDate)}</span>` : ''}</div>
+${p.roles?.length ? `<div style="font-size:calc(12px * var(--fs-mult, 1));color:#888">Role: ${p.roles.map((r) => esc(r)).join(', ')}</div>` : ''}
 ${p.description ? `<p style="margin-top:4px;color:#555">${md(p.description)}</p>` : ''}
 ${p.highlights?.length ? `<ul>${p.highlights.map((h) => `<li>${md(h)}</li>`).join('')}</ul>` : ''}
 ${p.keywords?.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${p.keywords.map((k) => `<span class="skill-tag">${esc(k)}</span>`).join('')}</div>` : ''}
@@ -77,7 +77,7 @@ ${section(
       (e) => `<div class="entry">
 <div class="entry-header"><h3>${link(e.url, e.institution || '')}</h3><span class="entry-meta">${dateRange(e.startDate, e.endDate)}</span></div>
 ${e.studyType || e.area ? `<div class="entry-org">${esc(e.studyType)}${e.area ? ` in ${esc(e.area)}` : ''}${e.score ? ` (${esc(e.score)})` : ''}</div>` : ''}
-${e.courses?.length ? `<div style="margin-top:4px;font-size:12px;color:#666">Courses: ${e.courses.map((c) => esc(c)).join(', ')}</div>` : ''}
+${e.courses?.length ? `<div style="margin-top:4px;font-size:calc(12px * var(--fs-mult, 1));color:#666">Courses: ${e.courses.map((c) => esc(c)).join(', ')}</div>` : ''}
 </div>`,
     )
     .join(''),
@@ -88,7 +88,7 @@ ${section(
     ? `<div class="skills-grid">${(resume.skills || [])
         .map(
           (s) => `<div class="skill-group">
-<h3>${esc(s.name)}${s.level ? ` <span style="font-weight:normal;color:#999;font-size:smaller">- ${esc(s.level)}</span>` : ''}</h3>
+<h3>${esc(s.name)}${s.level ? ` <span style="font-weight:normal;color:#999;font-size:calc(0.833em * var(--fs-mult, 1))">- ${esc(s.level)}</span>` : ''}</h3>
 <div class="skill-keywords">${(s.keywords || []).map((k) => `<span class="skill-tag">${esc(k)}</span>`).join('')}</div>
 </div>`,
         )

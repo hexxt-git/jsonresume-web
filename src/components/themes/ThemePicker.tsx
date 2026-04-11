@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
-import { useResumeStore } from '../../store/resumeStore';
+import { useResumeStore, activeSlot } from '../../store/resumeStore';
 import { themes } from '../../themes';
 
 export function ThemePicker() {
-  const selectedThemeId = useResumeStore((s) => s.selectedThemeId);
+  const selectedThemeId = useResumeStore((s) => activeSlot(s).themeId);
   const setTheme = useResumeStore((s) => s.setTheme);
-  const resume = useResumeStore((s) => s.resume);
+  const resume = useResumeStore((s) => activeSlot(s).resume);
 
   const previews = useMemo(
     () => themes.map((t) => ({ id: t.id, name: t.name, html: t.render(resume) })),

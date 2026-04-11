@@ -56,7 +56,7 @@ export function md(str: string | undefined | null): string {
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(
       /`(.+?)`/g,
-      '<code style="font-size:0.9em;background:rgba(0,0,0,0.05);padding:1px 4px;border-radius:2px">$1</code>',
+      '<code style="font-size:calc(0.9em * var(--fs-mult, 1));background:rgba(0,0,0,0.05);padding:1px 4px;border-radius:2px">$1</code>',
     )
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
 }

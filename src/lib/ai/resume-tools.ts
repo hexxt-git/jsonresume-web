@@ -1,4 +1,4 @@
-import { useResumeStore } from '../../store/resumeStore';
+import { useResumeStore, activeSlot } from '../../store/resumeStore';
 import type { ResumeSchema } from '../../types/resume';
 import type { ToolCall, ToolDeclaration } from './types';
 
@@ -128,7 +128,7 @@ export interface ToolExecResult {
 
 export function executeResumeTool(call: ToolCall): ToolExecResult {
   const store = useResumeStore.getState();
-  const resume = store.resume;
+  const resume = activeSlot(store).resume;
 
   try {
     switch (call.name) {

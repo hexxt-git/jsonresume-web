@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAiStore } from '../../store/aiStore';
 import { getProvider } from '../../lib/ai';
 import { useT } from '../../i18n';
+import { Eye, EyeOff } from 'lucide-react';
 
 export function AiKeyGate() {
   const t = useT();
@@ -10,6 +11,7 @@ export function AiKeyGate() {
   const [input, setInput] = useState('');
   const [validating, setValidating] = useState(false);
   const [error, setError] = useState('');
+  const [showKey, setShowKey] = useState(false);
 
   const handleSave = async () => {
     const key = input.trim();
@@ -33,15 +35,24 @@ export function AiKeyGate() {
       <div className="max-w-sm w-full text-center space-y-4">
         <h3 className="text-sm font-semibold text-text">{t('ai.keyTitle')}</h3>
         <p className="text-xs text-text-muted">{t('ai.keyDesc')}</p>
-        <input
-          type="password"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSave()}
-          placeholder={t('ai.keyPlaceholder')}
-          className={inputCls}
-          autoFocus
-        />
+        <div className="relative">
+          <input
+            type={showKey ? 'text' : 'password'}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSave()}
+            placeholder={t('ai.keyPlaceholder')}
+            className={`${inputCls} pr-9`}
+            autoFocus
+          />
+          <button
+            type="button"
+            onClick={() => setShowKey(!showKey)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary cursor-pointer"
+          >
+            {showKey ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
+        </div>
         {error && <p className="text-xs text-danger">{error}</p>}
         <button
           onClick={handleSave}

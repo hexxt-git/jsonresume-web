@@ -1,4 +1,4 @@
-import { useResumeStore } from '../../store/resumeStore';
+import { useResumeStore, activeSlot } from '../../store/resumeStore';
 import { useT } from '../../i18n';
 import { FormField } from './FormField';
 import { ChipInput } from './ChipInput';
@@ -6,7 +6,7 @@ import { RepeatableSection } from './RepeatableSection';
 
 export function VolunteerForm() {
   const t = useT();
-  const items = useResumeStore((s) => s.resume.volunteer) || [];
+  const items = useResumeStore((s) => activeSlot(s).resume.volunteer) || [];
   const update = useResumeStore((s) => s.updateArraySection);
   return (
     <RepeatableSection
@@ -69,7 +69,7 @@ export function VolunteerForm() {
 
 export function AwardsForm() {
   const t = useT();
-  const items = useResumeStore((s) => s.resume.awards) || [];
+  const items = useResumeStore((s) => activeSlot(s).resume.awards) || [];
   const update = useResumeStore((s) => s.updateArraySection);
   return (
     <RepeatableSection
@@ -113,7 +113,7 @@ export function AwardsForm() {
 
 export function CertificatesForm() {
   const t = useT();
-  const items = useResumeStore((s) => s.resume.certificates) || [];
+  const items = useResumeStore((s) => activeSlot(s).resume.certificates) || [];
   const update = useResumeStore((s) => s.updateArraySection);
   return (
     <RepeatableSection
@@ -159,7 +159,7 @@ export function CertificatesForm() {
 
 export function PublicationsForm() {
   const t = useT();
-  const items = useResumeStore((s) => s.resume.publications) || [];
+  const items = useResumeStore((s) => activeSlot(s).resume.publications) || [];
   const update = useResumeStore((s) => s.updateArraySection);
   return (
     <RepeatableSection
@@ -210,7 +210,7 @@ export function PublicationsForm() {
 
 export function LanguagesForm() {
   const t = useT();
-  const items = useResumeStore((s) => s.resume.languages) || [];
+  const items = useResumeStore((s) => activeSlot(s).resume.languages) || [];
   const update = useResumeStore((s) => s.updateArraySection);
   return (
     <RepeatableSection
@@ -240,7 +240,7 @@ export function LanguagesForm() {
 
 export function InterestsForm() {
   const t = useT();
-  const items = useResumeStore((s) => s.resume.interests) || [];
+  const items = useResumeStore((s) => activeSlot(s).resume.interests) || [];
   const update = useResumeStore((s) => s.updateArraySection);
   return (
     <RepeatableSection
@@ -269,7 +269,7 @@ export function InterestsForm() {
 
 export function ReferencesForm() {
   const t = useT();
-  const items = useResumeStore((s) => s.resume.references) || [];
+  const items = useResumeStore((s) => activeSlot(s).resume.references) || [];
   const update = useResumeStore((s) => s.updateArraySection);
   return (
     <RepeatableSection

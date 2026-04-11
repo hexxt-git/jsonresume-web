@@ -28,18 +28,9 @@ export function buildCustomCss(c: ThemeCustomization): string {
   if (c.paddingMultiplier !== 1) bodyRules.push(`padding:calc(40px * ${c.paddingMultiplier})`);
   if (bodyRules.length) parts.push(`body{${bodyRules.join(';')} !important}`);
 
-  // Font size — scale ALL elements via html font-size so it cascades through
-  // elements with explicit px/em values that inherit from root
+  // Font size — set CSS custom property that all theme font-size declarations reference
   if (c.fontSizeMultiplier !== 1) {
-    const s = c.fontSizeMultiplier;
-    parts.push(
-      `html{font-size:calc(16px * ${s}) !important}` +
-        `h1{font-size:calc(1.75em * ${s}) !important}` +
-        `h2{font-size:calc(0.875em * ${s}) !important}` +
-        `h3{font-size:calc(0.9375em * ${s}) !important}` +
-        `.entry-meta,.entry-org{font-size:calc(0.8125em * ${s}) !important}` +
-        `.label,.summary,p,li,.skill-item span,.languages{font-size:calc(0.8125em * ${s}) !important}`,
-    );
+    parts.push(`:root{--fs-mult:${c.fontSizeMultiplier}}`);
   }
 
   // Line height — apply to all text containers
