@@ -5,6 +5,8 @@ import { FormField } from './FormField';
 import { RepeatableSection } from './RepeatableSection';
 import { CountryPickerPopover } from '../ui/CountryPickerPopover';
 import { useCountries, detectCountryByPhone, flagUrl } from '../../hooks/useCountries';
+import { NetworkPickerButton } from './networkIcons';
+import { UrlField } from './UrlField';
 
 export function BasicsForm() {
   const t = useT();
@@ -99,18 +101,28 @@ export function BasicsForm() {
         </div>
       </div>
       <div className="grid grid-cols-2 gap-3">
-        <FormField
+        <UrlField
           label={t('basics.url')}
           value={basics.url || ''}
           onChange={(v) => updateBasics('url', v)}
           placeholder={t('ph.url')}
         />
-        <FormField
-          label={t('basics.image')}
-          value={basics.image || ''}
-          onChange={(v) => updateBasics('image', v)}
-          placeholder={t('ph.imageUrl')}
-        />
+        <div>
+          <UrlField
+            label={t('basics.image')}
+            value={basics.image || ''}
+            onChange={(v) => updateBasics('image', v)}
+            placeholder={t('ph.imageUrl')}
+          />
+          <a
+            href="https://imgbb.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block mt-1 text-[10px] text-text-muted hover:text-accent-text"
+          >
+            Upload at imgbb.com &rarr;
+          </a>
+        </div>
       </div>
       <FormField
         label={t('basics.summary')}
@@ -178,20 +190,27 @@ export function BasicsForm() {
         onChange={(items) => updateBasics('profiles', items)}
         defaultItem={{ network: '', username: '', url: '' }}
         renderItem={(item, index, update) => (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            <FormField
-              label={t('basics.network')}
-              value={item.network || ''}
-              onChange={(v) => update(index, { ...item, network: v })}
-              placeholder={t('ph.network')}
-            />
-            <FormField
-              label={t('basics.username')}
-              value={item.username || ''}
-              onChange={(v) => update(index, { ...item, username: v })}
-              placeholder={t('ph.username')}
-            />
-            <FormField
+          <div className="space-y-2">
+            <div className="flex gap-2 items-end">
+              <div>
+                <label className="block text-xs font-medium text-text-secondary mb-1">
+                  {t('basics.network')}
+                </label>
+                <NetworkPickerButton
+                  value={item.network || ''}
+                  onChange={(v) => update(index, { ...item, network: v })}
+                />
+              </div>
+              <div className="flex-1">
+                <FormField
+                  label={t('basics.username')}
+                  value={item.username || ''}
+                  onChange={(v) => update(index, { ...item, username: v })}
+                  placeholder={t('ph.username')}
+                />
+              </div>
+            </div>
+            <UrlField
               label="URL"
               value={item.url || ''}
               onChange={(v) => update(index, { ...item, url: v })}

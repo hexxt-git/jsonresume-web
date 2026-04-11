@@ -3,6 +3,7 @@ import { useT } from '../../i18n';
 import { FormField } from './FormField';
 import { ChipInput } from './ChipInput';
 import { RepeatableSection } from './RepeatableSection';
+import { ComboField, SKILL_LEVEL_OPTIONS } from './ComboField';
 
 export function SkillsForm() {
   const t = useT();
@@ -24,10 +25,11 @@ export function SkillsForm() {
               onChange={(v) => update(index, { ...item, name: v })}
               placeholder={t('ph.skillCategory')}
             />
-            <FormField
+            <ComboField
               label={t('skills.level')}
               value={item.level || ''}
               onChange={(v) => update(index, { ...item, level: v })}
+              options={SKILL_LEVEL_OPTIONS}
               placeholder={t('ph.skillLevel')}
             />
           </div>

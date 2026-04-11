@@ -3,6 +3,7 @@ import { useT } from '../../i18n';
 import { FormField } from './FormField';
 import { ChipInput } from './ChipInput';
 import { RepeatableSection } from './RepeatableSection';
+import { ComboField, DEGREE_OPTIONS } from './ComboField';
 
 export function EducationForm() {
   const t = useT();
@@ -32,10 +33,11 @@ export function EducationForm() {
             placeholder={t('ph.institution')}
           />
           <div className="grid grid-cols-2 gap-2">
-            <FormField
+            <ComboField
               label={t('edu.degree')}
               value={item.studyType || ''}
               onChange={(v) => update(index, { ...item, studyType: v })}
+              options={DEGREE_OPTIONS}
               placeholder={t('ph.degree')}
             />
             <FormField

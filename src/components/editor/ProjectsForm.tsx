@@ -3,6 +3,7 @@ import { useT } from '../../i18n';
 import { FormField } from './FormField';
 import { ChipInput } from './ChipInput';
 import { RepeatableSection } from './RepeatableSection';
+import { UrlField } from './UrlField';
 
 export function ProjectsForm() {
   const t = useT();
@@ -24,7 +25,7 @@ export function ProjectsForm() {
               onChange={(v) => update(index, { ...item, name: v })}
               placeholder={t('ph.projectName')}
             />
-            <FormField
+            <UrlField
               label={t('projects.url')}
               value={item.url || ''}
               onChange={(v) => update(index, { ...item, url: v })}

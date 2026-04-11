@@ -3,6 +3,7 @@ import { useT } from '../../i18n';
 import { FormField } from './FormField';
 import { ChipInput } from './ChipInput';
 import { RepeatableSection } from './RepeatableSection';
+import { UrlField } from './UrlField';
 
 export function WorkForm() {
   const t = useT();
@@ -58,7 +59,7 @@ export function WorkForm() {
               placeholder={t('ph.location')}
             />
           </div>
-          <FormField
+          <UrlField
             label={t('work.url')}
             value={item.url || ''}
             onChange={(v) => update(index, { ...item, url: v })}

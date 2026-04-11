@@ -218,11 +218,13 @@ function FormContent({
   setActiveSection,
   t,
   ActiveForm,
+  onSwitchTab,
 }: {
   activeSection: EditorSection;
   setActiveSection: (s: EditorSection) => void;
   t: ReturnType<typeof useT>;
   ActiveForm: React.FC;
+  onSwitchTab: (tab: Tab) => void;
 }) {
   const idx = sectionIds.indexOf(activeSection);
   const prev = idx > 0 ? sectionIds[idx - 1] : null;
@@ -309,7 +311,12 @@ function FormContent({
               {t(`section.${next}` as Parameters<typeof t>[0])} &rarr;
             </button>
           ) : (
-            <span />
+            <button
+              onClick={() => onSwitchTab('themes')}
+              className="text-xs px-3 py-1.5 border border-border rounded hover:bg-bg-hover cursor-pointer text-text-secondary"
+            >
+              {t('editor.themes')} &rarr;
+            </button>
           )}
         </div>
       </div>
@@ -394,6 +401,7 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
           setActiveSection={setActiveSection}
           t={t}
           ActiveForm={ActiveForm}
+          onSwitchTab={setTab}
         />
       )}
     </div>

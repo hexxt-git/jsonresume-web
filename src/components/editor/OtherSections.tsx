@@ -3,6 +3,8 @@ import { useT } from '../../i18n';
 import { FormField } from './FormField';
 import { ChipInput } from './ChipInput';
 import { RepeatableSection } from './RepeatableSection';
+import { ComboField, FLUENCY_OPTIONS } from './ComboField';
+import { UrlField } from './UrlField';
 
 export function VolunteerForm() {
   const t = useT();
@@ -44,7 +46,7 @@ export function VolunteerForm() {
               placeholder={t('ph.endDate')}
             />
           </div>
-          <FormField
+          <UrlField
             label={t('work.url')}
             value={item.url || ''}
             onChange={(v) => upd(i, { ...item, url: v })}
@@ -144,7 +146,7 @@ export function CertificatesForm() {
               onChange={(v) => upd(i, { ...item, date: v })}
               placeholder={t('ph.date')}
             />
-            <FormField
+            <UrlField
               label={t('certs.url')}
               value={item.url || ''}
               onChange={(v) => upd(i, { ...item, url: v })}
@@ -190,7 +192,7 @@ export function PublicationsForm() {
               onChange={(v) => upd(i, { ...item, releaseDate: v })}
               placeholder={t('ph.date')}
             />
-            <FormField
+            <UrlField
               label={t('pubs.url')}
               value={item.url || ''}
               onChange={(v) => upd(i, { ...item, url: v })}
@@ -226,10 +228,11 @@ export function LanguagesForm() {
             onChange={(v) => upd(i, { ...item, language: v })}
             placeholder={t('ph.language')}
           />
-          <FormField
+          <ComboField
             label={t('langs.fluency')}
             value={item.fluency || ''}
             onChange={(v) => upd(i, { ...item, fluency: v })}
+            options={FLUENCY_OPTIONS}
             placeholder={t('ph.fluency')}
           />
         </div>
