@@ -37,25 +37,15 @@ export function BatchProcessing({ jobs, doneCount, failCount, onStop }: Props) {
               <span className="w-2 h-2 rounded-full bg-accent animate-pulse shrink-0" />
             )}
             {job.status === 'done' && (
-              <span
-                className="w-2 h-2 rounded-full shrink-0"
-                style={{ background: 'var(--diff-add-text)' }}
-              />
+              <span className="w-2 h-2 rounded-full shrink-0 bg-diff-add" />
             )}
             {job.status === 'failed' && (
-              <span
-                className="w-2 h-2 rounded-full shrink-0"
-                style={{ background: 'var(--diff-rm-text)' }}
-              />
+              <span className="w-2 h-2 rounded-full shrink-0 bg-diff-rm" />
             )}
             <span className="text-text-secondary truncate flex-1">
               {job.result?.jobTitle || job.jdText.slice(0, 60) + '...'}
             </span>
-            {job.status === 'failed' && (
-              <span className="text-[10px]" style={{ color: 'var(--diff-rm-text)' }}>
-                failed
-              </span>
-            )}
+            {job.status === 'failed' && <span className="text-[10px] text-diff-rm">failed</span>}
           </div>
         ))}
       </div>

@@ -85,6 +85,60 @@
   display: none;
 }
 
+/* Diff semantic colours */
+.diff-word-add {
+  background: var(--diff-add-word);
+  color: var(--diff-add-text) !important;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+.diff-word-rm {
+  background: var(--diff-rm-word);
+  color: var(--diff-rm-text) !important;
+  text-decoration: line-through;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+.text-diff-add {
+  color: var(--diff-add-text);
+}
+.text-diff-rm {
+  color: var(--diff-rm-text);
+}
+.bg-diff-add {
+  background: var(--diff-add-text);
+}
+.bg-diff-rm {
+  background: var(--diff-rm-text);
+}
+.border-diff-add {
+  border-color: var(--diff-add-word);
+}
+.diff-line-rm {
+  background: var(--diff-rm-line);
+  color: var(--diff-rm-text);
+}
+.diff-line-add {
+  background: var(--diff-add-line);
+  color: var(--diff-add-text);
+}
+@keyframes ai-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+.ai-shimmer {
+  background: linear-gradient(90deg, transparent 0%, var(--accent, #2563eb) 50%, transparent 100%);
+  opacity: 0.07;
+  animation: ai-shimmer 1.5s ease-in-out infinite;
+}
+.dark .ai-shimmer {
+  opacity: 0.1;
+}
+
 /* Markdown in AI messages */
 .markdown-content {
   & h1,

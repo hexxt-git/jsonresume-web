@@ -179,34 +179,6 @@ export function computeListDiff(oldItems: string[], newItems: string[]): ListDif
   return result;
 }
 
-/* ── Styles ──────────────────────────────────────────── */
-
-const DIFF_STYLES = `
-@keyframes ai-shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-.ai-shimmer {
-  background: linear-gradient(90deg, transparent 0%, var(--accent, #2563eb) 50%, transparent 100%);
-  opacity: 0.07;
-  animation: ai-shimmer 1.5s ease-in-out infinite;
-}
-.dark .ai-shimmer { opacity: 0.10; }
-.diff-line-rm { background: var(--diff-rm-line); color: var(--diff-rm-text); }
-.diff-line-add { background: var(--diff-add-line); color: var(--diff-add-text); }
-.diff-word-rm { background: var(--diff-rm-word); color: var(--diff-rm-text) !important; text-decoration: line-through; border-radius: 2px; padding: 0 1px; }
-.diff-word-add { background: var(--diff-add-word); color: var(--diff-add-text) !important; border-radius: 2px; padding: 0 1px; }
-`;
-
-let stylesInjected = false;
-function ensureStyles() {
-  if (stylesInjected) return;
-  stylesInjected = true;
-  const style = document.createElement('style');
-  style.textContent = DIFF_STYLES;
-  document.head.appendChild(style);
-}
-
 /* ── Render: word tokens ─────────────────────────────── */
 
 function WordTokens({ tokens }: { tokens: WordToken[] }) {
@@ -270,7 +242,6 @@ function groupLines(lines: LineDiff[]): DisplayItem[] {
 /* ── Render: inline diff (for writing tools review) ──── */
 
 export function InlineDiffView({ oldText, newText }: { oldText: string; newText: string }) {
-  ensureStyles();
   const lines = lineDiff(tryNormalize(oldText), tryNormalize(newText));
   const groups = groupLines(lines);
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
@@ -341,7 +312,6 @@ export function InlineDiffView({ oldText, newText }: { oldText: string; newText:
 /* ── Render: block diff (for AI chat tool results) ───── */
 
 export function BlockDiffView({ oldText, newText }: { oldText: string; newText: string }) {
-  ensureStyles();
   const lines = lineDiff(tryNormalize(oldText), tryNormalize(newText));
   const groups = groupLines(lines);
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
@@ -424,7 +394,6 @@ export function BlockDiffView({ oldText, newText }: { oldText: string; newText: 
 /* ── Render: list diff (for chip inputs) ─────────────── */
 
 export function ListDiffView({ items }: { items: ListDiffItem[] }) {
-  ensureStyles();
   return (
     <div className="flex flex-wrap gap-1">
       {items.map((item, i) => (

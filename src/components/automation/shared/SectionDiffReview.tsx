@@ -20,10 +20,7 @@ interface SectionDiffReviewProps {
   onRejectAll: () => void;
 }
 
-function stringify(v: unknown): string {
-  if (typeof v === 'string') return v;
-  return JSON.stringify(v, null, 2);
-}
+import { stringify } from './helpers';
 
 export function SectionDiffReview({
   changes,
@@ -112,21 +109,17 @@ export function SectionDiffReview({
               status === 'rejected'
                 ? 'border-border opacity-40'
                 : status === 'accepted'
-                  ? 'border-[var(--diff-add-word)]'
+                  ? 'border-diff-add'
                   : 'border-border'
             }`}
           >
             <div className="flex items-center justify-between px-3 py-2 bg-bg-secondary">
               <span className="text-xs font-medium text-text">{change.label}</span>
               {status === 'accepted' && (
-                <span className="text-[10px] font-medium" style={{ color: 'var(--diff-add-text)' }}>
-                  Accepted
-                </span>
+                <span className="text-[10px] font-medium text-diff-add">Accepted</span>
               )}
               {status === 'rejected' && (
-                <span className="text-[10px] font-medium" style={{ color: 'var(--diff-rm-text)' }}>
-                  Rejected
-                </span>
+                <span className="text-[10px] font-medium text-diff-rm">Rejected</span>
               )}
             </div>
             {change.explanation && (

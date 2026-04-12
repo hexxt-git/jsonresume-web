@@ -43,14 +43,12 @@ export const SECTION_DISPLAY: Record<string, string> = {
 interface AutomationStore {
   tone: Tone;
   creativity: Creativity;
-  language: string;
   coverLetterLength: CoverLetterLength;
   sectionsToTailor: string[];
   auditStrictness: AuditStrictness;
 
   setTone: (v: Tone) => void;
   setCreativity: (v: Creativity) => void;
-  setLanguage: (v: string) => void;
   setCoverLetterLength: (v: CoverLetterLength) => void;
   toggleSection: (s: string) => void;
   setAuditStrictness: (v: AuditStrictness) => void;
@@ -60,7 +58,6 @@ interface AutomationStore {
 const DEFAULTS = {
   tone: 'professional' as Tone,
   creativity: 'balanced' as Creativity,
-  language: 'English',
   coverLetterLength: 'standard' as CoverLetterLength,
   sectionsToTailor: [...ALL_SECTIONS] as string[],
   auditStrictness: 'standard' as AuditStrictness,
@@ -73,7 +70,6 @@ export const useAutomationStore = create<AutomationStore>()(
 
       setTone: (tone) => set({ tone }),
       setCreativity: (creativity) => set({ creativity }),
-      setLanguage: (language) => set({ language }),
       setCoverLetterLength: (coverLetterLength) => set({ coverLetterLength }),
       toggleSection: (s) =>
         set((state) => ({
@@ -90,9 +86,9 @@ export const useAutomationStore = create<AutomationStore>()(
 
 /* ── Prompt helpers ───────────────────────────────────────── */
 
-/** Core directives (tone, creativity, language) — append to any system prompt. */
+/** Core directives (tone, creativity) — append to any system prompt. */
 export function getPromptDirectives(): string {
-  const { tone, creativity, language } = useAutomationStore.getState();
+  const { tone, creativity } = useAutomationStore.getState();
   const parts: string[] = [
     'CRITICAL: Never use placeholder text like [Company Name], [Your Name], [Position Title], [Hiring Manager], etc. If a detail is not provided in the job description or resume, use pronouns (your company, the team, this role) or omit the reference entirely. The output must be ready to send as-is with zero manual editing of placeholders.',
   ];
@@ -107,8 +103,6 @@ export function getPromptDirectives(): string {
     );
   else if (creativity === 'creative')
     parts.push('Suggest creative rewording and bold improvements where appropriate.');
-
-  if (language !== 'English') parts.push(`Write all output in ${language}.`);
 
   return '\n' + parts.join(' ');
 }
