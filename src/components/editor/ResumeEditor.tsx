@@ -6,10 +6,10 @@ import { useT } from '../../i18n';
 import { useUndoRedo } from '../../hooks/useUndoRedo';
 import { Undo2, Redo2 } from 'lucide-react';
 
-const AiChat = lazy(() => import('./AiChat'));
+const AiChat = lazy(() => import('../ai/AiChat'));
 const JsonEditor = lazy(() => import('./JsonEditor'));
 const AutomationHub = lazy(() => import('../automation/AutomationHub'));
-import { AiGate, AiProviderSettings } from './AiKeyGate';
+import { AiGate, AiProviderSettings } from '../ai/AiKeyGate';
 import { ErrorBoundary } from '../ErrorBoundary';
 
 function LazyFallback() {

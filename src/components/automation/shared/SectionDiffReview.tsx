@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BlockDiffView } from '../../editor/DiffView';
+import { BlockDiffView } from '../../ai/DiffView';
 import { TickCircle, CloseCircle } from 'iconsax-react';
 
 export interface SectionChange {

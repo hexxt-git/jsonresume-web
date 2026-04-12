@@ -1,8 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { ToolShell } from '../shared/ToolShell';
 import { useAiStream } from '../shared/useAiStream';
-import { CopyableOutput } from '../shared/CopyableOutput';
-import { BlockDiffView } from '../../editor/DiffView';
 import { useResumeStore, activeSlot } from '../../../store/resumeStore';
 import { captureBeforeDiscreteMutation } from '../../../hooks/useUndoRedo';
 import { getProvider } from '../../../lib/ai';
@@ -14,15 +12,20 @@ import { saveAs } from 'file-saver';
 import YAML from 'yaml';
 import { getThemeById } from '../../../themes';
 import { buildCustomCss } from '../../../store/themeCustomStore';
+import { Stepper } from '../shared/Stepper';
+import { AutomationSettings, SettingsFooterButton } from '../shared/AutomationSettings';
+import {
+  getPromptDirectives,
+  getSectionDirective,
+  getCoverLetterDirective,
+} from '../../../store/automationStore';
+import type { BatchJob } from './types';
+import { BatchInputStep } from './BatchInputStep';
+import { BatchProcessing } from './BatchProcessing';
+import { BatchResultCard } from './BatchResultCard';
+import { BatchFailedCard } from './BatchFailedCard';
 
-interface BatchJob {
-  id: string;
-  jdText: string;
-  status: 'pending' | 'processing' | 'done' | 'failed';
-  result?: { jobTitle: string; tailoredResume: ResumeSchema };
-  coverLetter?: string;
-  error?: string;
-}
+/* ── Helpers ──────────────────────────────────────────────── */
 
 type Step = 'input' | 'processing' | 'results';
 
@@ -33,25 +36,64 @@ function splitJds(text: string): string[] {
     .filter((s) => s.length > 20);
 }
 
-import { JdInput } from '../shared/JdInput';
-import { Stepper } from '../shared/Stepper';
+/* ── Prompts ──────────────────────────────────────────────── */
 
-const TAILOR_SYSTEM = `You are a resume tailoring expert. You will receive a resume and a job description.
+const CURRENT_DATE = new Date().toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const TAILOR_SYSTEM = `You are a resume tailoring expert. Today is ${CURRENT_DATE} (${new Date().getFullYear()}).
+You will receive a resume and a job description.
 Use your tools to tailor the resume. For replace_section, include ALL entries.
 Focus on keywords, bullet points, and summary. Do NOT fabricate experience.`;
 
-const TITLE_SYSTEM = `Extract the job title and company from this job description. Return ONLY JSON: {"title":"...","company":"..."}. No markdown.`;
+function buildTitleSystem(resume: ResumeSchema): string {
+  const profile = [
+    resume.basics?.label,
+    resume.basics?.summary?.slice(0, 120),
+    resume.skills?.map((s) => s.keywords?.join(', ')).join('; '),
+  ]
+    .filter(Boolean)
+    .join('. ');
+  return `Today is ${CURRENT_DATE} (${new Date().getFullYear()}). Extract the job title and company from the text, and check if it is a real job posting relevant to the candidate.
+Candidate profile: ${profile}
+Return ONLY JSON: {"title":"...","company":"...","relevant":true/false,"reason":"..."}. No markdown.
+Set relevant=false if: the text is not a job description, the role is for a completely unrelated field, or the text is gibberish/spam.`;
+}
+
+/* ── Component ────────────────────────────────────────────── */
 
 export default function BatchTailoringTool({ onBack }: { onBack: () => void }) {
   const [step, setStep] = useState<Step>('input');
   const [rawInput, setRawInput] = useState('');
   const [jobs, setJobs] = useState<BatchJob[]>([]);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [originalResume, setOriginalResume] = useState<ResumeSchema | null>(null);
   const [generatingCL, setGeneratingCL] = useState<string | null>(null);
   const abortRef = useRef(false);
   const { run, error } = useAiStream();
 
   const detectedJds = rawInput.trim() ? splitJds(rawInput) : [];
+
+  /* ── Preview HTML memoization ──────────────────────────── */
+
+  const previewHtmls = useMemo(() => {
+    if (step !== 'results') return {};
+    const slot = activeSlot(useResumeStore.getState());
+    const theme = getThemeById(slot.themeId);
+    const css = buildCustomCss(slot.customization);
+    const map: Record<string, string> = {};
+    for (const job of jobs) {
+      if (job.status === 'done' && job.result) {
+        map[job.id] = theme.render(job.result.tailoredResume, css);
+      }
+    }
+    return map;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, jobs]);
+
+  /* ── Handlers ───────────────────────────────────────────── */
 
   const handleStart = async () => {
     const jds = splitJds(rawInput);
@@ -66,7 +108,8 @@ export default function BatchTailoringTool({ onBack }: { onBack: () => void }) {
     abortRef.current = false;
 
     const slot = activeSlot(useResumeStore.getState());
-    const originalResume = structuredClone(slot.resume);
+    const origResume = structuredClone(slot.resume);
+    setOriginalResume(origResume);
     const { apiKeys, provider, model } = useAiStore.getState();
     const key = apiKeys[provider] || '';
     const providerObj = getProvider(provider);
@@ -83,7 +126,7 @@ export default function BatchTailoringTool({ onBack }: { onBack: () => void }) {
           const titleStream = providerObj.streamChat(
             key,
             [{ id: '1', role: 'user', content: job.jdText, timestamp: Date.now() }],
-            TITLE_SYSTEM,
+            buildTitleSystem(origResume),
             undefined,
             model,
           );
@@ -96,12 +139,16 @@ export default function BatchTailoringTool({ onBack }: { onBack: () => void }) {
               .replace(/^```(?:json)?\s*\n?/i, '')
               .replace(/\n?```\s*$/, ''),
           );
+          if (parsed.relevant === false) {
+            throw new Error(parsed.reason || 'Job description is not relevant to your profile');
+          }
           jobTitle = [parsed.title, parsed.company].filter(Boolean).join(' at ') || jobTitle;
-        } catch {
-          /* default title */
+        } catch (titleErr) {
+          if (titleErr instanceof Error && titleErr.message.includes('not relevant'))
+            throw titleErr;
         }
 
-        const clonedResume = structuredClone(originalResume);
+        const clonedResume = structuredClone(origResume);
         const messages: any[] = [
           {
             id: '1',
@@ -119,7 +166,10 @@ export default function BatchTailoringTool({ onBack }: { onBack: () => void }) {
           const stream = providerObj.streamChat(
             key,
             messages,
-            TAILOR_SYSTEM + `\n\nResume:\n\`\`\`json\n${JSON.stringify(tailored, null, 2)}\n\`\`\``,
+            TAILOR_SYSTEM +
+              getSectionDirective() +
+              getPromptDirectives() +
+              `\n\nResume:\n\`\`\`json\n${JSON.stringify(tailored, null, 2)}\n\`\`\``,
             resumeToolDeclarations,
             model,
           );
@@ -228,7 +278,7 @@ export default function BatchTailoringTool({ onBack }: { onBack: () => void }) {
     setGeneratingCL(job.id);
     try {
       const cl = await run(
-        `Write a professional cover letter for this job based on the candidate's tailored resume. No markdown headers.\n\nResume:\n${JSON.stringify(job.result.tailoredResume, null, 2)}`,
+        `Write a professional cover letter for this job based on the candidate's tailored resume. No markdown headers.${getCoverLetterDirective()}${getPromptDirectives()}\n\nResume:\n${JSON.stringify(job.result.tailoredResume, null, 2)}`,
         `Job Description:\n${job.jdText}`,
       );
       setJobs((prev) => prev.map((j) => (j.id === job.id ? { ...j, coverLetter: cl } : j)));
@@ -241,24 +291,31 @@ export default function BatchTailoringTool({ onBack }: { onBack: () => void }) {
   const doneCount = jobs.filter((j) => j.status === 'done').length;
   const failCount = jobs.filter((j) => j.status === 'failed').length;
 
+  /* ── Render ─────────────────────────────────────────────── */
+
   return (
     <ToolShell
       title="Batch Tailoring"
       onBack={onBack}
+      headerExtra={<AutomationSettings />}
       footer={
         step === 'input' ? (
-          <button
-            onClick={handleStart}
-            disabled={!detectedJds.length}
-            className="w-full text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer disabled:opacity-50"
-          >
-            Start Batch{detectedJds.length > 0 ? ` (${detectedJds.length})` : ''}
-          </button>
+          <div className="flex gap-2">
+            <SettingsFooterButton />
+            <button
+              onClick={handleStart}
+              disabled={!detectedJds.length}
+              className="flex-1 text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer disabled:opacity-50"
+            >
+              Start Batch{detectedJds.length > 0 ? ` (${detectedJds.length})` : ''}
+            </button>
+          </div>
         ) : step === 'results' ? (
           <button
             onClick={() => {
               setStep('input');
               setJobs([]);
+              setOriginalResume(null);
             }}
             className="w-full text-xs py-2.5 border border-border rounded-lg hover:bg-bg-hover cursor-pointer text-text-secondary"
           >
@@ -277,94 +334,27 @@ export default function BatchTailoringTool({ onBack }: { onBack: () => void }) {
           <div className="text-xs text-danger bg-danger/10 rounded-md px-3 py-2">{error}</div>
         )}
 
-        {/* Input */}
         {step === 'input' && (
-          <div className="space-y-3">
-            <p className="text-xs text-text-secondary">
-              Paste or upload multiple job descriptions separated by --- or blank lines. Each will
-              be tailored as a separate resume.
-            </p>
-            <JdInput
-              value={rawInput}
-              onChange={setRawInput}
-              rows={10}
-              label="Job Descriptions"
-              placeholder={
-                'Paste multiple job descriptions.\nSeparate them with --- or === or blank lines.'
-              }
-            />
-            {detectedJds.length > 0 && (
-              <p className="text-[10px] text-text-muted">
-                <span className="text-accent font-medium">{detectedJds.length}</span> job
-                description{detectedJds.length !== 1 ? 's' : ''} detected
-              </p>
-            )}
-          </div>
+          <BatchInputStep
+            rawInput={rawInput}
+            onChange={setRawInput}
+            detectedCount={detectedJds.length}
+          />
         )}
 
-        {/* Processing */}
         {step === 'processing' && (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-text-muted">
-                Processing {doneCount + failCount} of {jobs.length}...
-              </span>
-              <button
-                onClick={() => {
-                  abortRef.current = true;
-                }}
-                className="text-[10px] text-danger hover:underline cursor-pointer"
-              >
-                Stop
-              </button>
-            </div>
-            <div className="h-1.5 bg-border rounded-full overflow-hidden">
-              <div
-                className="h-full bg-accent rounded-full transition-all"
-                style={{ width: `${((doneCount + failCount) / jobs.length) * 100}%` }}
-              />
-            </div>
-            <div className="space-y-1">
-              {jobs.map((job) => (
-                <div
-                  key={job.id}
-                  className="flex items-center gap-2 px-3 py-1.5 border border-border rounded-md text-xs"
-                >
-                  {job.status === 'pending' && (
-                    <span className="w-2 h-2 rounded-full bg-border shrink-0" />
-                  )}
-                  {job.status === 'processing' && (
-                    <span className="w-2 h-2 rounded-full bg-accent animate-pulse shrink-0" />
-                  )}
-                  {job.status === 'done' && (
-                    <span
-                      className="w-2 h-2 rounded-full shrink-0"
-                      style={{ background: 'var(--diff-add-text)' }}
-                    />
-                  )}
-                  {job.status === 'failed' && (
-                    <span
-                      className="w-2 h-2 rounded-full shrink-0"
-                      style={{ background: 'var(--diff-rm-text)' }}
-                    />
-                  )}
-                  <span className="text-text-secondary truncate flex-1">
-                    {job.result?.jobTitle || job.jdText.slice(0, 60) + '...'}
-                  </span>
-                  {job.status === 'failed' && (
-                    <span className="text-[10px]" style={{ color: 'var(--diff-rm-text)' }}>
-                      failed
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+          <BatchProcessing
+            jobs={jobs}
+            doneCount={doneCount}
+            failCount={failCount}
+            onStop={() => {
+              abortRef.current = true;
+            }}
+          />
         )}
 
-        {/* Results */}
         {step === 'results' && (
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-xs text-text-muted">
                 <span style={{ color: 'var(--diff-add-text)' }}>{doneCount} succeeded</span>
@@ -372,76 +362,28 @@ export default function BatchTailoringTool({ onBack }: { onBack: () => void }) {
                   <span style={{ color: 'var(--diff-rm-text)' }}> · {failCount} failed</span>
                 )}
               </span>
-              <span className="text-[10px] text-text-muted">&nbsp;</span>
             </div>
 
             {jobs
               .filter((j) => j.status === 'done')
               .map((job) => (
-                <div key={job.id} className="border border-border rounded-lg overflow-hidden">
-                  <div className="flex items-center justify-between px-3 py-2 bg-bg-secondary">
-                    <span className="text-xs font-medium text-text">{job.result!.jobTitle}</span>
-                  </div>
-                  <div className="px-3 py-2 flex flex-wrap gap-1.5">
-                    <button
-                      onClick={() => setExpandedId(expandedId === job.id ? null : job.id)}
-                      className="text-[10px] px-2 py-1 bg-bg-tertiary rounded text-text-muted hover:text-text-secondary cursor-pointer"
-                    >
-                      {expandedId === job.id ? 'Hide diff' : 'Preview'}
-                    </button>
-                    {['json', 'yaml', 'html'].map((fmt) => (
-                      <button
-                        key={fmt}
-                        onClick={() =>
-                          handleDownload(job.result!.tailoredResume, job.result!.jobTitle, fmt)
-                        }
-                        className="text-[10px] px-2 py-1 bg-bg-tertiary rounded text-text-muted hover:text-text-secondary cursor-pointer uppercase"
-                      >
-                        {fmt}
-                      </button>
-                    ))}
-                    <button
-                      onClick={() => handleSetCurrent(job.result!.tailoredResume)}
-                      className="text-[10px] px-2 py-1 rounded bg-accent/10 text-accent hover:bg-accent/20 cursor-pointer"
-                    >
-                      Set as current
-                    </button>
-                    <button
-                      onClick={() => handleSaveSlot(job)}
-                      className="text-[10px] px-2 py-1 rounded bg-accent/10 text-accent hover:bg-accent/20 cursor-pointer"
-                    >
-                      Save as slot
-                    </button>
-                    <button
-                      onClick={() => handleGenerateCL(job)}
-                      disabled={generatingCL === job.id}
-                      className="text-[10px] px-2 py-1 bg-bg-tertiary rounded text-text-muted hover:text-text-secondary cursor-pointer disabled:opacity-50"
-                    >
-                      {generatingCL === job.id
-                        ? '...'
-                        : job.coverLetter
-                          ? 'Redo CL'
-                          : 'Cover letter'}
-                    </button>
-                  </div>
-                  {expandedId === job.id && (
-                    <div className="px-3 pb-3">
-                      <BlockDiffView
-                        oldText={JSON.stringify(
-                          activeSlot(useResumeStore.getState()).resume,
-                          null,
-                          2,
-                        )}
-                        newText={JSON.stringify(job.result!.tailoredResume, null, 2)}
-                      />
-                    </div>
-                  )}
-                  {job.coverLetter && (
-                    <div className="px-3 pb-3">
-                      <CopyableOutput content={job.coverLetter} label="Cover Letter" />
-                    </div>
-                  )}
-                </div>
+                <BatchResultCard
+                  key={job.id}
+                  job={job}
+                  previewHtml={previewHtmls[job.id] || ''}
+                  originalResume={originalResume!}
+                  generatingCL={generatingCL === job.id}
+                  onSetCurrent={handleSetCurrent}
+                  onSaveSlot={handleSaveSlot}
+                  onDownload={handleDownload}
+                  onGenerateCL={handleGenerateCL}
+                />
+              ))}
+
+            {jobs
+              .filter((j) => j.status === 'failed')
+              .map((job) => (
+                <BatchFailedCard key={job.id} job={job} />
               ))}
           </div>
         )}

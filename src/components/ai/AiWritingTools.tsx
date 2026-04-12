@@ -11,7 +11,7 @@ import {
   TickCircle,
   CloseCircle,
 } from 'iconsax-react';
-import { useGoToAi } from './EditorContext';
+import { useGoToAi } from '../editor/EditorContext';
 import { useResumeStore, activeSlot } from '../../store/resumeStore';
 import { InlineDiffView, ListDiffView, computeListDiff } from './DiffView';
 

@@ -1,14 +1,23 @@
 import { useState } from 'react';
 import { ToolShell } from '../shared/ToolShell';
 import { useAiStream } from '../shared/useAiStream';
-import { CopyableOutput } from '../shared/CopyableOutput';
-import { JdInput } from '../shared/JdInput';
+import { AutomationSettings, SettingsFooterButton } from '../shared/AutomationSettings';
+import { getPromptDirectives, getCoverLetterDirective } from '../../../store/automationStore';
 import { Stepper } from '../shared/Stepper';
+import { JdContextStep } from './JdContextStep';
+import { ContentTabs } from './ContentTabs';
+import { CoverLetterTab } from './CoverLetterTab';
+import { QuestionsTab } from './QuestionsTab';
+import { EmailTab } from './EmailTab';
 
 type Tab = 'cover-letter' | 'questions' | 'email';
 type Phase = 'context' | 'questions';
 
-const EMAIL_TYPES = ['Follow-up', 'Thank You', 'Inquiry', 'Negotiation'];
+const CURRENT_DATE = new Date().toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
 
 export default function ApplicationHelpTool({ onBack }: { onBack: () => void }) {
   const { run, runStreaming, isRunning, error, setError } = useAiStream();
@@ -30,7 +39,7 @@ export default function ApplicationHelpTool({ onBack }: { onBack: () => void }) 
     setCoverLetter('');
     setError(null);
     await runStreaming(
-      `You are an expert cover letter writer. Write a cover letter for the job below based on the candidate's resume. Write flowing paragraphs, not bullet points. No markdown headers.\n\nResume:\n${resumeCtx()}`,
+      `You are an expert cover letter writer. Today is ${CURRENT_DATE} (${new Date().getFullYear()}). Write a cover letter for the job below based on the candidate's resume. Write flowing paragraphs, not bullet points. No markdown headers.${getCoverLetterDirective()}${getPromptDirectives()}\n\nResume:\n${resumeCtx()}`,
       `Job Description:\n${jd}\n\nWrite the cover letter.`,
       (text) => setCoverLetter(text),
     );
@@ -41,7 +50,7 @@ export default function ApplicationHelpTool({ onBack }: { onBack: () => void }) 
     setError(null);
     try {
       const result = await run(
-        `You are a career consultant. Answer application questions based on the candidate's resume and job description. Return ONLY valid JSON array (no markdown fences): [{"question":"...","answer":"..."},...].\n\nResume:\n${resumeCtx()}\n\nJob Description:\n${jd}`,
+        `You are a career consultant. Today is ${CURRENT_DATE} (${new Date().getFullYear()}). Answer application questions based on the candidate's resume and job description. Return ONLY valid JSON array (no markdown fences): [{"question":"...","answer":"..."},...].${getPromptDirectives()}\n\nResume:\n${resumeCtx()}\n\nJob Description:\n${jd}`,
         `Answer these application questions:\n${questionList.map((q, i) => `${i + 1}. ${q}`).join('\n')}`,
       );
       const cleaned = result.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/, '');
@@ -56,18 +65,18 @@ export default function ApplicationHelpTool({ onBack }: { onBack: () => void }) 
     setEmailDraft('');
     setError(null);
     await runStreaming(
-      `You are a professional email writer. Draft a ${emailType.toLowerCase()} email related to a job application. Base it on the candidate's resume and job description. Keep it concise and professional.\n\nResume:\n${resumeCtx()}\n\nJob Description:\n${jd}`,
+      `You are a professional email writer. Today is ${CURRENT_DATE} (${new Date().getFullYear()}). Draft a ${emailType.toLowerCase()} email related to a job application. Base it on the candidate's resume and job description. Keep it concise and professional.${getPromptDirectives()}\n\nResume:\n${resumeCtx()}\n\nJob Description:\n${jd}`,
       `Write a ${emailType.toLowerCase()} email.${emailContext ? `\n\nAdditional context: ${emailContext}` : ''}`,
       (text) => setEmailDraft(text),
     );
   };
 
-  const footerButton =
+  const actionButton =
     phase === 'context' ? (
       <button
         onClick={() => setPhase('questions')}
         disabled={!jd.trim()}
-        className="w-full text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer disabled:opacity-50"
+        className="flex-1 text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer disabled:opacity-50"
       >
         Continue
       </button>
@@ -75,7 +84,7 @@ export default function ApplicationHelpTool({ onBack }: { onBack: () => void }) 
       <button
         onClick={handleCoverLetter}
         disabled={isRunning}
-        className="w-full text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer disabled:opacity-50"
+        className="flex-1 text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer disabled:opacity-50"
       >
         {isRunning ? 'Generating...' : 'Generate Cover Letter'}
       </button>
@@ -83,7 +92,7 @@ export default function ApplicationHelpTool({ onBack }: { onBack: () => void }) 
       <button
         onClick={handleQuestions}
         disabled={!questionList.length || isRunning}
-        className="w-full text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer disabled:opacity-50"
+        className="flex-1 text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer disabled:opacity-50"
       >
         {isRunning ? 'Generating...' : 'Generate Answers'}
       </button>
@@ -91,16 +100,24 @@ export default function ApplicationHelpTool({ onBack }: { onBack: () => void }) 
       <button
         onClick={handleEmail}
         disabled={isRunning}
-        className="w-full text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer disabled:opacity-50"
+        className="flex-1 text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer disabled:opacity-50"
       >
         {isRunning ? 'Drafting...' : 'Draft Email'}
       </button>
     );
 
+  const footerButton = (
+    <div className="flex gap-2">
+      <SettingsFooterButton />
+      {actionButton}
+    </div>
+  );
+
   return (
     <ToolShell
       title="Application Help"
       onBack={phase === 'questions' ? () => setPhase('context') : onBack}
+      headerExtra={<AutomationSettings />}
       footer={footerButton}
     >
       <div className="p-4 space-y-5">
@@ -113,134 +130,33 @@ export default function ApplicationHelpTool({ onBack }: { onBack: () => void }) 
           <div className="text-xs text-danger bg-danger/10 rounded-md px-3 py-2">{error}</div>
         )}
 
-        {/* Step 1: Context */}
-        {phase === 'context' && (
-          <div className="space-y-3">
-            <p className="text-xs text-text-secondary">
-              Provide the job description for the position you're applying to. This helps generate
-              more relevant and targeted content.
-            </p>
-            <JdInput value={jd} onChange={setJd} rows={10} />
-          </div>
-        )}
+        {phase === 'context' && <JdContextStep jd={jd} onChange={setJd} />}
 
-        {/* Step 2: Generate */}
         {phase === 'questions' && (
           <>
-            {/* Tabs */}
-            <div className="flex gap-4 border-b border-border">
-              {(
-                [
-                  ['cover-letter', 'Cover Letter'],
-                  ['questions', 'Questions'],
-                  ['email', 'Email'],
-                ] as const
-              ).map(([id, label]) => (
-                <button
-                  key={id}
-                  onClick={() => setTab(id)}
-                  className={`pb-2 text-xs cursor-pointer transition-colors ${
-                    tab === id
-                      ? 'text-accent border-b-2 border-accent font-medium'
-                      : 'text-text-muted hover:text-text-secondary'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-
-            {/* Cover Letter */}
-            {tab === 'cover-letter' && (
-              <div className="space-y-4">
-                {!coverLetter && (
-                  <p className="text-xs text-text-tertiary">
-                    A cover letter introduces you to the employer, highlights your fit for the role,
-                    and shows personality beyond your resume. Click generate below to create one
-                    tailored to the job.
-                  </p>
-                )}
-                {coverLetter && <CopyableOutput content={coverLetter} label="Cover Letter" />}
-              </div>
-            )}
-
-            {/* Questions */}
+            <ContentTabs active={tab} onChange={setTab} />
+            {tab === 'cover-letter' && <CoverLetterTab content={coverLetter} />}
             {tab === 'questions' && (
-              <div className="space-y-4">
-                <div className="border border-border-input bg-bg-input rounded-lg p-2 focus-within:ring-1 focus-within:ring-accent focus-within:border-accent space-y-1.5">
-                  {questionList.map((q, i) => (
-                    <div
-                      key={i}
-                      className="flex items-start gap-1.5 bg-bg-tertiary rounded px-2 py-1.5 text-xs text-text"
-                    >
-                      <span className="flex-1">{q}</span>
-                      <button
-                        type="button"
-                        onClick={() => setQuestionList(questionList.filter((_, j) => j !== i))}
-                        className="shrink-0 text-text-muted hover:text-text-secondary cursor-pointer"
-                      >
-                        &times;
-                      </button>
-                    </div>
-                  ))}
-                  <input
-                    value={questionInput}
-                    onChange={(e) => setQuestionInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && questionInput.trim()) {
-                        e.preventDefault();
-                        setQuestionList([...questionList, questionInput.trim()]);
-                        setQuestionInput('');
-                      }
-                    }}
-                    placeholder={
-                      questionList.length === 0
-                        ? 'Type a question and press Enter...'
-                        : 'Add another question...'
-                    }
-                    className="w-full text-xs outline-none bg-transparent text-text px-1 py-0.5"
-                  />
-                </div>
-                {answers.length > 0 && (
-                  <div className="space-y-3">
-                    {answers.map((a, i) => (
-                      <div key={i}>
-                        <p className="text-xs font-medium text-text mb-1">{a.question}</p>
-                        <CopyableOutput content={a.answer} format="plain" />
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <QuestionsTab
+                questionList={questionList}
+                questionInput={questionInput}
+                answers={answers}
+                onAddQuestion={(q) => {
+                  setQuestionList([...questionList, q]);
+                  setQuestionInput('');
+                }}
+                onRemoveQuestion={(i) => setQuestionList(questionList.filter((_, j) => j !== i))}
+                onInputChange={setQuestionInput}
+              />
             )}
-
-            {/* Email */}
             {tab === 'email' && (
-              <div className="space-y-4">
-                <div className="flex gap-2 flex-wrap">
-                  {EMAIL_TYPES.map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => setEmailType(t)}
-                      className={`text-[10px] px-3 py-1 rounded-full cursor-pointer transition-colors ${
-                        emailType === t
-                          ? 'bg-accent text-white'
-                          : 'border border-border text-text-secondary hover:bg-bg-hover'
-                      }`}
-                    >
-                      {t}
-                    </button>
-                  ))}
-                </div>
-                <textarea
-                  value={emailContext}
-                  onChange={(e) => setEmailContext(e.target.value)}
-                  placeholder="Additional context (optional)..."
-                  rows={2}
-                  className="w-full px-3 py-2 text-xs border border-border-input bg-bg-input text-text rounded-lg focus:outline-none focus:ring-1 focus:ring-accent resize-y"
-                />
-                {emailDraft && <CopyableOutput content={emailDraft} label="Email Draft" />}
-              </div>
+              <EmailTab
+                emailType={emailType}
+                emailContext={emailContext}
+                emailDraft={emailDraft}
+                onTypeChange={setEmailType}
+                onContextChange={setEmailContext}
+              />
             )}
           </>
         )}
