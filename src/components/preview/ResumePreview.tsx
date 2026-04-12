@@ -145,7 +145,7 @@ export function ResumePreview() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-bg-secondary shrink-0">
+      <div className="flex items-center justify-between px-3 py-2 bg-bg-secondary shrink-0">
         <span className="text-xs font-medium text-text-muted uppercase tracking-wide">
           {t('app.preview')}
         </span>

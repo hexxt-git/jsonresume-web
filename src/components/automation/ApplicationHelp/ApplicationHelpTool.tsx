@@ -6,7 +6,7 @@ import { JdInput } from '../shared/JdInput';
 import { Stepper } from '../shared/Stepper';
 
 type Tab = 'cover-letter' | 'questions' | 'email';
-type Phase = 'context' | 'generate';
+type Phase = 'context' | 'questions';
 
 const EMAIL_TYPES = ['Follow-up', 'Thank You', 'Inquiry', 'Negotiation'];
 
@@ -65,7 +65,7 @@ export default function ApplicationHelpTool({ onBack }: { onBack: () => void }) 
   const footerButton =
     phase === 'context' ? (
       <button
-        onClick={() => setPhase('generate')}
+        onClick={() => setPhase('questions')}
         disabled={!jd.trim()}
         className="w-full text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer disabled:opacity-50"
       >
@@ -100,12 +100,12 @@ export default function ApplicationHelpTool({ onBack }: { onBack: () => void }) 
   return (
     <ToolShell
       title="Application Help"
-      onBack={phase === 'generate' ? () => setPhase('context') : onBack}
+      onBack={phase === 'questions' ? () => setPhase('context') : onBack}
       footer={footerButton}
     >
       <div className="p-4 space-y-5">
         <Stepper
-          steps={['Job Description', 'Generate']}
+          steps={['Job Description', 'Questions']}
           currentIndex={phase === 'context' ? 0 : 1}
         />
 
@@ -125,7 +125,7 @@ export default function ApplicationHelpTool({ onBack }: { onBack: () => void }) 
         )}
 
         {/* Step 2: Generate */}
-        {phase === 'generate' && (
+        {phase === 'questions' && (
           <>
             {/* Tabs */}
             <div className="flex gap-4 border-b border-border">

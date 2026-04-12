@@ -10,25 +10,25 @@ const TOOLS = [
   {
     id: 'job-tailoring',
     title: 'Job Tailoring',
-    description: 'Tailor your resume for a specific job posting',
+    desc: 'Analyze keywords, score match, and rewrite sections to fit a specific job description.',
     icon: Magicpen,
   },
   {
     id: 'application-help',
     title: 'Application Help',
-    description: 'Cover letters, application questions, and follow-up emails',
+    desc: 'Generate cover letters, answer application questions, and draft follow-up emails.',
     icon: DocumentText1,
   },
   {
     id: 'batch-tailoring',
     title: 'Batch Tailoring',
-    description: 'Tailor for multiple jobs at once',
+    desc: 'Paste multiple job descriptions and get a tailored resume for each, ready to download.',
     icon: Layer,
   },
   {
     id: 'resume-audit',
     title: 'General ATS Audit',
-    description: 'ATS compatibility score and improvement suggestions',
+    desc: 'Score your resume for ATS compatibility, weak verbs, missing keywords, and more.',
     icon: ShieldTick,
   },
 ] as const;
@@ -59,35 +59,30 @@ export default function AutomationHub() {
   }
 
   return (
-    <div className="h-full flex items-center justify-center p-6">
-      <div className="w-full space-y-4">
-        <div className="text-center mb-6">
-          <h2 className="text-sm font-semibold text-text">Automation Tools</h2>
-          <p className="text-xs text-text-muted mt-1">AI-powered tools to enhance your resume</p>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {TOOLS.map((tool) => {
-            const Icon = tool.icon;
-            return (
-              <button
-                key={tool.id}
-                onClick={() => setActiveTool(tool.id)}
-                className="flex items-start gap-3 p-4 border border-border rounded-lg bg-bg hover:bg-bg-hover hover:border-accent/30 cursor-pointer transition-colors text-left"
-              >
-                <Icon
-                  size={20}
-                  variant="Bold"
-                  color="currentColor"
-                  className="text-accent shrink-0 mt-0.5"
-                />
-                <div>
-                  <div className="text-xs font-medium text-text">{tool.title}</div>
-                  <div className="text-[10px] text-text-muted mt-0.5">{tool.description}</div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
+    <div className="h-full flex flex-col p-3 space-y-2">
+      <h2 className="text-sm font-semibold text-text">Automation</h2>
+      <div className="grid grid-cols-2 gap-2">
+        {TOOLS.map((tool) => {
+          const Icon = tool.icon;
+          return (
+            <button
+              key={tool.id}
+              onClick={() => setActiveTool(tool.id)}
+              className="flex items-start gap-3 p-4 pb-24 rounded-lg bg-bg-secondary cursor-pointer active:opacity-80 text-left"
+            >
+              <Icon
+                size={20}
+                variant="Bold"
+                color="currentColor"
+                className="text-text-muted shrink-0 mt-0.5"
+              />
+              <div>
+                <div className="text-sm font-medium text-text">{tool.title}</div>
+                <div className="text-xs text-text-muted mt-0.5">{tool.desc}</div>
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
