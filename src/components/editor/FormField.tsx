@@ -1,5 +1,5 @@
-import { AiWritingTools } from './AiWritingTools';
-import { useAiContext } from './AiContext';
+import { AiWritingTools } from '../ai/AiWritingTools';
+import { useAiContext } from '../ai/AiContext';
 
 interface FormFieldProps {
   label: string;

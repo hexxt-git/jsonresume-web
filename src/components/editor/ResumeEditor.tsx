@@ -6,9 +6,11 @@ import { useT } from '../../i18n';
 import { useUndoRedo } from '../../hooks/useUndoRedo';
 import { Undo2, Redo2 } from 'lucide-react';
 
-const AiChat = lazy(() => import('./AiChat'));
+const AiChat = lazy(() => import('../ai/AiChat'));
 const JsonEditor = lazy(() => import('./JsonEditor'));
-import { AiGate, AiProviderSettings } from './AiKeyGate';
+const AutomationHub = lazy(() => import('../automation/AutomationHub'));
+import { AiGate, AiProviderSettings } from '../ai/AiKeyGate';
+import { ErrorBoundary } from '../ErrorBoundary';
 
 function LazyFallback() {
   const t = useT();
@@ -131,7 +133,7 @@ function MobileTabBar({
           {t('editor.ai')} <Sparkle />
         </button>
         <button onClick={() => setTab('auto')} className={tabCls(tab === 'auto')}>
-          {t('editor.auto')}*
+          {t('editor.auto')}
         </button>
         {onShowPreview && (
           <>
@@ -207,7 +209,7 @@ function DesktopTabBar({
         {t('editor.ai')} <Sparkle />
       </button>
       <button onClick={() => setTab('auto')} className={cls(tab === 'auto')}>
-        {t('editor.auto')}*
+        {t('editor.auto')}
       </button>
       <div className="flex-1" />
       <div className="flex items-center gap-0.5 pr-2">
@@ -392,23 +394,29 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
         </div>
       ) : tab === 'auto' ? (
         <AiGate onSetup={() => setAiSettings(true)}>
-          <div className="flex-1 flex items-center justify-center p-8">
-            <div className="text-center space-y-2">
-              <p className="text-sm text-text-tertiary">{t('auto.placeholder')}</p>
-            </div>
+          <div className="flex-1 overflow-hidden">
+            <ErrorBoundary label="automation">
+              <Suspense fallback={<LazyFallback />}>
+                <AutomationHub />
+              </Suspense>
+            </ErrorBoundary>
           </div>
         </AiGate>
       ) : tab === 'ai' ? (
         <div className="flex-1 overflow-hidden">
-          <Suspense fallback={<LazyFallback />}>
-            <AiChat />
-          </Suspense>
+          <ErrorBoundary label="ai-chat">
+            <Suspense fallback={<LazyFallback />}>
+              <AiChat />
+            </Suspense>
+          </ErrorBoundary>
         </div>
       ) : tab === 'json' ? (
         <div className="flex-1 overflow-hidden">
-          <Suspense fallback={<LazyFallback />}>
-            <JsonEditor />
-          </Suspense>
+          <ErrorBoundary label="json-editor">
+            <Suspense fallback={<LazyFallback />}>
+              <JsonEditor />
+            </Suspense>
+          </ErrorBoundary>
         </div>
       ) : tab === 'themes' ? (
         <div className="flex-1 overflow-y-auto">

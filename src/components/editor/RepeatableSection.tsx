@@ -1,6 +1,6 @@
 import { type ReactNode, useMemo } from 'react';
 import { useT } from '../../i18n';
-import { AiEntryProvider } from './AiContext';
+import { AiEntryProvider } from '../ai/AiContext';
 import {
   DndContext,
   closestCenter,

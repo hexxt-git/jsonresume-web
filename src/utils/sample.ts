@@ -7,7 +7,7 @@ export const sampleResume: ResumeSchema = {
     email: 'zeghdns@gmail.com',
     phone: '+213798922617',
     summary:
-      'Web Developer specializing in React, Next.js and TypeScript. I design, build, ship and handle end-to-end delivery (backend, stripe billing, web analytics and deployment) -- open to frontend roles and/or fullstack development work.',
+      'Web Developer specializing in React, Next.js, and TypeScript. I design, build, ship, and handle end-to-end delivery (backend, Stripe billing, web analytics, and deployment) — open to frontend roles or full-stack development work.',
     location: {
       city: 'Algiers',
       countryCode: 'DZ',
@@ -33,8 +33,8 @@ export const sampleResume: ResumeSchema = {
       startDate: '2025-12-01',
       location: 'Alger, Algiers',
       highlights: [
-        'Led the development of the startups 3 Dashboard and 2 Websites, using a monorepo architecture.',
-        'Reviewed colleague code to ensure compliance with high standard of security, performance and pixel perfect design.',
+        "Led the development of the startup's 3 Dashboards and 2 Websites, using a monorepo architecture.",
+        'Reviewed colleague code to ensure complice with high standards of security, performance, and pixel-perfect design.',
       ],
     },
     {
@@ -44,8 +44,8 @@ export const sampleResume: ResumeSchema = {
       endDate: '2025-12-01',
       location: 'Paris, France',
       highlights: [
-        'Worked on multiple projects and led the development of www.thetagpoint.com backoffice and client facing web-apps.',
-        'Converted figma designs to web applications using React with REST API integration.',
+        'Worked on multiple projects and led the development of www.thetagpoint.com back office and client-facing web applications.',
+        'Converted Figma designs to web applications using React with REST API integration.',
       ],
     },
     {

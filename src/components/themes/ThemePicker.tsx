@@ -25,8 +25,8 @@ export function ThemePicker() {
             onClick={() => setTheme(t.id)}
             className={`text-left rounded-md overflow-hidden cursor-pointer transition-shadow ${
               selectedThemeId === t.id
-                ? 'ring-2 ring-accent shadow-md'
-                : 'ring-1 ring-border hover:ring-border-input hover:shadow-sm'
+                ? 'ring-2 ring-accent'
+                : 'ring-0 hover:ring-1 hover:ring-border'
             }`}
           >
             <div className="relative w-full h-36 overflow-hidden bg-white flex items-start justify-center">

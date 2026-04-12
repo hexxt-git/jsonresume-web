@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo, type KeyboardEvent } from 'react';
 import { useT } from '../../i18n';
-import { AiWritingTools } from './AiWritingTools';
-import { useAiContext } from './AiContext';
+import { AiWritingTools } from '../ai/AiWritingTools';
+import { useAiContext } from '../ai/AiContext';
 import {
   DndContext,
   closestCenter,

@@ -175,7 +175,7 @@ export default {
   'empty.drop': 'Already have a resume? Drop it here to use as a starting point',
   'empty.formats': 'PDF, DOCX, JSON, YAML',
   'empty.or': 'or start fresh',
-  'empty.loadSample': 'Start with a template',
+  'empty.loadSample': 'Start with a sample',
   'empty.pasteJson': 'Paste JSON',
   'empty.hint': 'Or just start typing in the editor — it auto-saves.',
 
