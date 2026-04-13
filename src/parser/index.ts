@@ -1,4 +1,5 @@
 import type { ResumeSchema } from '../types/resume';
+import type { TextItems } from './types';
 import { extractTextFromDocx } from './docxParser';
 import { textToResume } from './textToResume';
 import YAML from 'yaml';
@@ -8,6 +9,7 @@ import { readPdf } from './read-pdf';
 import { groupTextItemsIntoLines } from './group-text-items-into-lines';
 import { groupLinesIntoSections } from './group-lines-into-sections';
 import { extractResumeFromSections } from './extract-resume-from-sections';
+import { extractTextItemsFromHtml } from './extract-text-items-from-html';
 
 // ── Date parsing ────────────────────────────────────────────────────
 
@@ -137,19 +139,35 @@ function openResumeToSchema(result: ReturnType<typeof extractResumeFromSections>
   };
 }
 
+// ── Shared pipeline: TextItems → ResumeSchema ──────────────────────
+
+function runPipeline(textItems: TextItems): ResumeSchema {
+  const lines = groupTextItemsIntoLines(textItems);
+  const sections = groupLinesIntoSections(lines);
+  const resume = extractResumeFromSections(sections);
+  return openResumeToSchema(resume);
+}
+
 // ── PDF pipeline ────────────────────────────────────────────────────
 
-async function parseResumeFromPdfFile(file: File): Promise<ResumeSchema> {
+async function parseResumeFromPdf(file: File): Promise<ResumeSchema> {
   const fileUrl = URL.createObjectURL(file);
   try {
     const textItems = await readPdf(fileUrl);
-    const lines = groupTextItemsIntoLines(textItems);
-    const sections = groupLinesIntoSections(lines);
-    const resume = extractResumeFromSections(sections);
-    return openResumeToSchema(resume);
+    return runPipeline(textItems);
   } finally {
     URL.revokeObjectURL(fileUrl);
   }
+}
+
+// ── DOCX pipeline: mammoth → HTML → DOM layout → TextItems ─────────
+
+async function parseResumeFromDocx(file: File): Promise<ResumeSchema> {
+  const mammoth = await import('mammoth');
+  const arrayBuffer = await file.arrayBuffer();
+  const result = await mammoth.convertToHtml({ arrayBuffer });
+  const textItems = await extractTextItemsFromHtml(result.value);
+  return runPipeline(textItems);
 }
 
 // ── Public entry point ──────────────────────────────────────────────
@@ -168,16 +186,14 @@ export async function parseResumeFile(file: File): Promise<ResumeSchema> {
   }
 
   if (ext === 'pdf') {
-    return parseResumeFromPdfFile(file);
+    return parseResumeFromPdf(file);
   }
 
-  // DOCX and plain text: extract text then use heuristic parser
-  let rawText: string;
   if (ext === 'docx' || ext === 'doc') {
-    rawText = await extractTextFromDocx(file);
-  } else {
-    rawText = await file.text();
+    return parseResumeFromDocx(file);
   }
 
+  // Plain text: no formatting info available, use keyword-based heuristic parser
+  const rawText = await file.text();
   return textToResume(rawText);
 }
