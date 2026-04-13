@@ -7,11 +7,23 @@ export interface TextItem {
   fontName: string;
   hasEOL: boolean;
 }
+export type TextItems = TextItem[];
 
 export type Line = TextItem[];
 export type Lines = Line[];
-export type Sections = Record<string, Lines>;
 
+export type ResumeSectionToLines = Record<string, Lines>;
+export type Subsections = Lines[];
+
+type FeatureScore = -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4;
+type ReturnMatchingTextOnly = boolean;
 export type FeatureSet =
-  | [matcher: (item: TextItem) => boolean, score: number]
-  | [matcher: (item: TextItem) => RegExpMatchArray | null, score: number, returnMatchOnly: true];
+  | [(item: TextItem) => boolean, FeatureScore]
+  | [(item: TextItem) => RegExpMatchArray | null, FeatureScore, ReturnMatchingTextOnly];
+
+export interface TextScore {
+  text: string;
+  score: number;
+  match: boolean;
+}
+export type TextScores = TextScore[];
