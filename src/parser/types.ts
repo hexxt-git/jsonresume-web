@@ -8,10 +8,19 @@ export interface TextItem {
   hasEOL: boolean;
 }
 
+export type TextItems = TextItem[];
 export type Line = TextItem[];
 export type Lines = Line[];
-export type Sections = Record<string, Lines>;
+export type SectionMap = Record<string, Lines>;
+export type SubsectionList = Lines[];
 
+export interface TextScore {
+  text: string;
+  score: number;
+  match: boolean;
+}
+
+type Score = -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4;
 export type FeatureSet =
-  | [matcher: (item: TextItem) => boolean, score: number]
-  | [matcher: (item: TextItem) => RegExpMatchArray | null, score: number, returnMatchOnly: true];
+  | [(item: TextItem) => boolean, Score]
+  | [(item: TextItem) => RegExpMatchArray | null, Score, boolean];

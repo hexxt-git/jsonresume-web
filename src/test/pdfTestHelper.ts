@@ -1,49 +1,47 @@
-import type { TextItem } from '../parser/types';
+import type { TextItems } from '../parser/types';
+import { groupIntoLines } from '../parser/line-grouper';
+import { groupIntoSections } from '../parser/section-grouper';
+import { extractAllSections } from '../parser/extractors';
 
-/**
- * PDF text extraction using the legacy pdfjs-dist build for Node.js test environment.
- * The browser build uses DOMMatrix which isn't available in jsdom/Node.
- */
-export async function extractTextItemsFromPdfLegacy(file: File): Promise<TextItem[]> {
-  // Dynamic import of the legacy build for Node.js compatibility
+export async function extractTextItemsFromPdfBuffer(data: Uint8Array): Promise<TextItems> {
   const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
+  const doc = await pdfjsLib.getDocument({ data }).promise;
+  const allItems: TextItems = [];
 
-  const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  const items: TextItem[] = [];
-
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
+  for (let pageNum = 1; pageNum <= doc.numPages; pageNum++) {
+    const page = await doc.getPage(pageNum);
     const content = await page.getTextContent();
-    const commonObjs = page.commonObjs;
+    await page.getOperatorList();
+    const { commonObjs } = page;
 
-    for (const raw of content.items) {
-      if (!('str' in raw)) continue;
-
-      const text = (raw as any).str.replace(/-\u00AD\u2010/g, '-');
-      if (!text.trim() && !(raw as any).hasEOL) continue;
-
-      let fontName = (raw as any).fontName || '';
+    const pageItems = content.items.map((raw: any) => {
+      const [, , , scaleY, tx, ty] = raw.transform ?? [0, 0, 0, 0, 0, 0];
+      let fontName: string = raw.fontName ?? '';
       try {
-        const fontObj = commonObjs.get((raw as any).fontName);
-        if (fontObj && typeof fontObj === 'object' && 'name' in fontObj) {
-          fontName = (fontObj as any).name as string;
-        }
+        const obj = commonObjs.get(raw.fontName);
+        if (obj && typeof obj === 'object' && 'name' in obj) fontName = obj.name;
       } catch {
-        /* font lookup can fail */
+        /* unresolved */
       }
 
-      items.push({
-        text,
-        x: (raw as any).transform[4],
-        y: (raw as any).transform[5],
-        width: (raw as any).width,
-        height: (raw as any).height,
+      return {
+        text: ((raw.str ?? '') as string).replace(/-\u00AD\u2010/g, '-'),
+        x: tx,
+        y: ty,
+        width: raw.width ?? 0,
+        height: raw.height ?? Math.abs(scaleY),
         fontName,
-        hasEOL: (raw as any).hasEOL ?? false,
-      });
-    }
+        hasEOL: raw.hasEOL ?? false,
+      };
+    });
+
+    allItems.push(...pageItems);
   }
 
-  return items;
+  return allItems.filter((i) => i.hasEOL || i.text.trim() !== '');
+}
+
+export async function parseResumeFromPdfBuffer(data: Uint8Array) {
+  const items = await extractTextItemsFromPdfBuffer(data);
+  return extractAllSections(groupIntoSections(groupIntoLines(items)));
 }
