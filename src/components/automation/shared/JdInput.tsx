@@ -9,9 +9,14 @@ import { extractMeta, splitJds, timeAgo } from './helpers';
 export async function readFile(file: File): Promise<string> {
   const ext = file.name.split('.').pop()?.toLowerCase();
   if (ext === 'pdf') {
-    const { extractTextItemsFromPdf } = await import('../../../parser/pdfParser');
-    const items = await extractTextItemsFromPdf(file);
-    return items.map((i) => i.text).join(' ');
+    const { extractPdfTextItems } = await import('../../../parser/pdf-reader');
+    const url = URL.createObjectURL(file);
+    try {
+      const items = await extractPdfTextItems(url);
+      return items.map((i: { text: string }) => i.text).join(' ');
+    } finally {
+      URL.revokeObjectURL(url);
+    }
   }
   if (ext === 'docx' || ext === 'doc') return extractTextFromDocx(file);
   return file.text();

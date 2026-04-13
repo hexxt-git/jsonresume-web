@@ -1,4 +1,4 @@
-import type { Lines, TextItem } from '../../types';
+import type { Lines } from '../../types';
 
 export const BULLET_CHARS = ['⋅', '∙', '🞄', '•', '⦁', '⚫︎', '●', '⬤', '⚬', '○'];
 

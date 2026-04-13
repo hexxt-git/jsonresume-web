@@ -1,4 +1,4 @@
-import type { TextItem, TextItems, Line, Lines } from './types';
+import type { TextItems, Line, Lines } from './types';
 import { BULLET_CHARS } from './extractors/lib/bullets';
 
 export function groupIntoLines(textItems: TextItems): Lines {

@@ -49,7 +49,7 @@ export function groupIntoSections(lines: Lines): SectionMap {
 // ── Internals ───────────────────────────────────────────────────────
 
 function detectSectionTitle(line: Line, lineIdx: number): boolean {
-  if (lineIdx < 2 || line.length !== 1 || line.length === 0) return false;
+  if (lineIdx < 2 || line.length !== 1) return false;
 
   const item = line[0];
 

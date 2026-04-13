@@ -13,7 +13,7 @@ async function htmlToPdfBuffer(html: string, browser: Browser): Promise<Uint8Arr
   return new Uint8Array(pdfBuffer);
 }
 
-describe('PDF parser: open-resume pipeline', () => {
+describe('PDF parser pipeline', () => {
   let browser: Browser;
   let resume: Awaited<ReturnType<typeof parseResumeFromPdfBuffer>>;
 
