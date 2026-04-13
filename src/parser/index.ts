@@ -1,19 +1,109 @@
 import type { ResumeSchema } from '../types/resume';
 import type { TextItems } from './types';
-import { extractTextFromDocx } from './docxParser';
-import { textToResume } from './textToResume';
 import YAML from 'yaml';
+import { extractPdfTextItems } from './pdf-reader';
+import { groupIntoLines } from './line-grouper';
+import { groupIntoSections } from './section-grouper';
+import { extractAllSections } from './extractors';
+import { extractHtmlTextItems } from './html-reader';
+import { textToResume } from './textToResume';
 
-// Open-resume pipeline
-import { readPdf } from './read-pdf';
-import { groupTextItemsIntoLines } from './group-text-items-into-lines';
-import { groupLinesIntoSections } from './group-lines-into-sections';
-import { extractResumeFromSections } from './extract-resume-from-sections';
-import { extractTextItemsFromHtml } from './extract-text-items-from-html';
+// ── Public entry point ──────────────────────────────────────────────
 
-// ── Date parsing ────────────────────────────────────────────────────
+export async function parseResumeFile(file: File): Promise<ResumeSchema> {
+  const ext = file.name.split('.').pop()?.toLowerCase();
 
-const MONTHS: Record<string, string> = {
+  switch (ext) {
+    case 'pdf':
+      return parsePdf(file);
+    case 'docx':
+    case 'doc':
+      return parseDocx(file);
+    case 'json': {
+      const raw = await file.text();
+      return JSON.parse(raw) as ResumeSchema;
+    }
+    case 'yaml':
+    case 'yml': {
+      const raw = await file.text();
+      return YAML.parse(raw) as ResumeSchema;
+    }
+    default:
+      return textToResume(await file.text());
+  }
+}
+
+// ── Format-specific pipelines ───────────────────────────────────────
+
+async function parsePdf(file: File): Promise<ResumeSchema> {
+  const url = URL.createObjectURL(file);
+  try {
+    return toSchema(runPipeline(await extractPdfTextItems(url)));
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
+async function parseDocx(file: File): Promise<ResumeSchema> {
+  const mammoth = await import('mammoth');
+  const { value: html } = await mammoth.convertToHtml({ arrayBuffer: await file.arrayBuffer() });
+  return toSchema(runPipeline(await extractHtmlTextItems(html)));
+}
+
+// ── Shared pipeline ─────────────────────────────────────────────────
+
+function runPipeline(items: TextItems) {
+  return extractAllSections(groupIntoSections(groupIntoLines(items)));
+}
+
+// ── Schema adapter ──────────────────────────────────────────────────
+
+function toSchema(result: ReturnType<typeof extractAllSections>): ResumeSchema {
+  const { profile, workExperiences, educations, projects, skills } = result;
+  const locParts = profile.location?.split(',').map((s) => s.trim()) ?? [];
+
+  return {
+    basics: {
+      name: profile.name || undefined,
+      email: profile.email || undefined,
+      phone: profile.phone || undefined,
+      url: profile.url || undefined,
+      summary: profile.summary || undefined,
+      location: profile.location
+        ? { city: locParts[0] ?? '', region: locParts[1] ?? '' }
+        : undefined,
+      profiles: profile.linkedin
+        ? [{ network: 'LinkedIn', username: profile.linkedin.username, url: profile.linkedin.url }]
+        : undefined,
+    },
+    work: mapOrUndefined(workExperiences, (w) => ({
+      name: w.company || undefined,
+      position: w.jobTitle || undefined,
+      ...splitDateRange(w.date),
+      highlights: w.descriptions.length ? w.descriptions : undefined,
+    })),
+    education: mapOrUndefined(educations, (e) => ({
+      institution: e.school || undefined,
+      studyType: e.degree || undefined,
+      score: e.gpa || undefined,
+      ...splitDateRange(e.date),
+      courses: e.descriptions.length ? e.descriptions : undefined,
+    })),
+    projects: mapOrUndefined(projects, (p) => ({
+      name: p.project || undefined,
+      url: p.url || undefined,
+      ...splitDateRange(p.date),
+      highlights: p.descriptions.length ? p.descriptions : undefined,
+    })),
+    skills: skills.skillGroups?.length
+      ? skills.skillGroups.map((g) => ({ name: g.name, keywords: g.keywords }))
+      : undefined,
+  };
+}
+
+// ── Date helpers ────────────────────────────────────────────────────
+
+const MONTH_MAP: Record<string, string> = {
   jan: '01',
   january: '01',
   feb: '02',
@@ -40,160 +130,31 @@ const MONTHS: Record<string, string> = {
   december: '12',
 };
 
-function normalizeDate(d: string): string | undefined {
-  const trimmed = d.trim();
-  if (/present|current|now/i.test(trimmed)) return undefined;
-  const monthYear = trimmed.match(/(\w+)\.?\s+(\d{4})/);
+function normalizeDate(raw: string): string | undefined {
+  const d = raw.trim();
+  if (/present|current|now/i.test(d)) return undefined;
+
+  const monthYear = d.match(/(\w+)\.?\s+(\d{4})/);
   if (monthYear) {
-    const m = MONTHS[monthYear[1].toLowerCase()];
+    const m = MONTH_MAP[monthYear[1].toLowerCase()];
     if (m) return `${monthYear[2]}-${m}`;
   }
-  const yearMonth = trimmed.match(/(\d{4})[-/](\d{1,2})/);
-  if (yearMonth) return `${yearMonth[1]}-${yearMonth[2].padStart(2, '0')}`;
-  const yearOnly = trimmed.match(/((?:19|20)\d{2})/);
-  if (yearOnly) return yearOnly[1];
-  return undefined;
+
+  const isoish = d.match(/(\d{4})[-/](\d{1,2})/);
+  if (isoish) return `${isoish[1]}-${isoish[2].padStart(2, '0')}`;
+
+  const yearOnly = d.match(/((?:19|20)\d{2})/);
+  return yearOnly?.[1];
 }
 
-function parseDateRange(text: string): { startDate?: string; endDate?: string } {
+function splitDateRange(text: string): { startDate?: string; endDate?: string } {
   if (!text) return {};
-  const match = text.match(/(.+?)\s*[-–—]\s*(.+)/);
-  if (match) {
-    return { startDate: normalizeDate(match[1]), endDate: normalizeDate(match[2]) };
-  }
+  const m = text.match(/(.+?)\s*[-–—]\s*(.+)/);
+  if (m) return { startDate: normalizeDate(m[1]), endDate: normalizeDate(m[2]) };
   const single = normalizeDate(text);
   return single ? { startDate: single } : {};
 }
 
-// ── Adapter: open-resume result → ResumeSchema ─────────────────────
-
-function openResumeToSchema(result: ReturnType<typeof extractResumeFromSections>): ResumeSchema {
-  const { profile, workExperiences, educations, projects, skills } = result;
-
-  const locationParts = profile.location
-    ? profile.location.split(',').map((s: string) => s.trim())
-    : [];
-
-  const profiles: NonNullable<NonNullable<ResumeSchema['basics']>['profiles']> = [];
-  if (profile.linkedin) {
-    profiles.push({
-      network: 'LinkedIn',
-      username: profile.linkedin.username,
-      url: profile.linkedin.url,
-    });
-  }
-
-  const basics: ResumeSchema['basics'] = {
-    name: profile.name || undefined,
-    email: profile.email || undefined,
-    phone: profile.phone || undefined,
-    url: profile.url || undefined,
-    summary: profile.summary || undefined,
-    location: profile.location
-      ? { city: locationParts[0] || '', region: locationParts[1] || '' }
-      : undefined,
-    profiles: profiles.length ? profiles : undefined,
-  };
-
-  const work: ResumeSchema['work'] = workExperiences.length
-    ? workExperiences.map((w) => ({
-        name: w.company || undefined,
-        position: w.jobTitle || undefined,
-        ...parseDateRange(w.date),
-        highlights: w.descriptions.length ? w.descriptions : undefined,
-      }))
-    : undefined;
-
-  const education: ResumeSchema['education'] = educations.length
-    ? educations.map((e) => ({
-        institution: e.school || undefined,
-        studyType: e.degree || undefined,
-        score: e.gpa || undefined,
-        ...parseDateRange(e.date),
-        courses: e.descriptions.length ? e.descriptions : undefined,
-      }))
-    : undefined;
-
-  const projectsList: ResumeSchema['projects'] = projects.length
-    ? projects.map((p) => ({
-        name: p.project || undefined,
-        url: p.url || undefined,
-        ...parseDateRange(p.date),
-        highlights: p.descriptions.length ? p.descriptions : undefined,
-      }))
-    : undefined;
-
-  const skillsList: ResumeSchema['skills'] = skills.skillGroups?.length
-    ? skills.skillGroups.map((g) => ({
-        name: g.name,
-        keywords: g.keywords,
-      }))
-    : undefined;
-
-  return {
-    basics,
-    work,
-    education,
-    projects: projectsList,
-    skills: skillsList,
-  };
-}
-
-// ── Shared pipeline: TextItems → ResumeSchema ──────────────────────
-
-function runPipeline(textItems: TextItems): ResumeSchema {
-  const lines = groupTextItemsIntoLines(textItems);
-  const sections = groupLinesIntoSections(lines);
-  const resume = extractResumeFromSections(sections);
-  return openResumeToSchema(resume);
-}
-
-// ── PDF pipeline ────────────────────────────────────────────────────
-
-async function parseResumeFromPdf(file: File): Promise<ResumeSchema> {
-  const fileUrl = URL.createObjectURL(file);
-  try {
-    const textItems = await readPdf(fileUrl);
-    return runPipeline(textItems);
-  } finally {
-    URL.revokeObjectURL(fileUrl);
-  }
-}
-
-// ── DOCX pipeline: mammoth → HTML → DOM layout → TextItems ─────────
-
-async function parseResumeFromDocx(file: File): Promise<ResumeSchema> {
-  const mammoth = await import('mammoth');
-  const arrayBuffer = await file.arrayBuffer();
-  const result = await mammoth.convertToHtml({ arrayBuffer });
-  const textItems = await extractTextItemsFromHtml(result.value);
-  return runPipeline(textItems);
-}
-
-// ── Public entry point ──────────────────────────────────────────────
-
-export async function parseResumeFile(file: File): Promise<ResumeSchema> {
-  const ext = file.name.split('.').pop()?.toLowerCase();
-
-  if (ext === 'json') {
-    const text = await file.text();
-    return JSON.parse(text) as ResumeSchema;
-  }
-
-  if (ext === 'yaml' || ext === 'yml') {
-    const text = await file.text();
-    return YAML.parse(text) as ResumeSchema;
-  }
-
-  if (ext === 'pdf') {
-    return parseResumeFromPdf(file);
-  }
-
-  if (ext === 'docx' || ext === 'doc') {
-    return parseResumeFromDocx(file);
-  }
-
-  // Plain text: no formatting info available, use keyword-based heuristic parser
-  const rawText = await file.text();
-  return textToResume(rawText);
+function mapOrUndefined<T, U>(arr: T[], fn: (item: T) => U): U[] | undefined {
+  return arr.length ? arr.map(fn) : undefined;
 }
