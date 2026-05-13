@@ -245,7 +245,7 @@ export function NetworkPickerButton({
       <Popover.Trigger asChild>
         <button
           type="button"
-          className="h-[34px] shrink-0 flex items-center justify-center gap-2 px-2 border border-border-input bg-bg-input rounded-md
+          className="h-[34px] shrink-0 flex items-center justify-center gap-2 px-3 border border-border-input bg-bg-input rounded-full
             hover:bg-bg-hover cursor-pointer transition-colors"
           title={value || t('basics.network')}
         >
@@ -286,7 +286,7 @@ export function NetworkPickerButton({
                 }
               }}
               placeholder={t('combo.search')}
-              className="w-full px-2 py-1 text-xs bg-bg-input border border-border-input rounded-md text-text
+              className="w-full px-2 py-1 text-xs bg-bg-input border border-border-input rounded-full text-text
                 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
             />
           </div>
@@ -300,7 +300,7 @@ export function NetworkPickerButton({
                     onChange(name);
                     setOpen(false);
                   }}
-                  className={`flex items-center gap-2 px-2 py-1.5 text-xs rounded-md text-left cursor-pointer truncate
+                  className={`flex items-center gap-2 px-2 py-1.5 text-xs rounded-full text-left cursor-pointer truncate
                     ${value === name ? 'bg-bg-accent text-accent-text font-medium' : 'hover:bg-bg-hover text-text-secondary'}`}
                 >
                   <NetworkIcon name={name} size={14} />

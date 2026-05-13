@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import * as RadixSelect from '@radix-ui/react-select';
+import { ArrowDown2, TickCircle } from 'iconsax-react';
 
 export interface SelectOption {
   value: string;
@@ -24,44 +25,44 @@ export function Select({
   size = 'md',
   className,
 }: SelectProps) {
-  const trigger = size === 'sm' ? 'text-xs px-2 py-1 gap-1' : 'text-xs px-3 py-1.5 gap-1.5';
+  const trigger = size === 'sm' ? 'text-xs px-4 py-1.5 gap-2' : 'text-xs px-5 py-2.5 gap-2.5';
   const selected = options.find((o) => o.value === value);
 
   return (
     <RadixSelect.Root value={value} onValueChange={onValueChange}>
       <RadixSelect.Trigger
-        className={`inline-flex items-center justify-between rounded-md border border-border bg-bg
+        className={`inline-flex items-center justify-between rounded-full border border-border bg-bg
           text-text-secondary hover:bg-bg-hover outline-none cursor-pointer transition-colors
           data-placeholder:text-text-muted ${trigger} ${className}`}
       >
-        <span className="flex items-center gap-1.5">
+        <span className="flex items-center gap-2">
           {selected?.icon}
           <RadixSelect.Value placeholder={placeholder} />
         </span>
         <RadixSelect.Icon className="text-text-muted">
-          <ChevronDown />
+          <ArrowDown2 size={14} variant="Bold" color="currentColor" />
         </RadixSelect.Icon>
       </RadixSelect.Trigger>
 
       <RadixSelect.Portal>
         <RadixSelect.Content
-          className="z-50 overflow-hidden rounded-lg border border-border bg-bg shadow-lg"
+          className="z-50 overflow-hidden rounded-2xl border border-border bg-bg shadow-xl"
           position="popper"
-          sideOffset={4}
+          sideOffset={8}
           align="start"
         >
-          <RadixSelect.Viewport className="p-1">
+          <RadixSelect.Viewport className="p-2">
             {options.map((opt) => (
               <RadixSelect.Item
                 key={opt.value}
                 value={opt.value}
-                className="flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs text-text-secondary
+                className="flex items-center gap-2.5 rounded-xl px-4 py-2 text-xs text-text-secondary
                   outline-none cursor-pointer select-none
                   data-[highlighted]:bg-bg-hover data-[highlighted]:text-text
                   data-[state=checked]:text-accent-text data-[state=checked]:font-medium"
               >
-                <RadixSelect.ItemIndicator className="w-3 text-accent">
-                  <Check />
+                <RadixSelect.ItemIndicator className="w-4 text-accent">
+                  <TickCircle size={14} variant="Bold" color="currentColor" />
                 </RadixSelect.ItemIndicator>
                 {opt.icon && <span className="shrink-0">{opt.icon}</span>}
                 <RadixSelect.ItemText>{opt.label}</RadixSelect.ItemText>
@@ -71,35 +72,5 @@ export function Select({
         </RadixSelect.Content>
       </RadixSelect.Portal>
     </RadixSelect.Root>
-  );
-}
-
-function ChevronDown() {
-  return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 12 12"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-    >
-      <path d="M3 4.5L6 7.5L9 4.5" />
-    </svg>
-  );
-}
-
-function Check() {
-  return (
-    <svg
-      width="10"
-      height="10"
-      viewBox="0 0 10 10"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-    >
-      <path d="M2 5.5L4 7.5L8 3" />
-    </svg>
   );
 }

@@ -17,8 +17,8 @@ a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}
 .contact{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:calc(13px * var(--fs-mult, 1));color:#6b7280}
 .contact a{color:#2563eb}
 .summary{color:#4b5563;margin-bottom:28px;padding:12px 16px;background:#f0f4ff;border-radius:6px;border-left:3px solid #2563eb}
-.section{margin-bottom:24px}
-.entry{margin-bottom:18px}
+.section{margin-bottom:24px;break-inside:avoid}
+.entry{margin-bottom:18px;break-inside:avoid}
 .entry-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap}
 .entry-meta{color:#2563eb;font-size:calc(13px * var(--fs-mult, 1));font-weight:500}
 .entry-org{color:#6b7280;font-size:calc(13px * var(--fs-mult, 1));margin-top:1px}
@@ -26,7 +26,7 @@ ul{padding-left:18px;margin-top:6px}
 li{margin-bottom:3px;color:#4b5563}
 li::marker{color:#2563eb}
 .skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.skill-group{background:#f8fafc;padding:10px 14px;border-radius:6px;border:1px solid #e5e7eb}
+.skill-group{background:#f8fafc;padding:10px 14px;border-radius:6px;border:1px solid #e5e7eb;break-inside:avoid}
 .skill-group h3{font-size:calc(13px * var(--fs-mult, 1));color:#2563eb;margin-bottom:6px}
 .skill-keywords{display:flex;flex-wrap:wrap;gap:4px}
 .tag{background:#dbeafe;color:#1e3a5f;padding:2px 8px;border-radius:3px;font-size:calc(11.5px * var(--fs-mult, 1))}

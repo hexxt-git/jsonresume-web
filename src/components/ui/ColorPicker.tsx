@@ -9,18 +9,16 @@ interface ColorPickerProps {
 }
 
 const PRESETS = [
-  '#2563eb',
-  '#0d9488',
-  '#6b7c5e',
-  '#9333ea',
-  '#dc2626',
-  '#ea580c',
-  '#ca8a04',
-  '#64748b',
-  '#0f172a',
-  '#1e293b',
-  '#404040',
-  '#737373',
+  '#2563eb', // blue
+  '#7c3aed', // violet
+  '#db2777', // pink
+  '#dc2626', // red
+  '#ea580c', // orange
+  '#d97706', // amber
+  '#059669', // emerald
+  '#0891b2', // cyan
+  '#4b5563', // grey
+  '#1f2937', // dark
 ];
 
 export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
@@ -49,45 +47,47 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
   }
 
   return (
-    <div>
-      <label className="block text-xs text-text-secondary mb-1.5">{label}</label>
-      <div className="flex items-center gap-2">
+    <div className="space-y-1.5 py-1">
+      <label className="block text-xs font-medium text-text-secondary ml-1">{label}</label>
+      <div className="flex items-center gap-3">
         <Popover.Root>
           <Popover.Trigger asChild>
             <button
-              className="w-8 h-8 rounded-lg border border-border cursor-pointer transition-shadow hover:shadow-sm focus-visible:ring-2 focus-visible:ring-accent/30 outline-none shrink-0"
+              className="w-10 h-10 rounded-full border-2 border-border cursor-pointer transition-all hover:shadow-md focus-visible:ring-4 focus-visible:ring-accent/10 outline-none shrink-0"
               style={{ backgroundColor: value || 'var(--accent)' }}
               aria-label={`${label}: ${value || 'default'}`}
             />
           </Popover.Trigger>
           <Popover.Portal>
             <Popover.Content
-              className="z-50 rounded-xl border border-border bg-bg shadow-lg p-3 w-52"
-              sideOffset={6}
+              className="z-50 rounded-2xl border border-border bg-bg shadow-2xl p-4 w-60 overflow-hidden"
+              sideOffset={8}
               align="start"
             >
-              <div className="grid grid-cols-4 gap-1.5 mb-3">
+              <div className="grid grid-cols-4 gap-2 mb-4">
                 {PRESETS.map((c) => (
                   <button
                     key={c}
                     onClick={() => selectColor(c)}
-                    className={`w-full aspect-square rounded-md cursor-pointer transition-all outline-none focus-visible:ring-2 focus-visible:ring-accent/30 ${
-                      value === c
-                        ? 'ring-2 ring-accent ring-offset-1 ring-offset-bg scale-110'
-                        : 'hover:scale-105'
+                    className={`w-full aspect-square rounded-full cursor-pointer transition-all outline-none focus-visible:ring-4 focus-visible:ring-accent/10 ${
+                      value === c ? 'ring-2 ring-accent ring-offset-2 ring-offset-bg scale-110' : ''
                     }`}
                     style={{ backgroundColor: c }}
                     aria-label={c}
                   />
                 ))}
               </div>
-              <input
-                type="color"
-                value={value || '#2563eb'}
-                onChange={(e) => selectColor(e.target.value)}
-                className="w-full h-8 rounded-md border border-border cursor-pointer"
-              />
-              <Popover.Arrow className="fill-border" />
+              <div className="relative h-10 w-full mb-1">
+                <input
+                  type="color"
+                  value={value || '#2563eb'}
+                  onChange={(e) => selectColor(e.target.value)}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                <div className="w-full h-full rounded-xl border border-border pointer-events-none flex items-center justify-center text-[10px] text-text-muted font-medium bg-bg-secondary">
+                  {t('ui.customColor' as any) || 'Custom Color'}
+                </div>
+              </div>
             </Popover.Content>
           </Popover.Portal>
         </Popover.Root>
@@ -98,7 +98,7 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
           onChange={(e) => handleInputChange(e.target.value)}
           onBlur={handleInputBlur}
           placeholder={t('customize.themeDefault')}
-          className="flex-1 px-2 py-1.5 text-xs border border-border-input bg-bg-input text-text rounded-md font-mono outline-none focus:ring-1 focus:ring-accent transition-shadow"
+          className="flex-1 px-4 py-2 text-xs border border-border-input bg-bg-input text-text rounded-full font-mono outline-none focus:ring-1 focus:ring-accent transition-all"
           aria-label={`${label} hex value`}
         />
 
@@ -108,7 +108,7 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
               onChange('');
               setInputValue('');
             }}
-            className="w-6 h-6 rounded-md flex items-center justify-center text-xs text-text-muted hover:bg-bg-hover hover:text-text-secondary cursor-pointer transition-colors"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-sm text-text-muted hover:bg-bg-hover hover:text-danger cursor-pointer transition-all border border-border"
             title={t('ui.resetDefault')}
             aria-label={`Reset ${label}`}
           >

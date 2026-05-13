@@ -1,6 +1,7 @@
 import { type ReactNode, useMemo } from 'react';
 import { useT } from '../../i18n';
 import { AiEntryProvider } from '../ai/AiContext';
+import { Eye, EyeSlash, Trash } from 'iconsax-react';
 import {
   DndContext,
   closestCenter,
@@ -36,6 +37,7 @@ export function RepeatableSection<T>({
   entryLabel,
 }: RepeatableSectionProps<T>) {
   const t = useT();
+
   const update = (index: number, item: T) => {
     const next = [...items];
     next[index] = item;
@@ -45,11 +47,16 @@ export function RepeatableSection<T>({
   const add = () => onChange([...items, { ...defaultItem }]);
   const remove = (index: number) => onChange(items.filter((_, i) => i !== index));
 
-  // Stable IDs for dnd-kit (index-based since items have no id)
-  // Stable IDs that follow items through reorder. Use content hash + index tiebreaker for duplicates.
+  const toggleVisibility = (index: number) => {
+    const item = items[index] as any;
+    const isVisible = item.visible !== false;
+    update(index, { ...item, visible: !isVisible });
+  };
+
   const ids = useMemo(() => {
     const seen = new Map<string, number>();
     return items.map((item) => {
+      // Create a stable key based on content and index
       const base = JSON.stringify(item).slice(0, 64);
       const count = seen.get(base) || 0;
       seen.set(base, count + 1);
@@ -75,33 +82,50 @@ export function RepeatableSection<T>({
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-text">{title}</h3>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-bold text-text uppercase tracking-widest flex items-center gap-2">
+          {title}
+        </h3>
         <button
           onClick={add}
-          className="text-xs px-2.5 py-1 bg-bg-accent text-accent-text rounded hover:bg-bg-accent transition-colors cursor-pointer"
+          className="text-[10px] font-black px-4 py-1.5 bg-accent text-white rounded-full hover:opacity-90 shadow-md transition-all cursor-pointer uppercase tracking-widest"
         >
           {t('repeatable.add')}
         </button>
       </div>
       {items.length === 0 && (
-        <p className="text-xs text-text-muted italic">{t('repeatable.empty')}</p>
+        <button
+          onClick={add}
+          className="w-full py-8 text-center bg-bg-secondary/20 rounded-3xl border border-dashed border-border/50 hover:bg-bg-secondary/40 transition-all cursor-pointer group"
+        >
+          <p className="text-xs text-text-muted italic group-hover:text-accent">
+            {t('repeatable.empty')}
+          </p>
+        </button>
       )}
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={ids} strategy={verticalListSortingStrategy}>
-          {items.map((item, index) => (
-            <SortableCard
-              key={ids[index]}
-              id={ids[index]}
-              index={index}
-              onRemove={() => remove(index)}
-            >
-              <AiEntryProvider label={entryLabel ? entryLabel(item) : `#${index + 1}`}>
-                {renderItem(item, index, update)}
-              </AiEntryProvider>
-            </SortableCard>
-          ))}
+          <div className="space-y-4">
+            {items.map((item, index) => {
+              const id = ids[index];
+              const label = entryLabel ? entryLabel(item) : `Entry #${index + 1}`;
+              const isVisible = (item as any).visible !== false;
+
+              return (
+                <SortableCard
+                  key={id}
+                  id={id}
+                  label={label}
+                  isVisible={isVisible}
+                  onRemove={() => remove(index)}
+                  onToggleVisibility={() => toggleVisibility(index)}
+                >
+                  <AiEntryProvider label={label}>{renderItem(item, index, update)}</AiEntryProvider>
+                </SortableCard>
+              );
+            })}
+          </div>
         </SortableContext>
       </DndContext>
     </div>
@@ -110,13 +134,17 @@ export function RepeatableSection<T>({
 
 function SortableCard({
   id,
-  index,
+  label,
+  isVisible,
   onRemove,
+  onToggleVisibility,
   children,
 }: {
   id: string;
-  index: number;
+  label: string;
+  isVisible: boolean;
   onRemove: () => void;
+  onToggleVisibility: () => void;
   children: ReactNode;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -131,34 +159,60 @@ function SortableCard({
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="border border-border rounded-lg p-3 mb-2 bg-bg">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-1.5">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="border border-border/60 rounded-3xl bg-bg shadow-sm transition-all hover:shadow-md group/card"
+    >
+      <div className={`flex items-center justify-between p-4 pb-2 ${!isVisible ? 'p-4!' : ''}`}>
+        <div className="flex items-center gap-3 min-w-0">
           <button
             {...attributes}
             {...listeners}
-            className="cursor-grab active:cursor-grabbing text-text-muted hover:text-text-secondary touch-none"
+            className="w-8 h-8 rounded-full flex items-center justify-center bg-bg-secondary text-text-muted hover:text-accent hover:bg-accent/5 cursor-grab active:cursor-grabbing touch-none transition-all shrink-0"
             title="Drag to reorder"
           >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-              <circle cx="4" cy="2" r="1" />
-              <circle cx="8" cy="2" r="1" />
-              <circle cx="4" cy="6" r="1" />
-              <circle cx="8" cy="6" r="1" />
-              <circle cx="4" cy="10" r="1" />
-              <circle cx="8" cy="10" r="1" />
+            <svg width="14" height="14" viewBox="0 0 12 12" fill="currentColor">
+              <circle cx="4" cy="2" r="1.2" />
+              <circle cx="8" cy="2" r="1.2" />
+              <circle cx="4" cy="6" r="1.2" />
+              <circle cx="8" cy="6" r="1.2" />
+              <circle cx="4" cy="10" r="1.2" />
+              <circle cx="8" cy="10" r="1.2" />
             </svg>
           </button>
-          <span className="text-xs text-text-muted">#{index + 1}</span>
+          <span
+            className={`h-8 inline-flex items-center text-[10px] font-black text-text-muted uppercase tracking-widest bg-bg-secondary px-3 py-1 rounded-full truncate max-w-xs ${
+              !isVisible ? 'line-through decoration-text-muted/50' : ''
+            }`}
+          >
+            {label}
+          </span>
         </div>
-        <button
-          onClick={onRemove}
-          className="text-xs px-1.5 text-danger hover:opacity-80 cursor-pointer"
-        >
-          &times;
-        </button>
+        <div className="flex items-center gap-1 shrink-0">
+          <button
+            onClick={onToggleVisibility}
+            className={`w-8 h-8 flex items-center justify-center rounded-full bg-bg-secondary transition-all cursor-pointer ${
+              isVisible ? 'text-text-muted hover:text-accent hover:bg-accent/5' : 'text-accent'
+            }`}
+            title={isVisible ? 'Collapse & Disable' : 'Expand & Enable'}
+          >
+            {isVisible ? (
+              <Eye size={16} variant="Bold" color="currentColor" />
+            ) : (
+              <EyeSlash size={16} variant="Bold" color="currentColor" />
+            )}
+          </button>
+          <button
+            onClick={onRemove}
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-bg-secondary text-text-muted hover:text-danger hover:bg-danger/5 transition-all cursor-pointer"
+            title="Remove entry"
+          >
+            <Trash size={16} variant="Bold" color="currentColor" />
+          </button>
+        </div>
       </div>
-      {children}
+      <div className={`p-4 pt-2 relative ${!isVisible ? 'hidden' : 'block'}`}>{children}</div>
     </div>
   );
 }

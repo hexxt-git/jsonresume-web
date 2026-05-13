@@ -4,6 +4,7 @@ import { getThemeById } from '../../themes';
 import { buildCustomCss } from '../../store/themeCustomStore';
 import { useT } from '../../i18n';
 import { Printer } from 'iconsax-react';
+import { filterVisible } from '../../utils/resume';
 
 const A4_HEIGHT = 1123; // 297mm at 96dpi
 const A4_WIDTH = 794; // 210mm at 96dpi
@@ -20,7 +21,7 @@ export function ResumePreview() {
   const [zoom, setZoom] = useState(1);
 
   const html = useMemo(
-    () => getThemeById(themeId).render(resume, buildCustomCss(custom)),
+    () => getThemeById(themeId).render(filterVisible(resume), buildCustomCss(custom)),
     [resume, themeId, custom],
   );
 
@@ -144,30 +145,30 @@ export function ResumePreview() {
   });
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between px-3 py-2 bg-bg-secondary shrink-0">
-        <span className="text-xs font-medium text-text-muted uppercase tracking-wide">
+    <div className="flex flex-col h-full bg-bg">
+      <div className="flex items-center justify-between px-6 py-4 bg-bg-secondary/30 border-b border-border shrink-0">
+        <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
           {t('app.preview')}
         </span>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2 bg-bg p-1 rounded-full border border-border/50 shadow-sm">
           <button
             onClick={zoomOut}
             disabled={zoom <= ZOOM_STEPS[0]}
-            className="w-6 h-6 flex items-center justify-center text-xs text-text-muted hover:text-text-secondary hover:bg-bg-hover rounded cursor-pointer disabled:opacity-30 disabled:cursor-default"
+            className="w-8 h-8 flex items-center justify-center text-sm text-text-muted hover:text-text hover:bg-bg-hover rounded-full cursor-pointer disabled:opacity-30 disabled:cursor-default transition-all"
             title={t('preview.zoomOut')}
           >
             &minus;
           </button>
           <button
             onClick={() => setZoom(fitZoom())}
-            className="px-1.5 py-0.5 text-[10px] text-text-muted hover:text-text-secondary hover:bg-bg-hover rounded cursor-pointer tabular-nums min-w-[3rem] text-center"
+            className="px-3 py-1 text-[10px] font-bold text-text-secondary hover:text-accent hover:bg-bg-hover rounded-full cursor-pointer tabular-nums min-w-[3.5rem] text-center transition-all"
             title={t('preview.fitWidth')}
           >
             {Math.round(zoom * 100)}%
           </button>
           <button
             onClick={() => setZoom(1)}
-            className={`px-1.5 py-0.5 text-[10px] rounded cursor-pointer ${zoom === 1 ? 'text-accent-text bg-bg-accent' : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'}`}
+            className={`px-3 py-1 text-[10px] font-bold rounded-full cursor-pointer transition-all ${zoom === 1 ? 'bg-accent text-white shadow-sm' : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'}`}
             title={t('preview.actualSize')}
           >
             1:1
@@ -175,35 +176,35 @@ export function ResumePreview() {
           <button
             onClick={zoomIn}
             disabled={zoom >= ZOOM_STEPS[ZOOM_STEPS.length - 1]}
-            className="w-6 h-6 flex items-center justify-center text-xs text-text-muted hover:text-text-secondary hover:bg-bg-hover rounded cursor-pointer disabled:opacity-30 disabled:cursor-default"
+            className="w-8 h-8 flex items-center justify-center text-sm text-text-muted hover:text-text hover:bg-bg-hover rounded-full cursor-pointer disabled:opacity-30 disabled:cursor-default transition-all"
             title={t('preview.zoomIn')}
           >
             +
           </button>
-          <div className="w-px h-4 bg-border mx-1" />
+        </div>
+        <div className="flex items-center gap-2">
           <button
             onClick={handlePrint}
-            className="w-7 h-7 flex items-center justify-center bg-accent text-white rounded hover:opacity-90 transition-colors cursor-pointer"
+            className="flex items-center gap-2 px-5 py-2 bg-accent text-white rounded-full hover:opacity-90 transition-all cursor-pointer font-bold text-xs shadow-md"
             title={t('preview.print')}
           >
-            <Printer size={14} variant="Bold" color="currentColor" />
+            <Printer size={16} variant="Bold" color="currentColor" />
+            <span className="hidden lg:inline">{t('preview.print').toUpperCase()}</span>
           </button>
         </div>
       </div>
-      <div ref={containerRef} className="flex-1 overflow-auto bg-bg-tertiary">
+      <div ref={containerRef} className="flex-1 overflow-auto bg-bg-tertiary/50 p-8">
         <div
-          className="relative mx-auto"
+          className="relative mx-auto transition-all duration-300"
           style={{
             width: A4_WIDTH * zoom,
             height: contentHeight * zoom,
-            marginTop: 16,
-            marginBottom: 16,
           }}
         >
           <iframe
             ref={iframeRef}
             srcDoc={html}
-            className="border-0 bg-white shadow-sm origin-top-left"
+            className="border-0 bg-white shadow-md origin-top-left rounded-sm"
             style={{
               width: A4_WIDTH,
               height: contentHeight,

@@ -18,8 +18,8 @@ a{color:#d4d4d4;text-decoration:none;border-bottom:1px solid #555}a:hover{border
 .contact a{color:#b3b3b3;border-bottom:none}
 .divider{border:none;border-top:1px solid #333;margin:20px 0}
 .summary{text-align:justify;color:#999;margin-bottom:28px}
-.section{margin-bottom:24px}
-.entry{margin-bottom:16px}
+.section{margin-bottom:24px;break-inside:avoid}
+.entry{margin-bottom:16px;break-inside:avoid}
 .entry-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap}
 .entry-meta{color:#808080;font-size:calc(13px * var(--fs-mult, 1));font-style:italic}
 .entry-org{color:#999;font-size:calc(13px * var(--fs-mult, 1));margin-top:1px}

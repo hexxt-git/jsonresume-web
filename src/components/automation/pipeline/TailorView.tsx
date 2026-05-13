@@ -167,11 +167,14 @@ IMPORTANT: Only modify content relevant to job tailoring (summary, work highligh
 
   if (error && changes.length === 0) {
     return (
-      <div className="space-y-3">
-        <div className="text-xs text-danger bg-danger/10 rounded-md px-3 py-2">{error}</div>
+      <div className="space-y-4 p-4">
+        <div className="text-xs font-medium text-danger bg-danger/10 border border-danger/20 rounded-2xl px-6 py-4 flex items-center gap-3">
+          <span className="text-lg">&times;</span>
+          {error}
+        </div>
         <button
           onClick={handleRegenerate}
-          className="text-xs text-accent hover:underline cursor-pointer"
+          className="text-xs font-bold text-accent hover:bg-accent/5 px-4 py-2 rounded-full border border-accent/20 transition-all cursor-pointer uppercase tracking-widest"
         >
           Try again
         </button>
@@ -183,13 +186,13 @@ IMPORTANT: Only modify content relevant to job tailoring (summary, work highligh
 
   if (changes.length === 0 && !isRunning) {
     return (
-      <div className="text-center py-8 space-y-2">
-        <p className="text-xs text-text-muted">
+      <div className="text-center py-16 space-y-4 bg-bg-secondary/20 rounded-3xl border border-dashed border-border/50">
+        <p className="text-sm font-medium text-text-muted italic">
           No changes needed — your resume already matches well.
         </p>
         <button
           onClick={handleRegenerate}
-          className="text-xs text-accent hover:underline cursor-pointer"
+          className="text-xs font-bold text-accent hover:bg-accent/5 px-6 py-2.5 rounded-full border border-accent/30 transition-all cursor-pointer uppercase tracking-widest"
         >
           Try with different settings
         </button>
@@ -200,49 +203,51 @@ IMPORTANT: Only modify content relevant to job tailoring (summary, work highligh
   /* ── Review ───────────────────────────────────────────── */
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 p-4">
       {/* Inline settings */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-[10px] font-medium text-text-muted uppercase tracking-wide">
+      <div className="space-y-6 bg-bg-secondary/30 p-5 rounded-2xl border border-border/50">
+        <div className="flex items-center gap-4 flex-wrap">
+          <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
             Approach
           </span>
-          {(['conservative', 'balanced', 'creative'] as Creativity[]).map((c) => (
-            <button
-              key={c}
-              onClick={() => setCreativity(c)}
-              className={`text-[10px] px-2.5 py-1 rounded-full cursor-pointer transition-colors ${
-                creativity === c
-                  ? 'bg-accent text-white'
-                  : 'border border-border text-text-muted hover:text-text-secondary'
-              }`}
-            >
-              {c.charAt(0).toUpperCase() + c.slice(1)}
-            </button>
-          ))}
+          <div className="flex gap-2 bg-bg p-1 rounded-full border border-border/50 shadow-sm">
+            {(['conservative', 'balanced', 'creative'] as Creativity[]).map((c) => (
+              <button
+                key={c}
+                onClick={() => setCreativity(c)}
+                className={`text-[10px] font-bold px-4 py-1.5 rounded-full cursor-pointer transition-all uppercase tracking-tight ${
+                  creativity === c
+                    ? 'bg-accent text-white shadow-md'
+                    : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
           <button
             onClick={handleRegenerate}
-            className="text-[10px] text-accent hover:underline cursor-pointer ml-auto"
+            className="text-[10px] font-bold text-accent hover:text-accent/80 cursor-pointer ml-auto uppercase tracking-widest border-b-2 border-accent/20 hover:border-accent transition-all pb-0.5"
           >
             Regenerate
           </button>
         </div>
 
         <details className="group">
-          <summary className="text-[10px] text-text-muted cursor-pointer hover:text-text-secondary select-none">
+          <summary className="text-[10px] font-bold text-text-muted cursor-pointer hover:text-text-secondary select-none uppercase tracking-widest flex items-center gap-2">
             Sections to modify
           </summary>
-          <div className="grid grid-cols-3 gap-x-3 gap-y-1 mt-1.5 pl-1">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3 mt-4 pl-3">
             {ALL_SECTIONS.map((s) => (
               <label
                 key={s}
-                className="flex items-center gap-1.5 text-[10px] text-text-secondary cursor-pointer select-none"
+                className="flex items-center gap-2.5 text-[11px] font-medium text-text-secondary cursor-pointer select-none group/item hover:text-accent transition-colors"
               >
                 <input
                   type="checkbox"
                   checked={sectionsToTailor.includes(s)}
                   onChange={() => toggleSection(s)}
-                  className="rounded border-border-input accent-accent w-3 h-3"
+                  className="rounded-full border-border-input accent-accent w-4 h-4 cursor-pointer"
                 />
                 {SECTION_DISPLAY[s] || s}
               </label>
@@ -252,7 +257,9 @@ IMPORTANT: Only modify content relevant to job tailoring (summary, work highligh
       </div>
 
       {error && (
-        <div className="text-xs text-danger bg-danger/10 rounded-md px-3 py-2">{error}</div>
+        <div className="text-xs font-medium text-danger bg-danger/10 border border-danger/20 rounded-2xl px-6 py-4">
+          {error}
+        </div>
       )}
 
       {/* Diff review */}

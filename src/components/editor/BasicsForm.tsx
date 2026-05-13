@@ -35,11 +35,13 @@ export function BasicsForm() {
   };
 
   const inputCls =
-    'w-full px-3 py-1.5 text-sm border border-border-input bg-bg-input text-text rounded-md focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent';
+    'w-full px-4 py-2 text-sm border border-border-input bg-bg-input text-text rounded-full focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all';
 
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-semibold text-text">{t('basics.title')}</h3>
+      <h3 className="text-sm font-bold text-text uppercase tracking-widest flex items-center gap-2">
+        {t('basics.title')}
+      </h3>
       <div className="grid grid-cols-2 gap-3">
         <FormField
           label={t('basics.name')}
@@ -63,16 +65,16 @@ export function BasicsForm() {
           placeholder={t('ph.email')}
         />
         {/* Phone with dial code picker */}
-        <div>
-          <label className="block text-xs font-medium text-text-secondary mb-1">
+        <div className="space-y-1.5">
+          <label className="block text-xs font-medium text-text-secondary ml-1">
             {t('basics.phone')}
           </label>
-          <div className="flex">
+          <div className="flex group transition-all">
             <CountryPickerPopover onSelect={handlePhoneCountrySelect} showDialCode>
               <button
                 type="button"
-                className="flex items-center gap-1 px-2 py-1.5 text-sm border border-border-input border-r-0
-                  bg-bg-input rounded-l-md hover:bg-bg-hover shrink-0 cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-border-input border-r-0
+                  bg-bg-secondary rounded-l-full hover:bg-bg-hover shrink-0 cursor-pointer transition-colors group-focus-within:border-accent"
               >
                 {phoneCountry ? (
                   <img
@@ -80,12 +82,14 @@ export function BasicsForm() {
                     alt=""
                     width={20}
                     height={15}
-                    className="shrink-0 rounded-[2px]"
+                    className="shrink-0 rounded-[3px] shadow-sm"
                   />
                 ) : (
                   <span className="text-xs">🌐</span>
                 )}
-                <span className="text-xs text-text-muted">{phoneCountry?.dialCode || '+'}</span>
+                <span className="text-xs font-bold text-text-muted">
+                  {phoneCountry?.dialCode || '+'}
+                </span>
                 <ChevronDown />
               </button>
             </CountryPickerPopover>
@@ -94,8 +98,8 @@ export function BasicsForm() {
               value={basics.phone || ''}
               onChange={(e) => updateBasics('phone', e.target.value)}
               placeholder={t('ph.phone')}
-              className={`flex-1 min-w-0 px-3 py-1.5 text-sm border border-border-input bg-bg-input text-text
-                rounded-r-md focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent`}
+              className={`flex-1 min-w-0 px-4 py-1.5 text-sm border border-border-input bg-bg-input text-text
+                rounded-r-full focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all`}
             />
           </div>
         </div>
@@ -118,7 +122,7 @@ export function BasicsForm() {
             href="https://imgbb.com/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block mt-1 text-[10px] text-text-muted hover:text-accent-text"
+            className="inline-block mt-1 ml-1 text-[10px] font-bold text-text-muted hover:text-accent uppercase tracking-widest transition-colors"
           >
             {t('url.uploadImage')} &rarr;
           </a>
@@ -132,7 +136,9 @@ export function BasicsForm() {
         placeholder={t('ph.summary')}
       />
 
-      <h3 className="text-sm font-semibold text-text pt-2">{t('basics.location')}</h3>
+      <h3 className="text-sm font-bold text-text uppercase tracking-widest flex items-center gap-2 pt-2">
+        {t('basics.location')}
+      </h3>
       <div className="grid grid-cols-2 gap-3">
         <FormField
           label={t('basics.city')}
@@ -149,14 +155,14 @@ export function BasicsForm() {
       </div>
       <div className="grid grid-cols-2 gap-3">
         {/* Country select with flag picker */}
-        <div>
-          <label className="block text-xs font-medium text-text-secondary mb-1">
+        <div className="space-y-1.5">
+          <label className="block text-xs font-medium text-text-secondary ml-1">
             {t('basics.countryCode')}
           </label>
           <CountryPickerPopover onSelect={(c) => updateBasicsLocation('countryCode', c.code)}>
             <button
               type="button"
-              className={`${inputCls} flex items-center gap-2 text-left cursor-pointer`}
+              className={`${inputCls} flex items-center gap-3 text-left cursor-pointer hover:bg-bg-hover`}
             >
               {selectedCountry ? (
                 <>
@@ -165,10 +171,12 @@ export function BasicsForm() {
                     alt=""
                     width={20}
                     height={15}
-                    className="shrink-0 rounded-[2px]"
+                    className="shrink-0 rounded-[3px] shadow-sm"
                   />
-                  <span className="flex-1 truncate">{selectedCountry.name}</span>
-                  <span className="text-text-muted text-xs">{selectedCountry.code}</span>
+                  <span className="flex-1 truncate font-medium">{selectedCountry.name}</span>
+                  <span className="text-text-muted text-[10px] font-bold bg-bg-secondary px-2 py-0.5 rounded-full">
+                    {selectedCountry.code}
+                  </span>
                 </>
               ) : (
                 <span className="text-text-muted">{t('ph.countryCode')}</span>
@@ -184,41 +192,43 @@ export function BasicsForm() {
         />
       </div>
 
-      <RepeatableSection
-        title={t('basics.profiles')}
-        items={profiles}
-        onChange={(items) => updateBasics('profiles', items)}
-        defaultItem={{ network: '', username: '', url: '' }}
-        renderItem={(item, index, update) => (
-          <div className="space-y-2">
-            <div className="flex gap-2 items-end">
-              <div>
-                <label className="block text-xs font-medium text-text-secondary mb-1">
-                  {t('basics.network')}
-                </label>
-                <NetworkPickerButton
-                  value={item.network || ''}
-                  onChange={(v) => update(index, { ...item, network: v })}
-                />
+      <div className="pt-2">
+        <RepeatableSection
+          title={t('basics.profiles')}
+          items={profiles}
+          onChange={(items) => updateBasics('profiles', items)}
+          defaultItem={{ network: '', username: '', url: '' }}
+          renderItem={(item, index, update) => (
+            <div className="space-y-3">
+              <div className="flex gap-4 items-end">
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-medium text-text-secondary ml-1">
+                    {t('basics.network')}
+                  </label>
+                  <NetworkPickerButton
+                    value={item.network || ''}
+                    onChange={(v) => update(index, { ...item, network: v })}
+                  />
+                </div>
+                <div className="flex-1">
+                  <FormField
+                    label={t('basics.username')}
+                    value={item.username || ''}
+                    onChange={(v) => update(index, { ...item, username: v })}
+                    placeholder={t('ph.username')}
+                  />
+                </div>
               </div>
-              <div className="flex-1">
-                <FormField
-                  label={t('basics.username')}
-                  value={item.username || ''}
-                  onChange={(v) => update(index, { ...item, username: v })}
-                  placeholder={t('ph.username')}
-                />
-              </div>
+              <UrlField
+                label="URL"
+                value={item.url || ''}
+                onChange={(v) => update(index, { ...item, url: v })}
+                placeholder={t('ph.profileUrl')}
+              />
             </div>
-            <UrlField
-              label="URL"
-              value={item.url || ''}
-              onChange={(v) => update(index, { ...item, url: v })}
-              placeholder={t('ph.profileUrl')}
-            />
-          </div>
-        )}
-      />
+          )}
+        />
+      </div>
     </div>
   );
 }

@@ -15,12 +15,13 @@ a{color:inherit;text-decoration:underline;text-decoration-color:#ccc;text-underl
 .meta{color:#777;font-size:calc(13px * var(--fs-mult, 1))}
 .contact{color:#777;font-size:calc(13px * var(--fs-mult, 1));margin-bottom:4px}
 .summary{color:#555;margin:16px 0 0}
-.entry{margin-bottom:14px}
+.section{break-inside:avoid}
+.entry{margin-bottom:14px;break-inside:avoid}
 .entry-row{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap}
 .sub{color:#555;font-size:calc(13px * var(--fs-mult, 1))}
 ul{padding-left:18px;margin-top:4px}
 li{margin-bottom:2px;color:#444}
-.skills-inline{color:#555}
+.skills-inline{color:#555;break-inside:avoid}
 .skills-inline strong{color:#222;font-weight:600}
 @media print{body{padding:20px 24px;font-size:calc(12.5px * var(--fs-mult, 1))}h2{margin:16px 0 8px}}
 ${customCss || ''}</style></head><body>

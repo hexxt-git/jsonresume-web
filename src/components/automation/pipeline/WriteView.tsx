@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAiStream } from '../shared/useAiStream';
 import { CopyableOutput } from '../shared/CopyableOutput';
+import { CloseCircle } from 'iconsax-react';
 import {
   useAutomationStore,
   getPromptDirectives,
@@ -102,58 +103,65 @@ export function WriteView({ jd, analysis }: Props) {
   /* ── Render ───────────────────────────────────────────── */
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 p-4">
       {/* Inline settings */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-[10px] font-medium text-text-muted uppercase tracking-wide">
-          Tone
-        </span>
-        {(['formal', 'professional', 'casual'] as Tone[]).map((t) => (
-          <button
-            key={t}
-            onClick={() => setTone(t)}
-            className={`text-[10px] px-2.5 py-1 rounded-full cursor-pointer transition-colors ${
-              tone === t
-                ? 'bg-accent text-white'
-                : 'border border-border text-text-muted hover:text-text-secondary'
-            }`}
-          >
-            {t.charAt(0).toUpperCase() + t.slice(1)}
-          </button>
-        ))}
-        {tab === 'cover-letter' && (
-          <>
-            <div className="w-px h-4 bg-border mx-1" />
-            <span className="text-[10px] font-medium text-text-muted uppercase tracking-wide">
-              Length
+      <div className="space-y-6 bg-bg-secondary/30 p-5 rounded-2xl border border-border/50">
+        <div className="flex items-center gap-6 flex-wrap">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
+              Tone
             </span>
-            {(['brief', 'standard', 'detailed'] as CoverLetterLength[]).map((l) => (
-              <button
-                key={l}
-                onClick={() => setCoverLetterLength(l)}
-                className={`text-[10px] px-2.5 py-1 rounded-full cursor-pointer transition-colors ${
-                  coverLetterLength === l
-                    ? 'bg-accent text-white'
-                    : 'border border-border text-text-muted hover:text-text-secondary'
-                }`}
-              >
-                {l.charAt(0).toUpperCase() + l.slice(1)}
-              </button>
-            ))}
-          </>
-        )}
+            <div className="flex gap-2 bg-bg p-1 rounded-full border border-border/50 shadow-sm">
+              {(['formal', 'professional', 'casual'] as Tone[]).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setTone(t)}
+                  className={`text-[10px] font-bold px-4 py-1.5 rounded-full cursor-pointer transition-all uppercase tracking-tight ${
+                    tone === t
+                      ? 'bg-accent text-white shadow-md'
+                      : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+          {tab === 'cover-letter' && (
+            <div className="flex items-center gap-2 border-l border-border/50 pl-6">
+              <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
+                Length
+              </span>
+              <div className="flex gap-2 bg-bg p-1 rounded-full border border-border/50 shadow-sm">
+                {(['brief', 'standard', 'detailed'] as CoverLetterLength[]).map((l) => (
+                  <button
+                    key={l}
+                    onClick={() => setCoverLetterLength(l)}
+                    className={`text-[10px] font-bold px-4 py-1.5 rounded-full cursor-pointer transition-all uppercase tracking-tight ${
+                      coverLetterLength === l
+                        ? 'bg-accent text-white shadow-md'
+                        : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
+                    }`}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-4 border-b border-border">
+      <div className="flex gap-2 p-1 bg-bg-secondary/50 rounded-full border border-border/50">
         {TABS.map(([id, label]) => (
           <button
             key={id}
             onClick={() => setTab(id)}
-            className={`pb-2 text-xs cursor-pointer transition-colors ${
+            className={`flex-1 py-2 text-xs font-bold rounded-full cursor-pointer transition-all uppercase tracking-widest ${
               tab === id
-                ? 'text-accent border-b-2 border-accent font-medium'
-                : 'text-text-muted hover:text-text-secondary'
+                ? 'bg-bg text-accent shadow-md border border-accent/10'
+                : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
             }`}
           >
             {label}
@@ -162,44 +170,52 @@ export function WriteView({ jd, analysis }: Props) {
       </div>
 
       {error && (
-        <div className="text-xs text-danger bg-danger/10 rounded-md px-3 py-2">{error}</div>
+        <div className="text-xs font-medium text-danger bg-danger/10 border border-danger/20 rounded-2xl px-6 py-4">
+          {error}
+        </div>
       )}
 
       {/* Cover Letter Tab */}
       {tab === 'cover-letter' && (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {!coverLetter && !isRunning && (
-            <p className="text-xs text-text-tertiary">
-              Generate a cover letter tailored to this position and your resume.
-            </p>
+            <div className="py-10 text-center bg-bg-secondary/20 rounded-3xl border border-dashed border-border/50">
+              <p className="text-sm font-medium text-text-muted italic">
+                Generate a cover letter tailored to this position and your resume.
+              </p>
+            </div>
           )}
           {coverLetter && <CopyableOutput content={coverLetter} label="Cover Letter" />}
           <button
             onClick={handleCoverLetter}
             disabled={isRunning}
-            className="w-full text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer disabled:opacity-50"
+            className="w-full text-xs py-3.5 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer disabled:opacity-50 font-bold shadow-lg transition-all uppercase tracking-widest"
           >
-            {isRunning ? 'Generating...' : coverLetter ? 'Regenerate' : 'Generate Cover Letter'}
+            {isRunning
+              ? 'Generating...'
+              : coverLetter
+                ? 'Regenerate Cover Letter'
+                : 'Generate Cover Letter'}
           </button>
         </div>
       )}
 
       {/* Questions Tab */}
       {tab === 'questions' && (
-        <div className="space-y-4">
-          <div className="border border-border-input bg-bg-input rounded-lg p-2 focus-within:ring-1 focus-within:ring-accent space-y-1.5">
+        <div className="space-y-6">
+          <div className="border border-border bg-bg-input rounded-2xl p-4 focus-within:ring-4 focus-within:ring-accent/10 focus-within:border-accent space-y-3 transition-all">
             {questionList.map((q, i) => (
               <div
                 key={i}
-                className="flex items-start gap-1.5 bg-bg-tertiary rounded px-2 py-1.5 text-xs text-text"
+                className="flex items-start gap-3 bg-bg shadow-sm border border-border/50 rounded-xl px-4 py-3 text-xs font-medium text-text-secondary group transition-all"
               >
-                <span className="flex-1">{q}</span>
+                <span className="flex-1 leading-relaxed">{q}</span>
                 <button
                   type="button"
                   onClick={() => setQuestionList(questionList.filter((_, j) => j !== i))}
-                  className="shrink-0 text-text-muted hover:text-text-secondary cursor-pointer"
+                  className="shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-bg-secondary text-text-muted hover:text-danger cursor-pointer transition-all"
                 >
-                  &times;
+                  <CloseCircle size={14} variant="Bold" color="currentColor" />
                 </button>
               </div>
             ))}
@@ -218,14 +234,16 @@ export function WriteView({ jd, analysis }: Props) {
                   ? 'Type a question and press Enter...'
                   : 'Add another question...'
               }
-              className="w-full text-xs outline-none bg-transparent text-text px-1 py-0.5"
+              className="w-full text-sm outline-none bg-transparent text-text px-2 py-1 font-medium placeholder:text-text-muted/50"
             />
           </div>
           {answers.length > 0 && (
-            <div className="space-y-3">
+            <div className="space-y-6">
               {answers.map((a, i) => (
-                <div key={i}>
-                  <p className="text-xs font-medium text-text mb-1">{a.question}</p>
+                <div key={i} className="space-y-2">
+                  <p className="text-xs font-bold text-text uppercase tracking-widest ml-1">
+                    {a.question}
+                  </p>
                   <CopyableOutput content={a.answer} format="plain" />
                 </div>
               ))}
@@ -234,7 +252,7 @@ export function WriteView({ jd, analysis }: Props) {
           <button
             onClick={handleQuestions}
             disabled={!questionList.length || isRunning}
-            className="w-full text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer disabled:opacity-50"
+            className="w-full text-xs py-3.5 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer disabled:opacity-50 font-bold shadow-lg transition-all uppercase tracking-widest"
           >
             {isRunning ? 'Generating...' : 'Generate Answers'}
           </button>
@@ -243,16 +261,16 @@ export function WriteView({ jd, analysis }: Props) {
 
       {/* Email Tab */}
       {tab === 'email' && (
-        <div className="space-y-4">
-          <div className="flex gap-2 flex-wrap">
+        <div className="space-y-6">
+          <div className="flex gap-2 bg-bg-secondary/30 p-2 rounded-full border border-border/50 overflow-x-auto scrollbar-none">
             {EMAIL_TYPES.map((t) => (
               <button
                 key={t}
                 onClick={() => setEmailType(t)}
-                className={`text-[10px] px-3 py-1 rounded-full cursor-pointer transition-colors ${
+                className={`text-[10px] font-bold px-5 py-2 rounded-full cursor-pointer transition-all uppercase tracking-tight whitespace-nowrap ${
                   emailType === t
-                    ? 'bg-accent text-white'
-                    : 'border border-border text-text-secondary hover:bg-bg-hover'
+                    ? 'bg-accent text-white shadow-md'
+                    : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
                 }`}
               >
                 {t}
@@ -263,16 +281,16 @@ export function WriteView({ jd, analysis }: Props) {
             value={emailContext}
             onChange={(e) => setEmailContext(e.target.value)}
             placeholder="Additional context (optional)..."
-            rows={2}
-            className="w-full px-3 py-2 text-xs border border-border-input bg-bg-input text-text rounded-lg focus:outline-none focus:ring-1 focus:ring-accent resize-y"
+            rows={3}
+            className="w-full px-5 py-4 text-sm border border-border bg-bg-input text-text rounded-2xl focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent resize-y transition-all font-medium"
           />
           {emailDraft && <CopyableOutput content={emailDraft} label="Email Draft" />}
           <button
             onClick={handleEmail}
             disabled={isRunning}
-            className="w-full text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer disabled:opacity-50"
+            className="w-full text-xs py-3.5 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer disabled:opacity-50 font-bold shadow-lg transition-all uppercase tracking-widest"
           >
-            {isRunning ? 'Drafting...' : emailDraft ? 'Redraft' : 'Draft Email'}
+            {isRunning ? 'Drafting...' : emailDraft ? 'Redraft Email' : 'Draft Email'}
           </button>
         </div>
       )}

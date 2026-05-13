@@ -27,17 +27,17 @@ export function Slider({
   const pct = ((value - min) / (max - min)) * 100;
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-2">
-        <label className="text-xs text-text-secondary">{label}</label>
-        <div className="flex items-center gap-1.5">
-          <span className="text-xs text-text-muted tabular-nums">
+    <div className="space-y-2.5 py-1">
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-medium text-text-secondary ml-1">{label}</label>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-text-muted tabular-nums px-2 py-0.5 bg-bg-secondary rounded-full">
             {isDefault ? 'default' : formatValue(value)}
           </span>
           {!isDefault && (
             <button
               onClick={() => onChange(defaultValue)}
-              className="w-4 h-4 rounded-full flex items-center justify-center text-[9px] text-text-muted hover:bg-bg-hover hover:text-text-secondary cursor-pointer transition-colors"
+              className="w-5 h-5 rounded-full flex items-center justify-center text-xs text-text-muted hover:bg-bg-hover hover:text-text-secondary cursor-pointer transition-colors border border-border"
               title={t('ui.resetDefault')}
               aria-label={`Reset ${label} to default`}
             >
@@ -47,7 +47,7 @@ export function Slider({
         </div>
       </div>
       <RadixSlider.Root
-        className="relative flex items-center select-none touch-none w-full h-4 cursor-pointer"
+        className="relative flex items-center select-none touch-none w-full h-5 cursor-pointer"
         value={[value]}
         onValueChange={([v]) => onChange(v)}
         min={min}
@@ -55,7 +55,7 @@ export function Slider({
         step={step}
         aria-label={label}
       >
-        <RadixSlider.Track className="relative grow rounded-full h-1 bg-border">
+        <RadixSlider.Track className="relative grow rounded-full h-1.5 bg-border/50">
           <RadixSlider.Range
             className="absolute rounded-full h-full transition-all"
             style={{
@@ -63,7 +63,7 @@ export function Slider({
             }}
           />
         </RadixSlider.Track>
-        <RadixSlider.Thumb className="block w-3.5 h-3.5 rounded-full bg-bg border-2 border-accent shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-accent/30 transition-shadow hover:shadow-md" />
+        <RadixSlider.Thumb className="block w-4.5 h-4.5 rounded-full bg-bg border-2 border-accent shadow-md outline-none focus-visible:ring-4 focus-visible:ring-accent/10 transition-all active:scale-95" />
       </RadixSlider.Root>
     </div>
   );

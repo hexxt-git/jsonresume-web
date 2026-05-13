@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { BlockDiffView, normalizeDiffText } from '../../ai/DiffView';
-import { Printer } from 'lucide-react';
+import { Printer } from 'iconsax-react';
 import type { ResumeSchema } from '../../../types/resume';
 import type { BatchJob } from './types';
 import { SECTION_LABELS } from './types';
@@ -73,76 +73,89 @@ export function BatchResultCard({
   const lineChanges = countLineChanges(originalResume, result.tailoredResume);
 
   return (
-    <div className="rounded-lg overflow-hidden border border-border transition-shadow hover:shadow-sm">
+    <div className="rounded-3xl overflow-hidden border-2 border-border/40 bg-bg transition-all hover:shadow-2xl group/card">
       {/* Preview thumbnail */}
-      <ResumePreviewThumbnail html={previewHtml} title={result.jobTitle} />
+      <div className="p-4 bg-bg-secondary/20 group-hover/card:bg-bg-secondary/40 transition-colors">
+        <div className="rounded-2xl overflow-hidden border border-border shadow-md">
+          <ResumePreviewThumbnail html={previewHtml} title={result.jobTitle} />
+        </div>
+      </div>
 
       {/* Title + change summary */}
-      <div className="px-3 py-2.5 border-t border-border bg-bg-secondary">
-        <div className="text-xs font-medium text-text">{result.jobTitle}</div>
-        <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+      <div className="px-6 py-5 border-t border-border/50 bg-bg-secondary/30">
+        <div className="text-sm font-bold text-text uppercase tracking-tight">
+          {result.jobTitle}
+        </div>
+        <div className="flex items-center gap-2 mt-3 flex-wrap">
           {changedSections.map((s) => (
-            <span key={s} className="text-[10px] px-1.5 py-0.5 rounded diff-word-add">
+            <span
+              key={s}
+              className="text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-tight diff-word-add shadow-sm border border-diff-add-word/30"
+            >
               {SECTION_LABELS[s] || s}
             </span>
           ))}
           {changedSections.length === 0 && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded diff-word-rm">No changes</span>
+            <span className="text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-tight diff-word-rm shadow-sm border border-diff-rm-word/30 opacity-60">
+              No changes
+            </span>
           )}
-          <span className="text-[10px] text-text-faint">· {lineChanges} lines changed</span>
+          <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest ml-1 bg-bg-secondary px-2 py-1 rounded-full border border-border/50">
+            · {lineChanges} LINES CHANGED
+          </span>
         </div>
       </div>
 
       {/* Primary actions */}
-      <div className="px-3 py-2 flex gap-2 border-t border-border">
+      <div className="px-6 py-5 flex gap-4 border-t border-border/50 bg-bg">
         <button
           onClick={() => onSetCurrent(result.tailoredResume)}
-          className="flex-1 text-xs py-1.5 rounded-md bg-accent text-white hover:opacity-90 cursor-pointer font-medium"
+          className="flex-1 flex items-center justify-center gap-2 text-xs py-3 rounded-full bg-accent text-white hover:opacity-90 cursor-pointer font-bold shadow-lg transition-all uppercase tracking-widest"
         >
-          Print <Printer size={14} className="inline-block ms-1" />
+          Print <Printer size={16} variant="Bold" color="currentColor" />
         </button>
         <button
           onClick={() => onSetCurrent(result.tailoredResume)}
-          className="flex-1 text-xs py-1.5 rounded-md bg-accent text-white hover:opacity-90 cursor-pointer font-medium"
+          className="flex-1 text-xs py-3 rounded-full bg-bg-secondary text-text hover:bg-bg-hover cursor-pointer font-bold border border-border/50 transition-all uppercase tracking-widest"
         >
           Set as current
         </button>
         <button
           onClick={() => onSaveSlot(job)}
-          className="flex-1 text-xs py-1.5 rounded-md border border-accent/50 text-accent hover:bg-accent/10 cursor-pointer"
+          className="flex-1 text-xs py-3 rounded-full border border-accent/30 text-accent bg-accent/5 hover:bg-accent/10 cursor-pointer font-bold transition-all uppercase tracking-widest"
         >
           Save to new slot
         </button>
       </div>
 
       {/* Secondary actions */}
-      <div className="px-3 py-2 flex items-center gap-1.5 border-t border-border">
-        <div className="flex gap-1">
+      <div className="px-6 py-4 flex items-center gap-3 border-t border-border/50 bg-bg-secondary/10">
+        <div className="flex gap-2">
           {['json', 'yaml', 'html'].map((fmt) => (
             <button
               key={fmt}
               onClick={() => onDownload(result.tailoredResume, result.jobTitle, fmt)}
-              className="text-[10px] px-2 py-1 bg-bg-tertiary rounded text-text-muted hover:text-text-secondary cursor-pointer uppercase"
+              className="text-[9px] px-3 py-1.5 bg-bg border border-border/50 rounded-full text-text-muted hover:text-accent cursor-pointer uppercase font-black tracking-widest shadow-sm transition-all"
             >
               {fmt}
             </button>
           ))}
         </div>
-        <div className="h-3.5 w-px bg-border" />
+        <div className="h-6 w-px bg-border/50 mx-1" />
         <button
           onClick={() => onGenerateCL(job)}
           disabled={generatingCL}
-          className="text-[10px] px-2 py-1 bg-bg-tertiary rounded text-text-muted hover:text-text-secondary cursor-pointer disabled:opacity-50"
+          className="text-[9px] px-3 py-1.5 bg-accent/5 border border-accent/20 rounded-full text-accent hover:bg-accent hover:text-white cursor-pointer disabled:opacity-50 font-black tracking-widest uppercase shadow-sm transition-all"
         >
-          {generatingCL ? '...' : job.coverLetter ? 'Redo CL' : 'Cover letter'}
+          {generatingCL ? '...' : job.coverLetter ? 'Redo Cover Letter' : 'Cover letter'}
         </button>
         <div className="flex-1" />
         <button
           onClick={() => setShowDiff(!showDiff)}
-          className={`text-[10px] px-2 py-1 rounded cursor-pointer transition-colors ${
+          className={`text-[9px] px-4 py-1.5 rounded-full cursor-pointer transition-all font-black tracking-widest uppercase border ${
             showDiff
-              ? 'bg-accent/10 text-accent'
-              : 'bg-bg-tertiary text-text-muted hover:text-text-secondary'
+              ? 'bg-bg text-accent border-accent/30 shadow-inner'
+              : 'bg-bg text-text-muted border-border/50 hover:text-text hover:bg-bg-secondary shadow-sm'
           }`}
         >
           {showDiff ? 'Hide diff' : 'View diff'}

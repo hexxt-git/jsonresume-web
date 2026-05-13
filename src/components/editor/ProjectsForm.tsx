@@ -18,8 +18,8 @@ export function ProjectsForm() {
       defaultItem={{ name: '', url: '', description: '', highlights: [], keywords: [] }}
       entryLabel={(item) => item.name || 'Project'}
       renderItem={(item, index, update) => (
-        <div className="space-y-2">
-          <div className="grid grid-cols-2 gap-2">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
             <FormField
               label={t('projects.name')}
               value={item.name || ''}
@@ -40,7 +40,7 @@ export function ProjectsForm() {
             multiline
             placeholder={t('ph.projectDesc')}
           />
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             <FormField
               label={t('projects.startDate')}
               value={item.startDate || ''}
@@ -57,13 +57,13 @@ export function ProjectsForm() {
           <ChipInput
             label={t('projects.highlights')}
             items={item.highlights || []}
-            onChange={(v) => update(index, { ...item, highlights: v })}
+            onChange={(v: string[]) => update(index, { ...item, highlights: v })}
             placeholder={t('ph.projectHighlight')}
           />
           <ChipInput
             label={t('projects.keywords')}
             items={item.keywords || []}
-            onChange={(v) => update(index, { ...item, keywords: v })}
+            onChange={(v: string[]) => update(index, { ...item, keywords: v })}
             placeholder={t('ph.projectKeyword')}
           />
         </div>
