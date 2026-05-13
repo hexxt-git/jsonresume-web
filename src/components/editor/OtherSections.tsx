@@ -20,8 +20,8 @@ export function VolunteerForm() {
         [item.position, item.organization].filter(Boolean).join(' at ') || 'Entry'
       }
       renderItem={(item, i, upd) => (
-        <div className="space-y-2">
-          <div className="grid grid-cols-2 gap-2">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
             <FormField
               label={t('volunteer.organization')}
               value={item.organization || ''}
@@ -35,7 +35,7 @@ export function VolunteerForm() {
               placeholder={t('ph.volunteer')}
             />
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             <FormField
               label={t('work.startDate')}
               value={item.startDate || ''}
@@ -64,7 +64,7 @@ export function VolunteerForm() {
           <ChipInput
             label={t('work.highlights')}
             items={item.highlights || []}
-            onChange={(v) => upd(i, { ...item, highlights: v })}
+            onChange={(v: string[]) => upd(i, { ...item, highlights: v })}
           />
         </div>
       )}
@@ -84,8 +84,8 @@ export function AwardsForm() {
       defaultItem={{ title: '', awarder: '', date: '', summary: '' }}
       entryLabel={(item) => [item.title, item.awarder].filter(Boolean).join(' from ') || 'Award'}
       renderItem={(item, i, upd) => (
-        <div className="space-y-2">
-          <div className="grid grid-cols-2 gap-2">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
             <FormField
               label={t('awards.name')}
               value={item.title || ''}
@@ -129,8 +129,8 @@ export function CertificatesForm() {
       defaultItem={{ name: '', issuer: '', date: '', url: '' }}
       entryLabel={(item) => [item.name, item.issuer].filter(Boolean).join(' by ') || 'Certificate'}
       renderItem={(item, i, upd) => (
-        <div className="space-y-2">
-          <div className="grid grid-cols-2 gap-2">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
             <FormField
               label={t('certs.name')}
               value={item.name || ''}
@@ -144,7 +144,7 @@ export function CertificatesForm() {
               placeholder={t('ph.certIssuer')}
             />
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             <FormField
               label={t('certs.date')}
               value={item.date || ''}
@@ -178,8 +178,8 @@ export function PublicationsForm() {
         [item.name, item.publisher].filter(Boolean).join(' in ') || 'Publication'
       }
       renderItem={(item, i, upd) => (
-        <div className="space-y-2">
-          <div className="grid grid-cols-2 gap-2">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
             <FormField
               label={t('pubs.name')}
               value={item.name || ''}
@@ -193,7 +193,7 @@ export function PublicationsForm() {
               placeholder={t('ph.publisher')}
             />
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             <FormField
               label={t('pubs.releaseDate')}
               value={item.releaseDate || ''}
@@ -230,7 +230,7 @@ export function LanguagesForm() {
       defaultItem={{ language: '', fluency: '' }}
       entryLabel={(item) => item.language || 'Language'}
       renderItem={(item, i, upd) => (
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-3">
           <FormField
             label={t('langs.language')}
             value={item.language || ''}
@@ -262,7 +262,7 @@ export function InterestsForm() {
       defaultItem={{ name: '', keywords: [] }}
       entryLabel={(item) => item.name || 'Interest'}
       renderItem={(item, i, upd) => (
-        <div className="space-y-2">
+        <div className="space-y-4">
           <FormField
             label={t('interests.name')}
             value={item.name || ''}
@@ -272,7 +272,7 @@ export function InterestsForm() {
           <ChipInput
             label={t('interests.keywords')}
             items={item.keywords || []}
-            onChange={(v) => upd(i, { ...item, keywords: v })}
+            onChange={(v: string[]) => upd(i, { ...item, keywords: v })}
           />
         </div>
       )}
@@ -292,7 +292,7 @@ export function ReferencesForm() {
       defaultItem={{ name: '', reference: '' }}
       entryLabel={(item) => item.name || 'Reference'}
       renderItem={(item, i, upd) => (
-        <div className="space-y-2">
+        <div className="space-y-4">
           <FormField
             label={t('refs.name')}
             value={item.name || ''}

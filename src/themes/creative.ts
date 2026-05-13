@@ -18,8 +18,8 @@ a{color:#5a6e4e;text-decoration:none}a:hover{text-decoration:underline}
 .contact{display:flex;flex-wrap:wrap;gap:14px;font-size:calc(13px * var(--fs-mult, 1));color:#888;margin-bottom:28px}
 .contact a{color:#5a6e4e}
 .summary{color:#555;margin-bottom:28px;padding:14px 18px;background:#f0efe8;border-radius:6px;line-height:1.7}
-.section{margin-bottom:26px}
-.entry{margin-bottom:18px;padding-left:14px;border-left:3px solid #d4d0c4}
+.section{margin-bottom:26px;break-inside:avoid}
+.entry{margin-bottom:18px;padding-left:14px;border-left:3px solid #d4d0c4;break-inside:avoid}
 .entry-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:4px}
 .entry-meta{color:#6b7c5e;font-size:calc(13px * var(--fs-mult, 1));font-weight:500}
 .entry-org{color:#888;font-size:calc(13px * var(--fs-mult, 1))}
@@ -27,7 +27,7 @@ ul{padding-left:18px;margin-top:6px}
 li{margin-bottom:3px;color:#555}
 li::marker{color:#6b7c5e}
 .skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.skill-card{background:#f0efe8;padding:12px 16px;border-radius:6px}
+.skill-card{background:#f0efe8;padding:12px 16px;border-radius:6px;break-inside:avoid}
 .skill-card h3{font-size:calc(13px * var(--fs-mult, 1));color:#5a6e4e;margin-bottom:6px}
 .tags{display:flex;flex-wrap:wrap;gap:5px}
 .tag{background:#e8e6dc;color:#4a4a4a;padding:3px 10px;border-radius:3px;font-size:calc(12px * var(--fs-mult, 1))}

@@ -117,8 +117,8 @@ export default function AutomationHub() {
 
   if (!activeTool) {
     return (
-      <div className="h-full flex flex-col p-3 space-y-2">
-        <h2 className="text-sm font-semibold text-text">Automation</h2>
+      <div className="h-full flex flex-col p-3 space-y-2 bg-bg">
+        <h2 className="text-sm font-semibold text-text px-1">Automation</h2>
         <div className="grid grid-rows-2 gap-2">
           {TOOLS.map((tool) => {
             const Icon = tool.icon;
@@ -126,7 +126,7 @@ export default function AutomationHub() {
               <button
                 key={tool.id}
                 onClick={() => setActiveTool(tool.id)}
-                className="flex items-start gap-3 p-4 pb-24 rounded-lg bg-bg-secondary cursor-pointer active:opacity-80 text-left"
+                className="flex items-start gap-3 p-4 rounded-xl bg-bg-secondary hover:bg-bg-hover cursor-pointer transition-colors text-left"
               >
                 <Icon
                   size={20}
@@ -234,7 +234,7 @@ export default function AutomationHub() {
       <div className="flex-1 overflow-y-auto p-4">
         <div className="space-y-4">
           {error && (
-            <div className="text-xs text-danger bg-danger/10 rounded-md px-3 py-2">{error}</div>
+            <div className="text-xs text-danger bg-danger/10 rounded-2xl px-3 py-2">{error}</div>
           )}
 
           {/* Step 1: Job Description */}
@@ -288,7 +288,7 @@ export default function AutomationHub() {
                     abort();
                     setStep('jd');
                   }}
-                  className="text-[10px] text-text-muted hover:text-danger cursor-pointer mt-1"
+                  className="text-[10px] text-text-muted hover:text-danger cursor-pointer mt-1 font-bold uppercase tracking-widest"
                 >
                   Cancel
                 </button>
@@ -312,28 +312,28 @@ export default function AutomationHub() {
       </div>
 
       {/* Footer */}
-      <div className="shrink-0 px-4 py-3 border-t border-border bg-bg">
+      <div className="shrink-0 px-6 py-4 border-t border-border bg-bg-secondary/10">
         {step === 'jd' && (
           <button
             onClick={handleAnalyze}
             disabled={!jd.trim() || isRunning}
-            className="w-full text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full text-xs py-3.5 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed font-bold shadow-md transition-all uppercase tracking-widest"
           >
             {isRunning ? 'Analyzing...' : 'Analyze Match'}
           </button>
         )}
 
         {step === 'analyze' && analysis && (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <button
               onClick={() => setStep('write')}
-              className="text-[10px] text-text-muted hover:text-text-secondary cursor-pointer shrink-0"
+              className="text-[10px] font-bold text-text-muted hover:text-text-secondary cursor-pointer shrink-0 uppercase tracking-widest px-4 py-2 rounded-full border border-border"
             >
               Skip to write
             </button>
             <button
               onClick={() => setStep('tailor')}
-              className="flex-1 text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer"
+              className="flex-1 text-xs py-3.5 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer font-bold shadow-md transition-all uppercase tracking-widest"
             >
               Tailor Resume
             </button>
@@ -344,7 +344,7 @@ export default function AutomationHub() {
           <button
             onClick={() => setStep('write')}
             disabled={!tailorReady}
-            className="w-full text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full text-xs py-3.5 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed font-bold shadow-md transition-all uppercase tracking-widest"
           >
             Write Materials
           </button>
@@ -353,7 +353,7 @@ export default function AutomationHub() {
         {step === 'write' && (
           <button
             onClick={handleReset}
-            className="w-full text-xs py-2.5 border border-border rounded-lg hover:bg-bg-hover cursor-pointer text-text-secondary"
+            className="w-full text-xs py-3.5 border-2 border-border rounded-full hover:bg-bg-hover cursor-pointer text-text-secondary font-bold transition-all uppercase tracking-widest"
           >
             Apply to Another Job
           </button>

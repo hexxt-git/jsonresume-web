@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, type ReactNode } from 'react';
 import * as Popover from '@radix-ui/react-popover';
+import { ArrowDown2, TickCircle } from 'iconsax-react';
 import { useT } from '../../i18n';
 
 interface Option {
@@ -52,31 +53,36 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
   }, [open]);
 
   const cls =
-    'w-full px-3 py-1.5 text-sm border border-border-input bg-bg-input text-text rounded-md focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent';
+    'w-full px-4 py-2 text-sm border border-border-input bg-bg-input text-text rounded-full focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all';
 
   return (
-    <div>
-      <label className="block text-xs font-medium text-text-secondary mb-1">{label}</label>
+    <div className="space-y-1.5">
+      <label className="block text-xs font-medium text-text-secondary ml-1">{label}</label>
       <Popover.Root open={open} onOpenChange={setOpen}>
         <Popover.Trigger asChild>
           <button
             type="button"
-            className={`${cls} flex items-center gap-2 text-left cursor-pointer`}
+            className={`${cls} flex items-center gap-2.5 text-left cursor-pointer hover:bg-bg-hover`}
           >
             {selectedOption && <OptionIcon opt={selectedOption} />}
             <span className={`flex-1 truncate ${value ? '' : 'text-text-muted'}`}>
               {selectedOption?.label || value || placeholder || 'Select...'}
             </span>
-            <Chevron />
+            <ArrowDown2
+              size={14}
+              className="text-text-muted shrink-0"
+              variant="Bold"
+              color="currentColor"
+            />
           </button>
         </Popover.Trigger>
         <Popover.Portal>
           <Popover.Content
-            className="z-50 w-[var(--radix-popover-trigger-width)] rounded-lg border border-border bg-bg shadow-lg"
-            sideOffset={4}
+            className="z-50 w-[var(--radix-popover-trigger-width)] rounded-2xl border border-border bg-bg shadow-xl overflow-hidden"
+            sideOffset={8}
             align="start"
           >
-            <div className="p-2 border-b border-border">
+            <div className="p-3 border-b border-border bg-bg-secondary/30">
               <input
                 ref={inputRef}
                 value={filter}
@@ -88,13 +94,13 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
                   }
                 }}
                 placeholder={t('combo.search')}
-                className="w-full px-2 py-1 text-sm bg-bg-input border border-border-input rounded-md text-text
+                className="w-full px-3 py-1.5 text-sm bg-bg-input border border-border-input rounded-full text-text
                   focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
               />
             </div>
-            <div className="max-h-[200px] overflow-y-auto p-1">
+            <div className="max-h-[240px] overflow-y-auto p-2">
               {filtered.length === 0 ? (
-                <div className="px-2 py-3 text-xs text-text-muted text-center">
+                <div className="px-3 py-4 text-xs text-text-muted text-center">
                   {filter.trim() ? (
                     <button
                       type="button"
@@ -102,7 +108,7 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
                         onChange(filter.trim());
                         setOpen(false);
                       }}
-                      className="text-accent hover:underline cursor-pointer"
+                      className="text-accent hover:underline cursor-pointer font-medium"
                     >
                       {t('combo.use')} &ldquo;{filter.trim()}&rdquo;
                     </button>
@@ -119,12 +125,19 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
                       onChange(o.value);
                       setOpen(false);
                     }}
-                    className={`w-full flex items-center gap-2 px-2 py-1.5 text-xs rounded-md text-left cursor-pointer
+                    className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs rounded-xl text-left cursor-pointer transition-colors
                       ${value === o.value ? 'bg-bg-accent text-accent-text font-medium' : 'hover:bg-bg-hover text-text-secondary'}`}
                   >
                     <OptionIcon opt={o} />
                     <span className="flex-1 truncate">{o.label}</span>
-                    {value === o.value && <span className="text-accent shrink-0">&#10003;</span>}
+                    {value === o.value && (
+                      <TickCircle
+                        size={14}
+                        variant="Bold"
+                        color="currentColor"
+                        className="text-accent shrink-0"
+                      />
+                    )}
                   </button>
                 ))
               )}
@@ -133,22 +146,6 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
         </Popover.Portal>
       </Popover.Root>
     </div>
-  );
-}
-
-function Chevron() {
-  return (
-    <svg
-      width="10"
-      height="10"
-      viewBox="0 0 12 12"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      className="text-text-muted shrink-0"
-    >
-      <path d="M3 4.5L6 7.5L9 4.5" />
-    </svg>
   );
 }
 

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { CloseCircle, ArrowLeft2 } from 'iconsax-react';
 import { useJdStore } from '../../../store/jdStore';
 import type { SavedJd } from '../../../store/jdStore';
 import { extractTextFromDocx } from '../../../parser/docxParser';
@@ -199,9 +200,9 @@ export function JdInput({
             <button
               type="button"
               onClick={() => setView('write')}
-              className="text-[10px] px-2 py-0.5 rounded border border-border text-text-muted hover:text-text-secondary hover:border-accent/30 cursor-pointer transition-colors"
+              className="text-[10px] px-2 py-0.5 rounded border border-border text-text-muted hover:text-text-secondary cursor-pointer transition-colors"
             >
-              ← Back
+              <ArrowLeft2 size={12} variant="Bold" color="currentColor" /> Back
             </button>
           ) : (
             <>
@@ -210,7 +211,7 @@ export function JdInput({
                 <button
                   type="button"
                   onClick={handleStartSave}
-                  className="text-[10px] px-2 py-0.5 rounded border border-border text-text-muted hover:text-text-secondary hover:border-accent/30 cursor-pointer transition-colors"
+                  className="text-[10px] px-2 py-0.5 rounded border border-border text-text-muted hover:text-text-secondary cursor-pointer transition-colors"
                 >
                   Save
                 </button>
@@ -220,12 +221,12 @@ export function JdInput({
                 <button
                   type="button"
                   onClick={handleSaveAll}
-                  className="text-[10px] px-2 py-0.5 rounded border border-border text-text-muted hover:text-text-secondary hover:border-accent/30 cursor-pointer transition-colors"
+                  className="text-[10px] px-2 py-0.5 rounded border border-border text-text-muted hover:text-text-secondary cursor-pointer transition-colors"
                 >
                   Save all ({unsavedChunks.length})
                 </button>
               )}
-              <label className="text-[10px] px-2 py-0.5 rounded border border-border text-text-muted hover:text-text-secondary hover:border-accent/30 cursor-pointer transition-colors">
+              <label className="text-[10px] px-2 py-0.5 rounded border border-border text-text-muted hover:text-text-secondary cursor-pointer transition-colors">
                 <input
                   type="file"
                   accept=".txt,.pdf,.doc,.docx"
@@ -265,9 +266,9 @@ export function JdInput({
           <button
             type="button"
             onClick={() => setLoadedJdId(null)}
-            className="text-text-muted hover:text-text-secondary cursor-pointer text-sm leading-none shrink-0"
+            className="text-text-muted hover:text-text-secondary cursor-pointer shrink-0"
           >
-            ×
+            <CloseCircle size={14} variant="Bold" color="currentColor" />
           </button>
         </div>
       )}
@@ -306,9 +307,9 @@ export function JdInput({
           <button
             type="button"
             onClick={() => setSaving(false)}
-            className="text-text-muted hover:text-text-secondary cursor-pointer text-sm leading-none shrink-0"
+            className="text-text-muted hover:text-text-secondary cursor-pointer shrink-0"
           >
-            ×
+            <CloseCircle size={14} variant="Bold" color="currentColor" />
           </button>
         </div>
       )}
@@ -353,7 +354,7 @@ export function JdInput({
                           ? 'border-accent/30 bg-accent/5 cursor-default'
                           : loadedJdId === jd.id
                             ? 'border-accent/50 bg-accent/5 cursor-pointer'
-                            : 'border-border hover:border-accent/30 hover:bg-bg-hover cursor-pointer'
+                            : 'border-border hover:bg-bg-hover cursor-pointer'
                       }`}
                     >
                       <div className="flex items-center gap-1 min-w-0">

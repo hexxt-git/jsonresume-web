@@ -42,17 +42,19 @@ a{color:#4f46e5;text-decoration:none}a:hover{text-decoration:underline}
 .label{color:#6b7280;font-size:calc(16px * var(--fs-mult, 1));margin-bottom:12px}
 .contact{display:flex;flex-wrap:wrap;gap:14px;color:#9ca3af;font-size:calc(13px * var(--fs-mult, 1));margin-bottom:28px}
 .summary{color:#6b7280;margin-bottom:32px}
-.section{margin-bottom:28px}
+.section{margin-bottom:28px;break-inside:avoid}
 .timeline{position:relative;padding-left:28px}
 .timeline::before{content:"";position:absolute;left:5px;top:8px;bottom:8px;width:2px;background:#e5e7eb}
-.tl-entry{position:relative;margin-bottom:20px}
+.tl-entry{position:relative;margin-bottom:20px;break-inside:avoid}
 .tl-dot{position:absolute;left:-28px;top:6px;width:12px;height:12px;border-radius:50%;background:#4f46e5;border:2px solid #fff;box-shadow:0 0 0 2px #4f46e5}
 .tl-date{font-size:calc(12px * var(--fs-mult, 1));color:#4f46e5;font-weight:600;margin-bottom:2px}
 .tl-sub{color:#6b7280;font-size:calc(13px * var(--fs-mult, 1))}
 .tl-detail{color:#6b7280;margin-top:4px}
 ul{padding-left:18px;margin-top:6px}
 li{margin-bottom:3px;color:#6b7280}
+.entry{break-inside:avoid}
 .skills-grid{display:flex;flex-wrap:wrap;gap:20px}
+.skill-group{break-inside:avoid}
 .skill-group h3{font-size:calc(13px * var(--fs-mult, 1));color:#4f46e5;margin-bottom:6px}
 .tags{display:flex;flex-wrap:wrap;gap:5px}
 .tag{background:#eef2ff;color:#4f46e5;padding:3px 10px;border-radius:4px;font-size:calc(12px * var(--fs-mult, 1))}

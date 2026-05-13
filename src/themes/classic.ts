@@ -17,8 +17,8 @@ a{color:#2c5282;text-decoration:none}a:hover{text-decoration:underline}
 .contact span+span::before{content:" | "}
 .divider{border:none;border-top:1px solid #ccc;margin:20px 0}
 .summary{text-align:justify;color:#444;margin-bottom:28px}
-.section{margin-bottom:24px}
-.entry{margin-bottom:16px}
+.section{margin-bottom:24px;break-inside:avoid}
+.entry{margin-bottom:16px;break-inside:avoid}
 .entry-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap}
 .entry-meta{color:#666;font-size:calc(13px * var(--fs-mult, 1));font-style:italic}
 .entry-org{color:#555;font-size:calc(13px * var(--fs-mult, 1));margin-top:1px}

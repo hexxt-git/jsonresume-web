@@ -29,14 +29,14 @@ export function EducationForm() {
         [item.studyType, item.area, item.institution].filter(Boolean).join(', ') || 'Entry'
       }
       renderItem={(item, index, update) => (
-        <div className="space-y-2">
+        <div className="space-y-4">
           <FormField
             label={t('edu.institution')}
             value={item.institution || ''}
             onChange={(v) => update(index, { ...item, institution: v })}
             placeholder={t('ph.institution')}
           />
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             <ComboField
               label={t('edu.degree')}
               value={item.studyType || ''}
@@ -51,7 +51,7 @@ export function EducationForm() {
               placeholder={t('ph.area')}
             />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <FormField
               label={t('edu.startDate')}
               value={item.startDate || ''}
@@ -79,7 +79,7 @@ export function EducationForm() {
           <ChipInput
             label={t('edu.courses')}
             items={item.courses || []}
-            onChange={(v) => update(index, { ...item, courses: v })}
+            onChange={(v: string[]) => update(index, { ...item, courses: v })}
             placeholder={t('ph.course')}
           />
         </div>

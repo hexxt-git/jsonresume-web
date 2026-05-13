@@ -4,6 +4,7 @@ import { useT } from '../../i18n';
 import { getThemeById } from '../../themes';
 import { saveAs } from 'file-saver';
 import YAML from 'yaml';
+import { filterVisible } from '../../utils/resume';
 
 interface ExportDialogProps {
   open: boolean;
@@ -27,7 +28,8 @@ export function ExportDialog({ open, onClose }: ExportDialogProps) {
 
   const fname = resume.basics?.name?.replace(/\s+/g, '_') || 'resume';
 
-  const renderHtml = () => getThemeById(themeId).render(resume, buildCustomCss(custom));
+  const renderHtml = () =>
+    getThemeById(themeId).render(filterVisible(resume), buildCustomCss(custom));
 
   const handlePrint = () => {
     const iframe = document.querySelector<HTMLIFrameElement>('iframe[title="Resume Preview"]');
@@ -76,22 +78,24 @@ export function ExportDialog({ open, onClose }: ExportDialogProps) {
 
   return (
     <>
-      <div className="fixed inset-0 z-40" onClick={onClose} />
-      <div className="absolute right-0 top-full mt-1 z-50 w-48 bg-bg border border-border rounded-lg shadow-lg overflow-hidden">
-        {options.map((opt, i) => (
+      <div className="fixed inset-0 z-40 bg-black/5" onClick={onClose} />
+      <div className="absolute right-0 top-full mt-2 z-50 w-64 bg-bg border border-border rounded-2xl shadow-2xl overflow-hidden p-2 space-y-1">
+        {options.map((opt) => (
           <button
             key={opt.ext}
             onClick={opt.action}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-bg-hover transition-colors cursor-pointer ${
-              i > 0 ? 'border-t border-border' : ''
-            }`}
+            className="w-full flex items-center gap-4 px-3 py-3 text-left hover:bg-bg-hover rounded-xl transition-all cursor-pointer group"
           >
-            <span className="w-8 h-8 rounded bg-bg-tertiary flex items-center justify-center text-xs font-mono text-text-tertiary shrink-0">
+            <span className="w-10 h-10 rounded-full bg-bg-secondary flex items-center justify-center text-[10px] font-bold text-text-tertiary shrink-0 group-hover:bg-accent group-hover:text-white transition-all shadow-sm">
               {EXT_ICONS[opt.ext]}
             </span>
             <div className="min-w-0">
-              <div className="text-sm font-medium text-text">{opt.label}</div>
-              <div className="text-xs text-text-muted truncate">{opt.sub}</div>
+              <div className="text-sm font-bold text-text group-hover:text-accent transition-colors">
+                {opt.label}
+              </div>
+              <div className="text-[10px] font-medium text-text-muted truncate mt-0.5">
+                {opt.sub}
+              </div>
             </div>
           </button>
         ))}

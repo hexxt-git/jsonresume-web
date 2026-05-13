@@ -1,90 +1,13 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAiStore } from '../../store/aiStore';
 import { getAtPath, setAtPath } from '../../lib/ai/resume-tools';
 import { useResumeStore, activeSlot } from '../../store/resumeStore';
-import type { AnyMessage, ToolResultMessage } from '../../lib/ai';
 import { useT } from '../../i18n';
-import { Copy, TickCircle } from 'iconsax-react';
+import { Markdown } from '../Markdown';
 import { BlockDiffView } from './DiffView';
+import type { AnyMessage, ToolResultMessage } from '../../lib/ai';
 
-/* ── Markdown renderer (marked + DOMPurify) ──────────── */
-
-import { marked } from 'marked';
-import DOMPurify from 'dompurify';
-
-// Configure marked: no mangle, GFM tables/strikethrough, breaks
-marked.setOptions({ gfm: true, breaks: true });
-
-function renderMarkdown(text: string): string {
-  const raw = marked.parse(text, { async: false }) as string;
-  return DOMPurify.sanitize(raw, {
-    ALLOWED_TAGS: [
-      'p',
-      'br',
-      'strong',
-      'em',
-      'del',
-      'code',
-      'pre',
-      'blockquote',
-      'h1',
-      'h2',
-      'h3',
-      'h4',
-      'h5',
-      'h6',
-      'ul',
-      'ol',
-      'li',
-      'table',
-      'thead',
-      'tbody',
-      'tr',
-      'th',
-      'td',
-      'a',
-      'span',
-      'div',
-      'hr',
-    ],
-    ALLOWED_ATTR: ['href', 'target', 'rel', 'class'],
-    ADD_ATTR: ['target'],
-  });
-}
-
-function Markdown({ text }: { text: string }) {
-  const html = renderMarkdown(text);
-  return <div className="markdown-content" dangerouslySetInnerHTML={{ __html: html }} />;
-}
-
-/* ── Copy button ──────────────────────────────────────── */
-
-function CopyButton({ text }: { text: string }) {
-  const t = useT();
-  const [copied, setCopied] = useState(false);
-  const handleCopy = useCallback(() => {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    });
-  }, [text]);
-
-  return (
-    <button
-      onClick={handleCopy}
-      className="opacity-0 group-hover:opacity-100 text-[10px] text-text-muted hover:text-text transition-all cursor-pointer px-1"
-      title={t('ai.copy')}
-    >
-      {copied ? (
-        <TickCircle size={16} variant="Bold" color="currentColor" />
-      ) : (
-        <Copy size={16} variant="Bold" color="currentColor" />
-      )}
-    </button>
-  );
-}
-
-/* ── Tool result badge with undo ──────────────────────── */
+/* ── Badge for tool results ─────────────────────────── */
 
 function ToolResultBadge({ msg, hideDiffs }: { msg: ToolResultMessage; hideDiffs?: boolean }) {
   const t = useT();
@@ -130,42 +53,47 @@ function ToolResultBadge({ msg, hideDiffs }: { msg: ToolResultMessage; hideDiffs
   const afterStr = currentValue != null ? sortedStringify(currentValue) : '';
 
   return (
-    <div className="space-y-1 w-full">
-      <div className="flex items-center gap-2 text-xs">
+    <div className="space-y-2 w-full">
+      <div className="flex items-center gap-3 text-xs">
         <span
-          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded ${
-            msg.success ? (msg.undone ? 'line-through' : '') : 'bg-danger/10 text-danger'
+          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-[10px] tracking-tight border ${
+            msg.success
+              ? msg.undone
+                ? 'line-through opacity-60'
+                : ''
+              : 'bg-danger/10 text-danger border-danger/20'
           }`}
           style={
             msg.success
               ? {
                   background: msg.undone ? 'var(--diff-rm-line)' : 'var(--diff-add-line)',
                   color: msg.undone ? 'var(--diff-rm-text)' : 'var(--diff-add-text)',
+                  borderColor: msg.undone ? 'var(--diff-rm-word)' : 'var(--diff-add-word)',
                 }
               : undefined
           }
         >
-          {msg.success ? (msg.undone ? '\u21A9' : '\u2713') : '\u2717'} {msg.result}
+          {msg.success ? (msg.undone ? '\u21A9' : '\u2713') : '\u2717'} {msg.result.toUpperCase()}
         </span>
         {msg.success && msg.path.length > 0 && (
           <button
             onClick={handleToggle}
-            className="text-text-muted hover:text-accent transition-colors cursor-pointer underline"
+            className="text-text-muted hover:text-accent transition-all cursor-pointer underline font-bold text-[10px] tracking-wide"
           >
-            {msg.undone ? t('ai.redo') : t('ai.undo')}
+            {(msg.undone ? t('ai.redo') : t('ai.undo')).toUpperCase()}
           </button>
         )}
         {!hideDiffs && hasDiff && beforeStr !== afterStr && (
           <button
             onClick={() => setShowDiff(!showDiff)}
-            className="text-text-muted hover:text-text-secondary transition-colors cursor-pointer text-[10px]"
+            className="text-text-muted hover:text-text-secondary transition-all cursor-pointer text-[10px] font-bold tracking-wide"
           >
-            {showDiff ? 'hide diff' : 'diff'}
+            {(showDiff ? 'hide diff' : 'diff').toUpperCase()}
           </button>
         )}
       </div>
       {showDiff && !hideDiffs && hasDiff && beforeStr !== afterStr && (
-        <div className="mt-1">
+        <div className="mt-2 rounded-2xl overflow-hidden shadow-sm">
           <BlockDiffView oldText={beforeStr} newText={afterStr} />
         </div>
       )}
@@ -212,21 +140,24 @@ export function AiMessageList({
 
   if (messages.length === 0 && !error) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center px-4 gap-4">
-        <div className="text-center max-w-xs">
-          <p className="text-sm font-medium text-text">
+      <div className="flex-1 flex flex-col items-center justify-center px-8 gap-10 bg-bg">
+        <div className="text-center max-w-sm space-y-4">
+          <div className="w-16 h-16 bg-accent/10 rounded-3xl flex items-center justify-center mx-auto mb-4">
+            <span className="text-2xl text-accent">&#10024;</span>
+          </div>
+          <p className="text-lg font-bold text-text tracking-tight">
             {name ? `Let's work on ${name}'s resume` : `Let's work on your resume`}
           </p>
-          <p className="text-xs text-text-muted mt-1">
+          <p className="text-sm text-text-tertiary leading-relaxed px-4 font-medium">
             Ask me to rewrite, translate, review, or tailor your resume for a specific role.
           </p>
         </div>
-        <div className="flex flex-wrap justify-center gap-2 max-w-xs">
+        <div className="flex flex-wrap justify-center gap-3 max-w-lg">
           {PRESETS.map((p) => (
             <button
               key={p.label}
               onClick={() => onSend?.(p.prompt)}
-              className="text-[11px] px-3 py-1.5 border border-border rounded-lg text-text-secondary hover:bg-bg-hover hover:text-text cursor-pointer transition-colors"
+              className="text-xs px-5 py-2.5 border border-border rounded-full text-text-secondary hover:bg-bg-secondary hover:text-accent cursor-pointer transition-all font-bold shadow-sm"
             >
               {p.label}
             </button>
@@ -237,14 +168,14 @@ export function AiMessageList({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 space-y-3">
+    <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
       {messages.map((m) => (
         <MessageRow key={m.id} message={m} hideDiffs={hideDiffs} />
       ))}
       {error && (
         <div className="flex justify-start">
           <div
-            className="max-w-[85%] rounded-lg px-3 py-2 text-xs bg-danger/10 text-danger cursor-pointer"
+            className="max-w-[90%] rounded-2xl px-4 py-3 text-xs bg-danger/10 text-danger cursor-pointer font-medium border border-danger/20"
             onClick={() => setError(null)}
             title={t('ai.clickDismiss')}
           >
@@ -260,7 +191,7 @@ export function AiMessageList({
 function MessageRow({ message: m, hideDiffs }: { message: AnyMessage; hideDiffs?: boolean }) {
   if (m.role === 'tool_result') {
     return (
-      <div className="flex justify-start pl-2">
+      <div className="flex justify-start pl-4 py-1">
         <ToolResultBadge msg={m} hideDiffs={hideDiffs} />
       </div>
     );
@@ -268,46 +199,90 @@ function MessageRow({ message: m, hideDiffs }: { message: AnyMessage; hideDiffs?
 
   const isUser = m.role === 'user';
   const hasContent = !!m.content;
-  // Show spinner only for assistant messages that have no content AND no tool calls yet
   const showSpinner = !hasContent && m.role === 'assistant' && !m.toolCalls?.length;
 
-  // Don't render empty assistant messages that only have tool calls (tool results show below)
   if (!hasContent && m.role === 'assistant' && m.toolCalls?.length) return null;
 
-  const timestamp = new Date(m.timestamp).toLocaleTimeString();
+  const timestamp = new Date(m.timestamp).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 
   return (
-    <>
-      {isUser ? (
-        <div className="text-xs text-text-muted text-right mb-px!">
-          user <span className="text-[0.6rem]">{timestamp}</span>
-        </div>
-      ) : (
-        <div className="text-xs text-text-muted mb-px!">
-          assistant <span className="text-[0.6rem]">{timestamp}</span>
-        </div>
-      )}
-      <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} group`}>
-        {isUser && hasContent && <CopyButton text={m.content} />}
+    <div className="space-y-1.5">
+      <div
+        className={`flex items-center gap-2 text-[10px] font-bold text-text-muted tracking-wider uppercase ${isUser ? 'flex-row-reverse' : ''}`}
+      >
+        {isUser ? 'USER' : 'ASSISTANT'}
+        <span className="font-normal opacity-50">{timestamp}</span>
+      </div>
+      <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} group items-end gap-2`}>
+        {isUser && hasContent && (
+          <div className="pb-1">
+            <CopyButton text={m.content} />
+          </div>
+        )}
         <div
-          className={`max-w-[85%] rounded-lg px-3 py-2 text-sm ${
-            isUser ? 'bg-accent text-white' : 'bg-bg-secondary text-text'
+          className={`max-w-[85%] px-5 py-3 text-sm shadow-sm transition-all ${
+            isUser
+              ? 'bg-accent text-white rounded-3xl rounded-br-lg font-medium'
+              : 'bg-bg-secondary text-text rounded-3xl rounded-bl-lg border border-border/50'
           }`}
         >
           {hasContent ? (
             isUser ? (
-              <span className="whitespace-pre-wrap">{m.content}</span>
+              <span className="whitespace-pre-wrap leading-relaxed">{m.content}</span>
             ) : (
               <Markdown text={m.content} />
             )
           ) : (
             showSpinner && (
-              <span className="inline-block w-4 h-4 border-2 border-text-muted border-t-transparent rounded-full animate-spin" />
+              <div className="py-1">
+                <span className="inline-block w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+              </div>
             )
           )}
         </div>
-        {!isUser && hasContent && <CopyButton text={m.content} />}
+        {!isUser && hasContent && (
+          <div className="pb-1">
+            <CopyButton text={m.content} />
+          </div>
+        )}
       </div>
-    </>
+    </div>
+  );
+}
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <button
+      onClick={handleCopy}
+      className="text-text-muted hover:text-text-secondary transition-colors cursor-pointer p-1 opacity-0 group-hover:opacity-100"
+      title="Copy message"
+    >
+      {copied ? (
+        '✓'
+      ) : (
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+      )}
+    </button>
   );
 }

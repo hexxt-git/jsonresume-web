@@ -18,14 +18,15 @@ a{color:#333;text-decoration:none}a:hover{text-decoration:underline}
 .contact{color:#666;font-size:calc(10.5px * var(--fs-mult, 1));margin-top:4px}
 .contact span+span::before{content:" | "}
 .summary{color:#444;margin-bottom:14px;font-size:calc(11.5px * var(--fs-mult, 1))}
-.section{margin-bottom:12px}
-.entry{margin-bottom:8px}
+.section{margin-bottom:12px;break-inside:avoid}
+.entry{margin-bottom:8px;break-inside:avoid}
 .entry-header{display:flex;justify-content:space-between;align-items:baseline}
 .entry-meta{color:#888;font-size:calc(10.5px * var(--fs-mult, 1));white-space:nowrap}
 .entry-sub{color:#555;font-size:calc(11px * var(--fs-mult, 1))}
 ul{padding-left:14px;margin-top:2px}
 li{margin-bottom:1px;color:#444}
 .skills-row{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:calc(11px * var(--fs-mult, 1))}
+.skills-row > div{break-inside:avoid}
 .skills-row strong{font-weight:600}
 .skills-row span{color:#555}
 .tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}

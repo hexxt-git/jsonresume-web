@@ -28,83 +28,85 @@ export function ThemeCustomizer() {
   const resetCustom = useResumeStore((s) => s.resetCustomization);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-8 py-2">
       <div className="flex justify-end">
         <button
           onClick={resetCustom}
-          className="text-xs text-danger hover:underline cursor-pointer"
+          className="text-[10px] font-bold text-danger hover:bg-danger/5 border border-danger/20 px-3 py-1.5 rounded-full transition-all cursor-pointer uppercase tracking-wider"
         >
           {t('customize.reset')}
         </button>
       </div>
 
-      <ColorPicker
-        label={t('customize.accentColor')}
-        value={custom.accentColor}
-        onChange={(v) => setCustom('accentColor', v)}
-      />
+      <div className="space-y-6">
+        <ColorPicker
+          label={t('customize.accentColor')}
+          value={custom.accentColor}
+          onChange={(v) => setCustom('accentColor', v)}
+        />
 
-      <div>
-        <label className="block text-xs text-text-secondary mb-1.5">
-          {t('customize.fontFamily')}
-        </label>
-        <Select
-          className="w-full"
-          value={custom.fontFamily || THEME_DEFAULT}
-          onValueChange={(v) => setCustom('fontFamily', v === THEME_DEFAULT ? '' : v)}
-          options={FONT_OPTIONS}
+        <div className="space-y-1.5">
+          <label className="block text-xs font-medium text-text-secondary ml-1">
+            {t('customize.fontFamily')}
+          </label>
+          <Select
+            className="w-full"
+            value={custom.fontFamily || THEME_DEFAULT}
+            onValueChange={(v) => setCustom('fontFamily', v === THEME_DEFAULT ? '' : v)}
+            options={FONT_OPTIONS}
+          />
+        </div>
+
+        <Slider
+          label={t('customize.fontSize')}
+          value={custom.fontSizeMultiplier}
+          onChange={(v) => setCustom('fontSizeMultiplier', v)}
+          min={0.5}
+          max={1.5}
+          step={0.01}
+          defaultValue={1}
+          formatValue={(v) => `${Math.round(v * 100)}%`}
+        />
+
+        <Slider
+          label={t('customize.lineHeight')}
+          value={custom.lineHeightMultiplier}
+          onChange={(v) => setCustom('lineHeightMultiplier', v)}
+          min={0.5}
+          max={1.5}
+          step={0.01}
+          defaultValue={1}
+          formatValue={(v) => `${Math.round(v * 100)}%`}
+        />
+
+        <Slider
+          label={t('customize.pagePadding')}
+          value={custom.paddingMultiplier}
+          onChange={(v) => setCustom('paddingMultiplier', v)}
+          min={0.25}
+          max={1.75}
+          step={0.01}
+          defaultValue={1}
+          formatValue={(v) => `${Math.round(v * 100)}%`}
+        />
+
+        <Slider
+          label={t('customize.sectionSpacing')}
+          value={custom.sectionSpacingMultiplier}
+          onChange={(v) => setCustom('sectionSpacingMultiplier', v)}
+          min={0.25}
+          max={2}
+          step={0.01}
+          defaultValue={1}
+          formatValue={(v) => `${Math.round(v * 100)}%`}
+        />
+
+        <Toggle
+          label={t('customize.rtl')}
+          value={!!custom.rtl}
+          onChange={(v) => setCustom('rtl', v ? 1 : 0)}
         />
       </div>
-
-      <Slider
-        label={t('customize.fontSize')}
-        value={custom.fontSizeMultiplier}
-        onChange={(v) => setCustom('fontSizeMultiplier', v)}
-        min={0.5}
-        max={1.5}
-        step={0.01}
-        defaultValue={1}
-        formatValue={(v) => `${Math.round(v * 100)}%`}
-      />
-
-      <Slider
-        label={t('customize.lineHeight')}
-        value={custom.lineHeightMultiplier}
-        onChange={(v) => setCustom('lineHeightMultiplier', v)}
-        min={0.5}
-        max={1.5}
-        step={0.01}
-        defaultValue={1}
-        formatValue={(v) => `${Math.round(v * 100)}%`}
-      />
-
-      <Slider
-        label={t('customize.pagePadding')}
-        value={custom.paddingMultiplier}
-        onChange={(v) => setCustom('paddingMultiplier', v)}
-        min={0.25}
-        max={1.75}
-        step={0.01}
-        defaultValue={1}
-        formatValue={(v) => `${Math.round(v * 100)}%`}
-      />
-
-      <Slider
-        label={t('customize.sectionSpacing')}
-        value={custom.sectionSpacingMultiplier}
-        onChange={(v) => setCustom('sectionSpacingMultiplier', v)}
-        min={0.25}
-        max={2}
-        step={0.01}
-        defaultValue={1}
-        formatValue={(v) => `${Math.round(v * 100)}%`}
-      />
-
-      <Toggle
-        label={t('customize.rtl')}
-        value={!!custom.rtl}
-        onChange={(v) => setCustom('rtl', v ? 1 : 0)}
-      />
     </div>
   );
 }

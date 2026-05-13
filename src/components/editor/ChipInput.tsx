@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useMemo, type KeyboardEvent } from 'react'
 import { useT } from '../../i18n';
 import { AiWritingTools } from '../ai/AiWritingTools';
 import { useAiContext } from '../ai/AiContext';
+import { CloseCircle } from 'iconsax-react';
 import {
   DndContext,
   closestCenter,
@@ -92,10 +93,10 @@ export function ChipInput({ label, items, onChange, placeholder }: ChipInputProp
   };
 
   return (
-    <div>
-      <label className="block text-xs font-medium text-text-secondary mb-1">{label}</label>
+    <div className="space-y-1.5">
+      <label className="block text-xs font-medium text-text-secondary ml-1">{label}</label>
       <AiWritingTools mode="list" items={items} onChange={onChange} context={aiContext}>
-        <div className="flex flex-wrap gap-1.5 p-2 pr-8 border border-border-input bg-bg-input rounded-md focus-within:ring-1 focus-within:ring-accent focus-within:border-accent min-h-[36px]">
+        <div className="flex flex-wrap gap-2 p-3 pr-10 border border-border-input bg-bg-input rounded-3xl focus-within:ring-1 focus-within:ring-accent focus-within:border-accent min-h-[42px] transition-all relative">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -123,7 +124,7 @@ export function ChipInput({ label, items, onChange, placeholder }: ChipInputProp
             onKeyDown={handleKey}
             onBlur={addItem}
             placeholder={items.length === 0 ? resolvedPlaceholder : ''}
-            className="flex-1 min-w-[80px] text-sm outline-none bg-transparent text-text"
+            className="flex-1 min-w-[100px] text-sm outline-none bg-transparent text-text"
           />
         </div>
       </AiWritingTools>
@@ -153,7 +154,7 @@ function SortableChip({
     disabled: isEditing,
   });
   const [editValue, setEditValue] = useState(text);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const didDrag = useRef(false);
 
   useEffect(() => {
@@ -163,7 +164,6 @@ function SortableChip({
   useEffect(() => {
     if (isEditing) {
       setEditValue(text);
-      // Focus after render
       requestAnimationFrame(() => {
         inputRef.current?.focus();
         inputRef.current?.select();
@@ -185,7 +185,7 @@ function SortableChip({
     onStartEdit();
   };
 
-  const handleEditKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  const handleEditKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
       onFinishEdit(editValue);
@@ -200,16 +200,17 @@ function SortableChip({
       <span
         ref={setNodeRef}
         style={style}
-        className="inline-flex items-center bg-bg-tertiary text-text text-xs px-1 py-0.5 rounded ring-1 ring-accent"
+        className="inline-flex items-center bg-bg-tertiary text-text text-xs px-2 py-1 rounded-2xl ring-1 ring-accent min-w-[60px]"
       >
-        <input
+        <textarea
           ref={inputRef}
           value={editValue}
           onChange={(e) => setEditValue(e.target.value)}
           onKeyDown={handleEditKeyDown}
           onBlur={() => onFinishEdit(editValue)}
-          className="bg-transparent outline-none text-xs text-text"
-          style={{ width: `${Math.max(editValue.length, 1) + 1}ch` }}
+          className="bg-transparent outline-none text-xs text-text resize-none w-full"
+          rows={1}
+          style={{ minHeight: '1.2em' }}
         />
       </span>
     );
@@ -219,12 +220,12 @@ function SortableChip({
     <span
       ref={setNodeRef}
       style={style}
-      className="inline-flex items-center gap-1 bg-bg-tertiary text-text text-xs px-2 py-0.5 rounded cursor-grab active:cursor-grabbing touch-none"
+      className="inline-flex items-center gap-2 bg-bg-tertiary text-text text-xs px-2 py-1 rounded-full cursor-grab active:cursor-grabbing touch-none hover:bg-bg-hover transition-colors border border-border/50 max-w-full"
       {...attributes}
       {...listeners}
       onClick={handleClick}
     >
-      {text}
+      <span className="truncate flex-1 min-w-0">{text}</span>
       <button
         type="button"
         onClick={(e) => {
@@ -232,9 +233,9 @@ function SortableChip({
           onRemove();
         }}
         onPointerDown={(e) => e.stopPropagation()}
-        className="text-text-muted hover:text-text-secondary cursor-pointer"
+        className="text-text-muted hover:text-danger cursor-pointer transition-colors shrink-0"
       >
-        &times;
+        <CloseCircle size={14} variant="Bold" color="currentColor" />
       </button>
     </span>
   );

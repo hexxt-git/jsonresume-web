@@ -25,8 +25,8 @@ export function WorkForm() {
       }}
       entryLabel={(item) => [item.position, item.name].filter(Boolean).join(' at ') || 'Entry'}
       renderItem={(item, index, update) => (
-        <div className="space-y-2">
-          <div className="grid grid-cols-2 gap-2">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
             <FormField
               label={t('work.position')}
               value={item.position || ''}
@@ -40,7 +40,7 @@ export function WorkForm() {
               placeholder={t('ph.company')}
             />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <FormField
               label={t('work.startDate')}
               value={item.startDate || ''}
@@ -76,7 +76,7 @@ export function WorkForm() {
           <ChipInput
             label={t('work.highlights')}
             items={item.highlights || []}
-            onChange={(v) => update(index, { ...item, highlights: v })}
+            onChange={(v: string[]) => update(index, { ...item, highlights: v })}
             placeholder={t('ph.highlight')}
           />
         </div>

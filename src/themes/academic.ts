@@ -16,8 +16,8 @@ a{color:#222;text-decoration:none;border-bottom:0.5px solid #999}a:hover{border-
 .label{font-style:italic;color:#555;font-size:calc(14px * var(--fs-mult, 1));margin-bottom:8px}
 .contact{font-size:calc(12px * var(--fs-mult, 1));color:#555}
 .contact span+span::before{content:" \\00b7 "}
-.section{margin-bottom:18px}
-.entry{margin-bottom:12px}
+.section{margin-bottom:18px;break-inside:avoid}
+.entry{margin-bottom:12px;break-inside:avoid}
 .entry-header{display:flex;justify-content:space-between;align-items:baseline}
 .entry-meta{font-style:italic;color:#555;font-size:calc(12.5px * var(--fs-mult, 1));white-space:nowrap}
 .entry-org{font-style:italic;color:#555;font-size:calc(13px * var(--fs-mult, 1))}

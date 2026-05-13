@@ -160,7 +160,7 @@ function ProviderRow({
               onKeyDown={(e) => e.key === 'Enter' && handleSave()}
               placeholder={placeholder}
               autoFocus={!hasKey}
-              className="w-full px-3 py-1.5 pr-8 text-sm border border-border-input bg-bg-input text-text rounded-md focus:outline-none focus:ring-1 focus:ring-accent"
+              className="w-full px-3 py-1.5 pr-8 text-sm border border-border-input bg-bg-input text-text rounded-full focus:outline-none focus:ring-1 focus:ring-accent"
             />
             <button
               type="button"
@@ -168,9 +168,9 @@ function ProviderRow({
               className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary cursor-pointer"
             >
               {showKey ? (
-                <EyeSlash size={14} color="currentColor" />
+                <EyeSlash size={14} variant="Bold" color="currentColor" />
               ) : (
-                <Eye size={14} color="currentColor" />
+                <Eye size={14} variant="Bold" color="currentColor" />
               )}
             </button>
           </div>
@@ -201,7 +201,7 @@ function ProviderRow({
               <button
                 onClick={handleSave}
                 disabled={validating || !input.trim()}
-                className="text-xs px-3 py-1 bg-accent text-white rounded-md hover:opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-xs px-3 py-1 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {validating ? t('ai.keyValidating') : t('ai.save')}
               </button>
@@ -241,7 +241,7 @@ export function AiSetupPrompt({ onSetup }: { onSetup: () => void }) {
         </p>
         <button
           onClick={onSetup}
-          className="text-xs px-4 py-2 bg-accent text-white rounded-md hover:opacity-90 cursor-pointer"
+          className="text-xs px-4 py-2 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer"
         >
           {t('ai.setupButton')}
         </button>
@@ -266,11 +266,11 @@ export function AiSettingsButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-1 text-xs text-text-secondary hover:text-text transition-colors cursor-pointer p-1 rounded bg-bg-hover/30 hover:bg-bg-hover"
+      className="flex items-center gap-1.5 text-[10px] font-bold text-text-secondary hover:text-text transition-all cursor-pointer px-3 py-1.5 rounded-full bg-bg-secondary border border-border/50 hover:bg-bg-hover"
       title={t('ai.settings')}
     >
       <Setting size={14} variant="Bold" color="currentColor" />
-      {t('ai.settings')}
+      {t('ai.settings').toUpperCase()}
     </button>
   );
 }

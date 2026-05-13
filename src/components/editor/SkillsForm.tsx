@@ -18,8 +18,8 @@ export function SkillsForm() {
       defaultItem={{ name: '', level: '', keywords: [] }}
       entryLabel={(item) => item.name || 'Skill'}
       renderItem={(item, index, update) => (
-        <div className="space-y-2">
-          <div className="grid grid-cols-2 gap-2">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
             <FormField
               label={t('skills.category')}
               value={item.name || ''}
@@ -37,7 +37,7 @@ export function SkillsForm() {
           <ChipInput
             label={t('skills.keywords')}
             items={item.keywords || []}
-            onChange={(v) => update(index, { ...item, keywords: v })}
+            onChange={(v: string[]) => update(index, { ...item, keywords: v })}
             placeholder={t('ph.skill')}
           />
         </div>

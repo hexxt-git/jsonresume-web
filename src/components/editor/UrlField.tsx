@@ -7,7 +7,7 @@ interface UrlFieldProps {
 
 /**
  * URL input that shows an https:// prefix chip.
- * Strips the prefix for display and re-adds on change if missing.
+ * Strips the prefix for display and re-adds on change.
  */
 export function UrlField({ label, value, onChange, placeholder }: UrlFieldProps) {
   const id = label.toLowerCase().replace(/\s+/g, '-');
@@ -15,35 +15,31 @@ export function UrlField({ label, value, onChange, placeholder }: UrlFieldProps)
   const display = hasProtocol ? value.replace(/^https?:\/\//i, '') : value;
 
   const handleChange = (raw: string) => {
-    // If user cleared the field, clear the value
     if (!raw.trim()) {
       onChange('');
       return;
     }
-    // If it already has a protocol, keep as-is
     if (/^https?:\/\//i.test(raw)) {
       onChange(raw);
       return;
     }
-    // Auto-prefix https://
     onChange(`https://${raw}`);
   };
 
   const handleBlur = () => {
-    // Clean up on blur: if user typed just a protocol, clear it
     if (value === 'https://' || value === 'http://') {
       onChange('');
     }
   };
 
   return (
-    <div>
-      <label htmlFor={id} className="block text-xs font-medium text-text-secondary mb-1">
+    <div className="space-y-1.5">
+      <label htmlFor={id} className="block text-xs font-medium text-text-secondary ml-1">
         {label}
       </label>
-      <div className="flex">
+      <div className="flex group transition-all">
         {value || display ? (
-          <span className="flex items-center px-2 py-1.5 text-xs text-text-muted border border-border-input border-r-0 bg-bg-secondary rounded-l-md select-none shrink-0">
+          <span className="flex items-center px-4 py-2 text-xs text-text-muted border border-border-input border-r-0 bg-bg-secondary rounded-l-full select-none shrink-0 transition-colors group-focus-within:border-accent">
             https://
           </span>
         ) : null}
@@ -54,9 +50,9 @@ export function UrlField({ label, value, onChange, placeholder }: UrlFieldProps)
           onChange={(e) => handleChange(e.target.value)}
           onBlur={handleBlur}
           placeholder={placeholder?.replace(/^https?:\/\//i, '') || 'example.com'}
-          className={`flex-1 min-w-0 px-3 py-1.5 text-sm border border-border-input bg-bg-input text-text
-            focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent
-            ${value || display ? 'rounded-r-md' : 'rounded-md'}`}
+          className={`flex-1 min-w-0 px-4 py-2 text-sm border border-border-input bg-bg-input text-text
+            focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all
+            ${value || display ? 'rounded-r-full' : 'rounded-full'}`}
         />
       </div>
     </div>

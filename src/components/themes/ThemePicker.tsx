@@ -17,32 +17,33 @@ export function ThemePicker() {
   );
 
   return (
-    <div className="h-full overflow-y-auto p-3">
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+    <div className="h-full overflow-y-auto pb-10">
+      <div className="grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {previews.map((t) => (
           <button
             key={t.id}
             onClick={() => setTheme(t.id)}
-            className={`text-left rounded-md overflow-hidden cursor-pointer transition-shadow ${
-              selectedThemeId === t.id
-                ? 'ring-2 ring-accent'
-                : 'ring-0 hover:ring-1 hover:ring-border'
-            }`}
+            className={`text-left rounded-3xl overflow-hidden cursor-pointer transition-all duration-300 border ${selectedThemeId === t.id ? 'border-accent' : 'border-border'}`}
           >
-            <div className="relative w-full h-36 overflow-hidden bg-white flex items-start justify-center">
+            <div className="relative w-full h-44 overflow-hidden bg-white flex items-start justify-center p-2">
               <iframe
                 srcDoc={t.html}
                 title={t.name}
                 className="w-[900px] h-[700px] border-0 pointer-events-none shrink-0"
-                style={{ transform: 'scale(0.22)', transformOrigin: 'top center' }}
+                style={{ transform: 'scale(0.24)', transformOrigin: 'top center' }}
                 tabIndex={-1}
               />
+              {selectedThemeId === t.id && (
+                <div className="absolute top-3 right-3 w-6 h-6 bg-accent rounded-full flex items-center justify-center text-white text-[10px] shadow-lg">
+                  &#10003;
+                </div>
+              )}
             </div>
             <div
-              className={`px-2.5 py-1.5 text-xs border-t ${
+              className={`px-4 py-3 text-[11px] font-bold text-center tracking-wide uppercase transition-colors ${
                 selectedThemeId === t.id
-                  ? 'bg-bg-accent text-accent-text font-semibold border-accent'
-                  : 'bg-bg-secondary text-text border-border'
+                  ? 'bg-accent text-white'
+                  : 'bg-bg-secondary text-text-secondary'
               }`}
             >
               {t.name}

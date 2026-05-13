@@ -16,14 +16,15 @@ a{color:#333;text-decoration:none}a:hover{text-decoration:underline}
 .contact{display:flex;flex-wrap:wrap;gap:16px;color:#666;font-size:calc(13px * var(--fs-mult, 1));margin-bottom:32px}
 .contact a{color:#666}
 .summary{color:#555;margin-bottom:32px;line-height:1.7}
-.section{margin-bottom:28px}
-.entry{margin-bottom:20px}
+.section{margin-bottom:28px;break-inside:avoid}
+.entry{margin-bottom:20px;break-inside:avoid}
 .entry-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:4px}
 .entry-meta{color:#999;font-size:calc(13px * var(--fs-mult, 1));white-space:nowrap}
 .entry-org{color:#666;font-size:calc(13px * var(--fs-mult, 1))}
 ul{padding-left:18px;margin-top:6px}
 li{margin-bottom:4px;color:#555}
 .skills-grid{display:flex;flex-wrap:wrap;gap:20px}
+.skill-group{break-inside:avoid}
 .skill-group h3{font-size:calc(13px * var(--fs-mult, 1));margin-bottom:6px}
 .skill-keywords{display:flex;flex-wrap:wrap;gap:6px}
 .skill-tag{background:#f5f5f5;padding:3px 10px;border-radius:3px;font-size:calc(12px * var(--fs-mult, 1));color:#555}

@@ -16,7 +16,7 @@
   --text-muted: #9ca3af;
   --text-faint: #d1d5db;
   --border: #e5e7eb;
-  --border-input: #d1d5db;
+  --border-input: #edf0f5;
   --accent: #2563eb;
   --accent-text: #2563eb;
   --danger: #ef4444;
@@ -197,17 +197,18 @@
     font-family: ui-monospace, monospace;
     font-size: 0.85em;
     background: var(--bg-tertiary);
-    padding: 1px 4px;
-    border-radius: 3px;
+    padding: 2px 6px;
+    border-radius: 6px;
   }
   & pre {
     background: var(--bg-tertiary);
-    border-radius: 6px;
-    padding: 0.75em 1em;
-    margin: 0.5em 0;
+    border-radius: 16px;
+    padding: 1em 1.25em;
+    margin: 0.75em 0;
     overflow-x: auto;
     font-size: 0.82em;
-    line-height: 1.5;
+    line-height: 1.6;
+    border: 1px solid var(--border);
     & code {
       background: none;
       padding: 0;

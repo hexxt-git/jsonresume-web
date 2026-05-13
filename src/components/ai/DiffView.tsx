@@ -326,7 +326,7 @@ export function BlockDiffView({ oldText, newText }: { oldText: string; newText: 
   };
 
   return (
-    <div className="w-full text-xs font-mono rounded-md overflow-hidden border border-border whitespace-pre-wrap">
+    <div className="w-full text-xs font-mono rounded-2xl overflow-hidden border border-border whitespace-pre-wrap">
       {groups.map((item, i) => {
         if (item.kind === 'collapsed') {
           if (expanded.has(item.groupId)) {

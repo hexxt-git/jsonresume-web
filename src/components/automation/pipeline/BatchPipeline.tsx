@@ -26,14 +26,14 @@ import type { BatchJob } from '../BatchTailoring/types';
 import { BatchProcessing } from '../BatchTailoring/BatchProcessing';
 import { BatchResultCard } from '../BatchTailoring/BatchResultCard';
 import { BatchFailedCard } from '../BatchTailoring/BatchFailedCard';
+import { splitJds } from '../shared/helpers';
+import { filterVisible } from '../../../utils/resume';
 
 /* ── Constants ──────────────────────────────────────────── */
 
 type Step = 'jd' | 'processing' | 'results';
 const STEP_LABELS = ['Job Descriptions', 'Process', 'Results'];
 const STEP_INDEX: Record<Step, number> = { jd: 0, processing: 1, results: 2 };
-
-import { splitJds } from '../shared/helpers';
 
 const CURRENT_DATE = new Date().toLocaleDateString('en-US', {
   year: 'numeric',
@@ -93,7 +93,7 @@ export function BatchPipeline({ onBack }: Props) {
     const map: Record<string, string> = {};
     for (const job of jobs) {
       if (job.status === 'done' && job.result) {
-        map[job.id] = theme.render(job.result.tailoredResume, css);
+        map[job.id] = theme.render(filterVisible(job.result.tailoredResume), css);
       }
     }
     return map;
@@ -288,9 +288,17 @@ export function BatchPipeline({ onBack }: Props) {
     else if (format === 'html') {
       const slot = activeSlot(useResumeStore.getState());
       saveAs(
-        new Blob([getThemeById(slot.themeId).render(resume, buildCustomCss(slot.customization))], {
-          type: 'text/html',
-        }),
+        new Blob(
+          [
+            getThemeById(slot.themeId).render(
+              filterVisible(resume),
+              buildCustomCss(slot.customization),
+            ),
+          ],
+          {
+            type: 'text/html',
+          },
+        ),
         `${fname}.html`,
       );
     }
@@ -331,14 +339,14 @@ export function BatchPipeline({ onBack }: Props) {
   /* ── Render ───────────────────────────────────────────── */
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-bg">
       {/* Header */}
-      <div className="px-4 pt-3 pb-2 border-b border-border shrink-0">
+      <div className="px-6 py-4 border-b border-border bg-bg-secondary/20 shrink-0">
         <div className="flex items-center justify-between">
           <Stepper steps={STEP_LABELS} currentIndex={stepIndex} onStepClick={handleStepClick} />
           <button
             onClick={step === 'jd' ? onBack : handleReset}
-            className="text-[10px] text-text-muted hover:text-text-secondary cursor-pointer shrink-0 ml-3"
+            className="text-[10px] font-bold text-text-muted hover:text-accent cursor-pointer shrink-0 ml-4 uppercase tracking-widest transition-all px-3 py-1.5 rounded-full border border-border/50 hover:bg-bg-secondary"
           >
             {step === 'jd' ? 'Back' : 'Start over'}
           </button>
@@ -346,74 +354,85 @@ export function BatchPipeline({ onBack }: Props) {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-4">
-        <div className="space-y-4">
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="max-w-4xl mx-auto space-y-6">
           {error && (
-            <div className="text-xs text-danger bg-danger/10 rounded-md px-3 py-2">{error}</div>
+            <div className="text-xs font-medium text-danger bg-danger/10 border border-danger/20 rounded-2xl px-6 py-4 shadow-sm">
+              {error}
+            </div>
           )}
 
           {/* Step 1: JD Input */}
           {step === 'jd' && (
-            <div className="space-y-3">
-              <p className="text-xs text-text-secondary">
-                Paste multiple job descriptions separated by{' '}
-                <code className="text-[10px] px-1 py-0.5 bg-bg-tertiary rounded">---</code> or blank
-                lines. Each gets a tailored resume.
-              </p>
-
-              <JdInput
-                value={rawInput}
-                onChange={setRawInput}
-                rows={10}
-                label="Job Descriptions"
-                placeholder={
-                  'Paste multiple job descriptions.\nSeparate them with --- or === or blank lines.'
-                }
-                append
-              />
-
-              {detectedJds.length > 0 && (
-                <p className="text-[10px] text-text-muted">
-                  <span className="text-accent font-medium">{detectedJds.length}</span> job
-                  description{detectedJds.length !== 1 ? 's' : ''} detected
+            <div className="space-y-6">
+              <div className="bg-bg-secondary/30 p-5 rounded-2xl border border-border/50 space-y-4">
+                <p className="text-sm font-medium text-text-secondary leading-relaxed">
+                  Paste multiple job descriptions separated by{' '}
+                  <code className="text-[11px] px-2 py-0.5 bg-bg-tertiary rounded-full font-bold">
+                    ---
+                  </code>{' '}
+                  or blank lines. Each gets a tailored resume variant.
                 </p>
-              )}
+
+                <JdInput
+                  value={rawInput}
+                  onChange={setRawInput}
+                  rows={10}
+                  label="Job Descriptions"
+                  placeholder={
+                    'Paste multiple job descriptions.\nSeparate them with --- or === or blank lines.'
+                  }
+                  append
+                />
+
+                {detectedJds.length > 0 && (
+                  <div className="flex justify-center">
+                    <p className="text-[10px] font-bold text-accent uppercase tracking-widest bg-accent/5 px-4 py-1 rounded-full border border-accent/20">
+                      {detectedJds.length} {detectedJds.length !== 1 ? 'positions' : 'position'}{' '}
+                      detected
+                    </p>
+                  </div>
+                )}
+              </div>
 
               {/* Inline settings */}
-              <div className="space-y-2 pt-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[10px] font-medium text-text-muted uppercase tracking-wide">
+              <div className="bg-bg-secondary/30 p-6 rounded-3xl border border-border/50 space-y-6 shadow-sm">
+                <div className="flex items-center gap-6 flex-wrap">
+                  <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
                     Approach
                   </span>
-                  {(['conservative', 'balanced', 'creative'] as Creativity[]).map((c) => (
-                    <button
-                      key={c}
-                      onClick={() => setCreativity(c)}
-                      className={`text-[10px] px-2.5 py-1 rounded-full cursor-pointer transition-colors ${
-                        creativity === c
-                          ? 'bg-accent text-white'
-                          : 'border border-border text-text-muted hover:text-text-secondary'
-                      }`}
-                    >
-                      {c.charAt(0).toUpperCase() + c.slice(1)}
-                    </button>
-                  ))}
+                  <div className="flex gap-2 bg-bg p-1 rounded-full border border-border/50 shadow-sm">
+                    {(['conservative', 'balanced', 'creative'] as Creativity[]).map((c) => (
+                      <button
+                        key={c}
+                        onClick={() => setCreativity(c)}
+                        className={`text-[10px] font-bold px-4 py-1.5 rounded-full cursor-pointer transition-all uppercase tracking-tight ${
+                          creativity === c
+                            ? 'bg-accent text-white shadow-md'
+                            : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
+                        }`}
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <details className="group">
-                  <summary className="text-[10px] text-text-muted cursor-pointer hover:text-text-secondary select-none">
+
+                <details className="group" open>
+                  <summary className="text-[10px] font-bold text-text-muted cursor-pointer hover:text-text-secondary select-none uppercase tracking-widest flex items-center gap-2">
                     Sections to modify
                   </summary>
-                  <div className="grid grid-cols-3 gap-x-3 gap-y-1 mt-1.5 pl-1">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-3 mt-4 pl-3">
                     {ALL_SECTIONS.map((s) => (
                       <label
                         key={s}
-                        className="flex items-center gap-1.5 text-[10px] text-text-secondary cursor-pointer select-none"
+                        className="flex items-center gap-2.5 text-[11px] font-medium text-text-secondary cursor-pointer select-none group/item hover:text-accent transition-colors"
                       >
                         <input
                           type="checkbox"
                           checked={sectionsToTailor.includes(s)}
                           onChange={() => toggleSection(s)}
-                          className="rounded border-border-input accent-accent w-3 h-3"
+                          className="rounded-full border-border-input accent-accent w-4 h-4 cursor-pointer"
                         />
                         {SECTION_DISPLAY[s] || s}
                       </label>
@@ -475,20 +494,20 @@ export function BatchPipeline({ onBack }: Props) {
       </div>
 
       {/* Footer */}
-      <div className="shrink-0 px-4 py-3 border-t border-border bg-bg">
+      <div className="shrink-0 px-8 py-6 border-t border-border bg-bg-secondary/10">
         {step === 'jd' && (
           <button
             onClick={handleStart}
             disabled={!detectedJds.length}
-            className="w-full text-xs py-2.5 bg-accent text-white rounded-lg hover:opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full text-sm py-4 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed font-bold shadow-xl transition-all uppercase tracking-widest"
           >
-            Process{detectedJds.length > 0 ? ` (${detectedJds.length} jobs)` : ' All'}
+            Process{detectedJds.length > 0 ? ` (${detectedJds.length} positions)` : ' All'}
           </button>
         )}
         {step === 'results' && (
           <button
             onClick={handleReset}
-            className="w-full text-xs py-2.5 border border-border rounded-lg hover:bg-bg-hover cursor-pointer text-text-secondary"
+            className="w-full text-sm py-4 border-2 border-border rounded-full hover:bg-bg-hover cursor-pointer text-text-secondary font-bold shadow-sm transition-all uppercase tracking-widest"
           >
             New Batch
           </button>

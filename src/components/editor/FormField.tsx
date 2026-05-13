@@ -20,11 +20,11 @@ export function FormField({
 }: FormFieldProps) {
   const aiContext = useAiContext(label);
   const id = label.toLowerCase().replace(/\s+/g, '-');
-  const cls =
-    'w-full px-3 py-1.5 text-sm border border-border-input bg-bg-input text-text rounded-md focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent';
+  const baseCls =
+    'w-full px-4 py-2 text-sm border border-border-input bg-bg-input text-text focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all';
   return (
-    <div>
-      <label htmlFor={id} className="block text-xs font-medium text-text-secondary mb-1">
+    <div className="space-y-1.5">
+      <label htmlFor={id} className="block text-xs font-medium text-text-secondary ml-1">
         {label}
       </label>
       {multiline ? (
@@ -35,7 +35,7 @@ export function FormField({
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
             rows={4}
-            className={cls + ' resize-y pr-8'}
+            className={`${baseCls} rounded-2xl resize-y pr-8`}
           />
         </AiWritingTools>
       ) : (
@@ -45,7 +45,7 @@ export function FormField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className={cls}
+          className={`${baseCls} rounded-full`}
         />
       )}
     </div>

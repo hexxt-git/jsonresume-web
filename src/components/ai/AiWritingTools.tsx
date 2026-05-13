@@ -8,7 +8,6 @@ import {
   TextalignJustifycenter,
   MessageSquare,
   Chart,
-  TickCircle,
   CloseCircle,
 } from 'iconsax-react';
 import { useGoToAi } from '../editor/EditorContext';
@@ -238,61 +237,65 @@ export function AiWritingTools(props: Props) {
   if (disabledReason && !isReview && !isProcessing) {
     const clickable = !hasKey;
     triggerButton = (
-      <div className="absolute top-0 right-0 group z-10">
+      <div className="absolute top-1 right-1 group z-10 p-1">
         <button
           type="button"
           onClick={clickable ? goToAi : undefined}
           disabled={!clickable}
-          className={`p-1.5 rounded-bl-md rounded-tr-md bg-bg-secondary border-b border-l border-border text-text-faint opacity-40
+          className={`w-7 h-7 flex items-center justify-center rounded-full bg-bg-secondary border border-border text-text-faint opacity-40 transition-all
             ${clickable ? 'cursor-pointer hover:opacity-70' : 'cursor-not-allowed'}`}
         >
           <MagicStar size={12} variant="Bold" color="currentColor" />
         </button>
-        <div className="hidden group-hover:block absolute top-full right-0 z-50 px-2 py-1 rounded bg-bg-tertiary border border-border shadow-sm whitespace-nowrap">
+        <div className="hidden group-hover:block absolute top-full right-0 z-50 px-3 py-1.5 rounded-full bg-bg-tertiary border border-border shadow-xl whitespace-nowrap mt-1">
           {clickable ? (
             <button
               type="button"
               onClick={goToAi}
-              className="text-[10px] text-accent cursor-pointer"
+              className="text-[10px] font-bold text-accent cursor-pointer uppercase tracking-wider"
             >
               {disabledReason} &rarr;
             </button>
           ) : (
-            <span className="text-[10px] text-text-muted">{disabledReason}</span>
+            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">
+              {disabledReason}
+            </span>
           )}
         </div>
       </div>
     );
   } else if (isProcessing) {
     triggerButton = (
-      <button
-        type="button"
-        disabled
-        className="absolute top-0 right-0 z-10 p-1.5 rounded-bl-md rounded-tr-md bg-accent/10 border-b border-l border-border text-accent cursor-wait"
-      >
-        <MagicStar size={12} variant="Bold" color="currentColor" />
-      </button>
+      <div className="absolute top-1 right-1 z-10 p-1">
+        <button
+          type="button"
+          disabled
+          className="w-7 h-7 flex items-center justify-center rounded-full bg-accent/10 border border-accent/20 text-accent cursor-wait animate-pulse"
+        >
+          <MagicStar size={12} variant="Bold" color="currentColor" />
+        </button>
+      </div>
     );
   } else if (!isReview) {
     triggerButton = (
-      <>
+      <div className="absolute top-1 right-1 z-10 p-1">
         <button
           type="button"
           onClick={() => setOpen(!open)}
-          className="absolute top-0 right-0 z-10 p-1.5 rounded-bl-md rounded-tr-md border-b border-l border-border transition-colors cursor-pointer
-            bg-bg-secondary text-text-muted hover:text-accent hover:bg-bg-hover"
+          className="w-7 h-7 flex items-center justify-center rounded-full border border-border transition-all cursor-pointer
+            bg-bg-secondary text-text-muted hover:text-accent hover:bg-bg-hover shadow-sm"
           title="AI writing tools"
         >
           <MagicStar size={12} variant="Bold" color="currentColor" />
         </button>
         {open && (
           <>
-            <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-            <div className="absolute top-7 right-0 z-50 w-52 bg-bg border border-border rounded-lg shadow-lg p-2">
-              <h3 className="text-xs font-medium text-text-secondary mt-1 mb-2 text-center">
+            <div className="fixed inset-0 z-40 bg-black/5" onClick={() => setOpen(false)} />
+            <div className="absolute top-9 right-0 z-50 w-56 bg-bg border border-border rounded-2xl shadow-2xl p-3 space-y-3">
+              <h3 className="text-[10px] font-bold text-text-muted uppercase tracking-widest text-center px-2">
                 AI Writing Tools
               </h3>
-              <div className="grid grid-cols-2 gap-1.5">
+              <div className="grid grid-cols-2 gap-2">
                 {tools.map((tool) => {
                   const Icon = tool.icon;
                   return (
@@ -300,10 +303,12 @@ export function AiWritingTools(props: Props) {
                       key={tool.id}
                       type="button"
                       onClick={() => run(tool.prompt)}
-                      className="flex flex-col items-center gap-1 px-2 py-2.5 rounded-lg text-text-secondary bg-bg-hover/20 hover:bg-bg-hover hover:text-text cursor-pointer transition-colors"
+                      className="flex flex-col items-center gap-1.5 px-2 py-3 rounded-xl text-text-secondary bg-bg-secondary/50 hover:bg-bg-hover hover:text-accent cursor-pointer transition-all border border-border/40"
                     >
-                      <Icon size={18} variant="Bold" color="currentColor" />
-                      <span className="text-[10px] leading-tight text-center">{tool.label}</span>
+                      <Icon size={20} variant="Bold" color="currentColor" />
+                      <span className="text-[10px] font-bold leading-tight text-center">
+                        {tool.label.toUpperCase()}
+                      </span>
                     </button>
                   );
                 })}
@@ -313,16 +318,18 @@ export function AiWritingTools(props: Props) {
                     setOpen(false);
                     goToAi();
                   }}
-                  className="flex flex-col items-center gap-1 px-2 py-2.5 rounded-lg text-accent bg-bg-hover/30 hover:bg-bg-hover cursor-pointer transition-colors col-span-full"
+                  className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-full text-accent bg-accent/5 hover:bg-accent/10 cursor-pointer transition-all col-span-full border border-accent/20"
                 >
-                  <MessageSquare size={15} variant="Bold" color="currentColor" />
-                  <span className="text-[10px] leading-tight text-center">AI Chat</span>
+                  <MessageSquare size={14} variant="Bold" color="currentColor" />
+                  <span className="text-[10px] font-bold tracking-widest uppercase text-center">
+                    Open AI Chat
+                  </span>
                 </button>
               </div>
             </div>
           </>
         )}
-      </>
+      </div>
     );
   }
 
@@ -337,14 +344,14 @@ export function AiWritingTools(props: Props) {
 
         {/* Processing shimmer */}
         {isProcessing && (
-          <div className="absolute inset-0 z-10 rounded-md overflow-hidden pointer-events-none">
+          <div className="absolute inset-0 z-10 rounded-2xl overflow-hidden pointer-events-none">
             <div className="absolute inset-0 ai-shimmer" />
           </div>
         )}
 
         {/* Review diff overlay */}
         {isReview && (
-          <div className="absolute inset-0 z-10 bg-bg rounded-md border border-accent/30 overflow-auto p-2.5">
+          <div className="absolute inset-0 z-10 bg-bg rounded-2xl border border-accent/30 overflow-auto p-4 shadow-inner">
             {state.phase === 'review' ? (
               <InlineDiffView oldText={state.oldValue} newText={state.newValue} />
             ) : state.phase === 'review-list' ? (
@@ -356,21 +363,21 @@ export function AiWritingTools(props: Props) {
 
       {/* Accept/reject below the field, in normal flow */}
       {isReview && (
-        <div className="flex justify-end gap-1.5 mt-1">
+        <div className="flex justify-end gap-2 mt-2">
           <button
             type="button"
             onClick={reject}
-            className="flex items-center gap-1 text-[10px] text-text-muted hover:text-danger cursor-pointer transition-colors"
+            className="flex items-center gap-1.5 text-[10px] font-bold text-text-muted hover:text-danger cursor-pointer transition-all px-3 py-1.5 rounded-full border border-border/50 hover:bg-danger/5 uppercase tracking-wide"
           >
-            <CloseCircle size={12} variant="Bold" color="currentColor" />
+            <CloseCircle size={14} variant="Bold" color="currentColor" />
             Reject
           </button>
           <button
             type="button"
             onClick={accept}
-            className="flex items-center gap-1 text-[10px] text-accent hover:opacity-80 cursor-pointer transition-colors"
+            className="flex items-center gap-1.5 text-[10px] font-bold text-accent hover:opacity-80 cursor-pointer transition-all px-3 py-1.5 rounded-full border border-accent/20 bg-accent/5 uppercase tracking-wide"
           >
-            <TickCircle size={12} variant="Bold" color="currentColor" />
+            <MagicStar size={14} variant="Bold" color="currentColor" />
             Accept
           </button>
         </div>

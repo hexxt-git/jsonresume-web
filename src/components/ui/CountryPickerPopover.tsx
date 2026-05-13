@@ -45,25 +45,25 @@ export function CountryPickerPopover({ children, onSelect, showDialCode }: Props
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
-          className="z-50 w-[280px] rounded-lg border border-border bg-bg shadow-lg"
-          sideOffset={4}
+          className="z-50 w-[320px] rounded-2xl border border-border bg-bg shadow-2xl overflow-hidden"
+          sideOffset={8}
           align="start"
         >
-          <div className="p-2 border-b border-border">
+          <div className="p-3 border-b border-border bg-bg-secondary/30">
             <input
               ref={inputRef}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t('ui.searchCountries')}
-              className="w-full px-2 py-1 text-sm bg-bg-input border border-border-input rounded-md text-text
+              className="w-full px-3 py-1.5 text-sm bg-bg-input border border-border-input rounded-full text-text
                 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
             />
           </div>
-          <div className="max-h-[200px] overflow-y-auto p-1">
+          <div className="max-h-[280px] overflow-y-auto p-2">
             {loading ? (
-              <div className="px-2 py-4 text-xs text-text-muted text-center">{t('ui.loading')}</div>
+              <div className="px-3 py-6 text-xs text-text-muted text-center">{t('ui.loading')}</div>
             ) : filtered.length === 0 ? (
-              <div className="px-2 py-4 text-xs text-text-muted text-center">
+              <div className="px-3 py-6 text-xs text-text-muted text-center">
                 {t('ui.noResults')}
               </div>
             ) : (
@@ -76,19 +76,19 @@ export function CountryPickerPopover({ children, onSelect, showDialCode }: Props
                     setOpen(false);
                     setSearch('');
                   }}
-                  className="w-full flex items-center gap-2 px-2 py-1.5 text-xs rounded-md
-                    hover:bg-bg-hover text-text-secondary text-left cursor-pointer"
+                  className="w-full flex items-center gap-3 px-3 py-2 text-xs rounded-xl
+                    hover:bg-bg-hover text-text-secondary text-left cursor-pointer transition-colors"
                 >
                   <img
                     src={flagUrl(c.code)}
                     alt=""
-                    width={20}
-                    height={15}
-                    className="shrink-0 rounded-[2px]"
+                    width={22}
+                    height={16}
+                    className="shrink-0 rounded-[3px] shadow-sm"
                     loading="lazy"
                   />
-                  <span className="flex-1 truncate">{c.name}</span>
-                  <span className="text-text-muted shrink-0">
+                  <span className="flex-1 truncate font-medium">{c.name}</span>
+                  <span className="text-text-muted shrink-0 text-[10px] bg-bg-secondary px-1.5 py-0.5 rounded-full">
                     {showDialCode ? c.dialCode : c.code}
                   </span>
                 </button>

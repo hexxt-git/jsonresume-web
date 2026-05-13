@@ -73,15 +73,15 @@ function ButtonGroup<T extends string>({
   onChange: (v: T) => void;
 }) {
   return (
-    <div className="flex rounded overflow-hidden border border-border">
+    <div className="flex rounded-full overflow-hidden border border-border p-1 bg-bg-secondary/50">
       {options.map((o) => (
         <button
           key={o.value}
           onClick={() => onChange(o.value)}
-          className={`flex-1 flex items-center justify-center gap-1 text-xs px-2 py-1 cursor-pointer transition-colors ${
+          className={`flex-1 flex items-center justify-center gap-1.5 text-[10px] font-medium px-3 py-1.5 rounded-full cursor-pointer transition-all ${
             value === o.value
-              ? 'bg-accent text-white'
-              : 'bg-bg text-text-secondary hover:bg-bg-hover'
+              ? 'bg-accent text-white shadow-sm'
+              : 'bg-transparent text-text-tertiary hover:text-text-secondary hover:bg-bg-hover'
           }`}
         >
           {o.icon}
@@ -118,22 +118,22 @@ function MobileMenu({
     <div className="relative sm:hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="text-xs px-1.5 py-1 border border-border rounded hover:bg-bg-hover cursor-pointer text-text-secondary"
+        className="text-xs px-2.5 py-1.5 border border-border rounded-full hover:bg-bg-hover cursor-pointer text-text-secondary transition-colors"
       >
         &#8943;
       </button>
       {open && (
         <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full mt-1 z-50 w-48 bg-bg border border-border rounded-lg shadow-lg p-2 space-y-2">
-            <div className="flex gap-1">
+          <div className="fixed inset-0 z-40 bg-black/5" onClick={() => setOpen(false)} />
+          <div className="absolute right-0 top-full mt-2 z-50 w-56 bg-bg border border-border rounded-2xl shadow-2xl p-3 space-y-3">
+            <div className="flex gap-2">
               <button
                 onClick={() => {
                   undo();
                   setOpen(false);
                 }}
                 disabled={!canUndo}
-                className="flex-1 text-xs px-2 py-1.5 text-text-secondary hover:bg-bg-hover rounded cursor-pointer disabled:opacity-30 disabled:cursor-default"
+                className="flex-1 text-xs px-2 py-2 text-text-secondary hover:bg-bg-hover rounded-xl cursor-pointer disabled:opacity-30 disabled:cursor-default transition-colors border border-border/50"
               >
                 {t('undo.undo')}
               </button>
@@ -143,37 +143,37 @@ function MobileMenu({
                   setOpen(false);
                 }}
                 disabled={!canRedo}
-                className="flex-1 text-xs px-2 py-1.5 text-text-secondary hover:bg-bg-hover rounded cursor-pointer disabled:opacity-30 disabled:cursor-default"
+                className="flex-1 text-xs px-2 py-2 text-text-secondary hover:bg-bg-hover rounded-xl cursor-pointer disabled:opacity-30 disabled:cursor-default transition-colors border border-border/50"
               >
                 {t('undo.redo')}
               </button>
             </div>
-            <div className="border-t border-border pt-2">
+            <div className="border-t border-border pt-3">
               <button
                 onClick={() => {
                   onImport();
                   setOpen(false);
                 }}
-                className="w-full text-xs px-2 py-1.5 text-left text-text-secondary hover:bg-bg-hover rounded cursor-pointer"
+                className="w-full text-xs px-3 py-2 text-left text-text-secondary hover:bg-bg-hover rounded-xl cursor-pointer transition-colors"
               >
                 {t('app.import')}
               </button>
             </div>
-            <div className="border-t border-border pt-2">
+            <div className="border-t border-border pt-3 space-y-3">
               <ButtonGroup options={colorModes} value={colorMode} onChange={setColorMode} />
+              <ButtonGroup
+                options={locales.map((l) => ({ value: l.id, label: l.label }))}
+                value={locale}
+                onChange={(v) => setLocale(v as Locale)}
+              />
             </div>
-            <ButtonGroup
-              options={locales.map((l) => ({ value: l.id, label: l.label }))}
-              value={locale}
-              onChange={(v) => setLocale(v as Locale)}
-            />
-            <div className="border-t border-border pt-2">
+            <div className="border-t border-border pt-3">
               <button
                 onClick={() => {
                   reset();
                   setOpen(false);
                 }}
-                className="w-full text-xs px-2 py-1.5 text-left text-danger hover:bg-bg-hover rounded cursor-pointer"
+                className="w-full text-xs px-3 py-2 text-left text-danger hover:bg-danger/10 rounded-xl cursor-pointer transition-colors"
               >
                 {t('app.reset')}
               </button>
@@ -295,31 +295,31 @@ function App() {
 
   return (
     <div className="h-screen flex flex-col bg-bg">
-      <header className="flex items-center justify-between px-2 py-1.5 border-b border-border bg-bg shrink-0 gap-1">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-bg shrink-0 gap-4">
         <h1 className="text-sm font-bold text-text tracking-tight shrink-0">{t('app.title')}</h1>
-        <div className="flex items-center gap-1 shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           <SlotsPicker />
           <button
             onClick={() => setImportOpen(true)}
-            className="hidden sm:inline-flex text-xs px-2 py-1 border border-border rounded hover:bg-bg-hover transition-colors cursor-pointer text-text-secondary"
+            className="hidden sm:inline-flex text-xs px-3 py-1.5 border border-border rounded-full hover:bg-bg-hover transition-all cursor-pointer text-text-secondary"
           >
             {t('app.import')}
           </button>
           <div className="relative">
             <button
               onClick={() => setExportOpen(!exportOpen)}
-              className="text-xs px-2 py-1 bg-accent text-white rounded hover:opacity-90 transition-colors cursor-pointer"
+              className="text-xs px-4 py-1.5 bg-accent text-white rounded-full hover:opacity-90 shadow-sm transition-all cursor-pointer font-medium"
             >
               {t('app.export')}
             </button>
             <ExportDialog open={exportOpen} onClose={() => setExportOpen(false)} />
           </div>
-          <div className="hidden sm:flex items-center gap-1 ml-0.5">
+          <div className="hidden sm:flex items-center gap-2 ml-1">
             <ColorModeToggle />
             <LocalePicker />
             <button
               onClick={reset}
-              className="text-xs px-2 py-1 border border-border rounded hover:bg-bg-hover transition-colors cursor-pointer text-danger"
+              className="text-xs px-3 py-1.5 border border-border rounded-full hover:bg-danger/10 transition-all cursor-pointer text-danger"
             >
               {t('app.reset')}
             </button>
@@ -378,8 +378,8 @@ function EmptyState({
   };
 
   return (
-    <div className="flex-1 flex items-center justify-center p-8 bg-bg">
-      <div className="max-w-md w-full text-center">
+    <div className="flex-1 flex items-center justify-center p-6 bg-bg">
+      <div className="max-w-lg w-full text-center space-y-6">
         <div
           onDragOver={(e) => {
             e.preventDefault();
@@ -388,10 +388,10 @@ function EmptyState({
           onDragLeave={() => setDragging(false)}
           onDrop={handleDrop}
           onClick={() => fileRef.current?.click()}
-          className={`border-2 border-dashed rounded-xl p-12 cursor-pointer transition-colors ${
+          className={`border-2 border-dashed rounded-3xl p-12 cursor-pointer transition-all ${
             dragging
               ? 'border-accent bg-bg-accent'
-              : 'border-border hover:border-text-muted hover:bg-bg-hover'
+              : 'border-border hover:border-accent hover:bg-bg-hover'
           }`}
         >
           <input
@@ -403,26 +403,28 @@ function EmptyState({
               if (e.target.files?.[0]) onFile(e.target.files[0]);
             }}
           />
-          <div className="text-3xl text-text-faint mb-4">+</div>
-          <div className="text-sm text-text-tertiary mb-1">{t('empty.drop')}</div>
+          <div className="text-4xl text-text-faint mb-4">+</div>
+          <div className="text-base font-medium text-text-secondary mb-2">{t('empty.drop')}</div>
           <div className="text-xs text-text-muted">{t('empty.formats')}</div>
         </div>
-        <div className="mt-6 text-xs text-text-muted">{t('empty.or')}</div>
-        <div className="mt-4 flex gap-3 justify-center">
+        <div className="flex items-center gap-4 text-xs text-text-muted before:flex-1 before:h-px before:bg-border after:flex-1 after:h-px after:bg-border">
+          {t('empty.or')}
+        </div>
+        <div className="flex gap-3 justify-center">
           <button
             onClick={onSample}
-            className="text-xs px-4 py-2 border border-border rounded-md hover:bg-bg-hover cursor-pointer text-text-secondary"
+            className="text-xs px-5 py-2 border border-border rounded-full hover:bg-bg-hover transition-all cursor-pointer text-text-secondary font-medium"
           >
             {t('empty.loadSample')}
           </button>
           <button
             onClick={onImport}
-            className="text-xs px-4 py-2 border border-border rounded-md hover:bg-bg-hover cursor-pointer text-text-secondary"
+            className="text-xs px-5 py-2 border border-border rounded-full hover:bg-bg-hover transition-all cursor-pointer text-text-secondary font-medium"
           >
             {t('empty.pasteJson')}
           </button>
         </div>
-        <p className="mt-6 text-xs text-text-faint">{t('empty.hint')}</p>
+        <p className="text-xs text-text-faint italic">{t('empty.hint')}</p>
       </div>
     </div>
   );
