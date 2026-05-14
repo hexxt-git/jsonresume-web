@@ -8,12 +8,14 @@ import {
   getPromptDirectives,
   getAuditDirective,
   type AuditStrictness,
-} from '../../store/automationStore';
+} from '@/store/automationStore';
 import type { CombinedAnalysis } from './pipeline/types';
 import type { SectionChange } from './shared/SectionDiffReview';
 import { AnalyzeView } from './pipeline/AnalyzeView';
 import { TailorView } from './pipeline/TailorView';
 import { WriteView } from './pipeline/WriteView';
+import { Button } from '@/components/ui/Button';
+import { cn } from '@/utils/cn';
 
 const BatchPipeline = lazy(() =>
   import('./pipeline/BatchPipeline').then((m) => ({ default: m.BatchPipeline })),
@@ -123,22 +125,23 @@ export default function AutomationHub() {
           {TOOLS.map((tool) => {
             const Icon = tool.icon;
             return (
-              <button
+              <Button
                 key={tool.id}
+                variant="ghost"
                 onClick={() => setActiveTool(tool.id)}
-                className="bg-bg-secondary hover:bg-bg-hover flex cursor-pointer items-start gap-3 rounded-xl p-4 text-left transition-colors"
+                className="bg-bg-secondary hover:bg-bg-hover flex h-auto cursor-pointer items-start justify-start gap-3 rounded-xl p-4 pb-12 text-left transition-colors"
               >
                 <Icon
-                  size={20}
+                  size={26}
                   variant="Bold"
                   color="currentColor"
                   className="text-text-muted mt-0.5 shrink-0"
                 />
-                <div>
+                <div className="flex flex-col items-start text-left whitespace-normal">
                   <div className="text-text text-sm font-medium">{tool.title}</div>
-                  <div className="text-text-muted mt-0.5 max-w-80 text-xs">{tool.desc}</div>
+                  <div className="text-text-muted mt-0.5 max-w-100 text-sm">{tool.desc}</div>
                 </div>
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -221,12 +224,13 @@ export default function AutomationHub() {
       <div className="border-border shrink-0 border-b px-4 pt-3 pb-2">
         <div className="flex items-center justify-between">
           <Stepper steps={STEP_LABELS} currentIndex={stepIndex} onStepClick={handleStepClick} />
-          <button
+          <Button
+            variant="ghost"
             onClick={handleBack}
-            className="text-text-muted hover:text-text-secondary ml-3 shrink-0 cursor-pointer text-[10px]"
+            className="text-text-muted hover:text-text-secondary ml-3 shrink-0 px-0 py-0 text-[10px] hover:bg-transparent"
           >
             {step === 'jd' ? 'Back' : 'Start over'}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -257,25 +261,28 @@ export default function AutomationHub() {
                     Strictness
                   </span>
                   {(['lenient', 'standard', 'strict'] as AuditStrictness[]).map((s) => (
-                    <button
+                    <Button
                       key={s}
+                      variant="ghost"
                       onClick={() => setAuditStrictness(s)}
-                      className={`cursor-pointer rounded-full px-2.5 py-1 text-[10px] transition-colors ${
+                      className={cn(
+                        'rounded-full px-2.5 py-1 text-[10px] transition-colors',
                         auditStrictness === s
-                          ? 'bg-accent text-white'
-                          : 'text-text-muted hover:text-text-secondary border'
-                      }`}
+                          ? 'bg-accent hover:bg-accent/90 text-white hover:text-white'
+                          : 'text-text-muted border-border hover:text-text-secondary border',
+                      )}
                     >
                       {s.charAt(0).toUpperCase() + s.slice(1)}
-                    </button>
+                    </Button>
                   ))}
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={handleAnalyze}
                     disabled={isRunning}
-                    className="text-accent ml-auto cursor-pointer text-[10px] hover:underline disabled:opacity-50"
+                    className="text-accent ml-auto px-0 py-0 text-[10px] hover:bg-transparent hover:underline"
                   >
                     Re-analyze
-                  </button>
+                  </Button>
                 </div>
                 <AnalyzeView analysis={analysis} onEditJd={() => setStep('jd')} />
               </>
@@ -283,15 +290,16 @@ export default function AutomationHub() {
               <div className="py-8 text-center">
                 <div className="border-accent mb-2 inline-block h-5 w-5 animate-spin rounded-full border-2 border-t-transparent" />
                 <p className="text-text-muted text-xs">Analyzing match & ATS compatibility...</p>
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => {
                     abort();
                     setStep('jd');
                   }}
-                  className="text-text-muted hover:text-danger mt-1 cursor-pointer text-[10px] font-bold tracking-widest uppercase"
+                  className="text-text-muted hover:text-danger mt-1 px-0 py-0 text-[10px] font-bold tracking-widest uppercase hover:bg-transparent"
                 >
                   Cancel
-                </button>
+                </Button>
               </div>
             ))}
 
@@ -314,49 +322,51 @@ export default function AutomationHub() {
       {/* Footer */}
       <div className="border-border bg-bg-secondary/10 shrink-0 border-t px-6 py-4">
         {step === 'jd' && (
-          <button
+          <Button
             onClick={handleAnalyze}
             disabled={!jd.trim() || isRunning}
-            className="bg-accent w-full cursor-pointer rounded-full py-3.5 text-xs font-bold tracking-widest text-white uppercase shadow-md transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30"
+            className="w-full py-3.5 font-bold tracking-widest uppercase"
           >
             {isRunning ? 'Analyzing...' : 'Analyze Match'}
-          </button>
+          </Button>
         )}
 
         {step === 'analyze' && analysis && (
           <div className="flex items-center gap-4">
-            <button
+            <Button
+              variant="outline"
               onClick={() => setStep('write')}
-              className="text-text-muted hover:text-text-secondary border-border shrink-0 cursor-pointer rounded-full border px-4 py-2 text-[10px] font-bold tracking-widest uppercase"
+              className="shrink-0 px-4 py-2 text-[10px] font-bold tracking-widest uppercase"
             >
               Skip to write
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setStep('tailor')}
-              className="bg-accent flex-1 cursor-pointer rounded-full py-3.5 text-xs font-bold tracking-widest text-white uppercase shadow-md transition-all hover:opacity-90"
+              className="flex-1 py-3.5 font-bold tracking-widest uppercase"
             >
               Tailor Resume
-            </button>
+            </Button>
           </div>
         )}
 
         {step === 'tailor' && (
-          <button
+          <Button
             onClick={() => setStep('write')}
             disabled={!tailorReady}
-            className="bg-accent w-full cursor-pointer rounded-full py-3.5 text-xs font-bold tracking-widest text-white uppercase shadow-md transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30"
+            className="w-full py-3.5 font-bold tracking-widest uppercase"
           >
             Write Materials
-          </button>
+          </Button>
         )}
 
         {step === 'write' && (
-          <button
+          <Button
+            variant="outline"
             onClick={handleReset}
-            className="border-border hover:bg-bg-hover text-text-secondary w-full cursor-pointer rounded-full border-2 py-3.5 text-xs font-bold tracking-widest uppercase transition-all"
+            className="w-full border-2 py-3.5 font-bold tracking-widest uppercase"
           >
             Apply to Another Job
-          </button>
+          </Button>
         )}
       </div>
     </div>

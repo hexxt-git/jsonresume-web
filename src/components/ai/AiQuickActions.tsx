@@ -1,4 +1,5 @@
-import { useT } from '../../i18n';
+import { useT } from '@/i18n';
+import { Button } from '@/components/ui/Button';
 
 interface Props {
   onAction: (prompt: string) => void;
@@ -31,14 +32,15 @@ export function AiQuickActions({ onAction, disabled }: Props) {
   return (
     <div className="flex shrink-0 gap-2 overflow-x-auto border-t px-4 py-2">
       {actions.map((a) => (
-        <button
+        <Button
           key={a.key}
+          variant="outline"
           onClick={() => onAction(a.prompt)}
           disabled={disabled}
-          className="text-text-secondary hover:bg-bg-hover shrink-0 cursor-pointer rounded-full border px-3 py-1 text-xs transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          className="shrink-0 px-3 py-1 text-xs"
         >
           {t(a.key)}
-        </button>
+        </Button>
       ))}
     </div>
   );

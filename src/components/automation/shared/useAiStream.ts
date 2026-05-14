@@ -1,13 +1,13 @@
 import { useState, useRef, useCallback } from 'react';
-import { useAiStore } from '../../../store/aiStore';
-import { useResumeStore, activeSlot } from '../../../store/resumeStore';
-import { getProvider } from '../../../lib/ai';
-import type { ToolCall, ToolDeclaration } from '../../../lib/ai';
+import { useAiStore } from '@/store/aiStore';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
+import { getProvider } from '@/lib/ai';
+import type { ToolCall, ToolDeclaration } from '@/lib/ai';
 import {
   resumeToolDeclarations,
   executeResumeTool,
   type ToolExecResult,
-} from '../../../lib/ai/resume-tools';
+} from '@/lib/ai/resume-tools';
 
 interface ToolCallCapture {
   call: ToolCall;

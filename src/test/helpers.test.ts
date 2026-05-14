@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { esc, formatDate, dateRange, section, link, md } from '../themes/helpers';
+import { esc, formatDate, dateRange, section, link, md } from '@/themes/helpers';
 
 describe('esc', () => {
   it('escapes HTML entities', () => {

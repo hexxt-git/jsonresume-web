@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import puppeteer from 'puppeteer';
 import type { Browser } from 'puppeteer';
-import { sampleResume } from '../utils/sample';
-import { getThemeById } from '../themes';
+import { sampleResume } from '@/utils/sample';
+import { getThemeById } from '@/themes';
 import { parseResumeFromPdfBuffer } from './pdfTestHelper';
 
 async function htmlToPdfBuffer(html: string, browser: Browser): Promise<Uint8Array> {

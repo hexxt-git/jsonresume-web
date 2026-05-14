@@ -1,5 +1,5 @@
-import { useResumeStore, activeSlot } from '../../store/resumeStore';
-import type { ResumeSchema } from '../../types/resume';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
+import type { ResumeSchema } from '@/types/resume';
 import type { ToolCall, ToolDeclaration } from './types';
 
 /* ── Tool declarations (sent to the LLM) ─────────────── */

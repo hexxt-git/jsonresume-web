@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { useAiStream } from '../shared/useAiStream';
 import { SectionDiffReview, type SectionChange } from '../shared/SectionDiffReview';
-import { useResumeStore, activeSlot } from '../../../store/resumeStore';
-import { getAtPath } from '../../../lib/ai/resume-tools';
-import { captureBeforeDiscreteMutation } from '../../../hooks/useUndoRedo';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
+import { getAtPath } from '@/lib/ai/resume-tools';
+import { captureBeforeDiscreteMutation } from '@/hooks/useUndoRedo';
 import {
   useAutomationStore,
   getPromptDirectives,
@@ -11,9 +11,9 @@ import {
   ALL_SECTIONS,
   SECTION_DISPLAY,
   type Creativity,
-} from '../../../store/automationStore';
+} from '@/store/automationStore';
 import type { CombinedAnalysis } from './types';
-import type { ResumeSchema } from '../../../types/resume';
+import type { ResumeSchema } from '@/types/resume';
 
 const CURRENT_DATE = new Date().toLocaleDateString('en-US', {
   year: 'numeric',
@@ -210,14 +210,14 @@ IMPORTANT: Only modify content relevant to job tailoring (summary, work highligh
           <span className="text-text-muted text-[10px] font-bold tracking-widest uppercase">
             Approach
           </span>
-          <div className="bg-bg border-border/50 flex gap-2 rounded-full border p-1 shadow-sm">
+          <div className="bg-bg border-border/50 flex gap-2 rounded-full border p-1">
             {(['conservative', 'balanced', 'creative'] as Creativity[]).map((c) => (
               <button
                 key={c}
                 onClick={() => setCreativity(c)}
                 className={`cursor-pointer rounded-full px-4 py-1.5 text-[10px] font-bold tracking-tight uppercase transition-all ${
                   creativity === c
-                    ? 'bg-accent text-white shadow-md'
+                    ? 'bg-accent text-white'
                     : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
                 }`}
               >

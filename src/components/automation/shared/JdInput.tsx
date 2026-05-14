@@ -1,16 +1,20 @@
 import { useState, useMemo } from 'react';
 import { CloseCircle, ArrowLeft2 } from 'iconsax-react';
-import { useJdStore } from '../../../store/jdStore';
-import type { SavedJd } from '../../../store/jdStore';
-import { extractTextFromDocx } from '../../../parser/docxParser';
+import { useJdStore } from '@/store/jdStore';
+import type { SavedJd } from '@/store/jdStore';
+import { extractTextFromDocx } from '@/parser/docxParser';
 import { extractMeta, splitJds, timeAgo } from './helpers';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
+import { cn } from '@/utils/cn';
 
 /* ── File reader ─────────────────────────────────────────── */
 
 export async function readFile(file: File): Promise<string> {
   const ext = file.name.split('.').pop()?.toLowerCase();
   if (ext === 'pdf') {
-    const { extractPdfTextItems } = await import('../../../parser/pdf-reader');
+    const { extractPdfTextItems } = await import('@/parser/pdf-reader');
     const url = URL.createObjectURL(file);
     try {
       const items = await extractPdfTextItems(url);
@@ -197,36 +201,40 @@ export function JdInput({
             <span className="text-accent animate-pulse text-[10px]">{savedFeedback}</span>
           )}
           {view === 'library' ? (
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="xs"
               onClick={() => setView('write')}
-              className="text-text-muted hover:text-text-secondary cursor-pointer rounded border px-2 py-0.5 text-[10px] transition-colors"
+              leftIcon={<ArrowLeft2 size={12} variant="Bold" color="currentColor" />}
+              className="text-text-muted hover:text-text-secondary"
             >
-              <ArrowLeft2 size={12} variant="Bold" color="currentColor" /> Back
-            </button>
+              Back
+            </Button>
           ) : (
             <>
               {/* Single mode: save one JD */}
               {!append && value.trim() && !saving && !loadedJd && (
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
+                  size="xs"
                   onClick={handleStartSave}
-                  className="text-text-muted hover:text-text-secondary cursor-pointer rounded border px-2 py-0.5 text-[10px] transition-colors"
+                  className="text-text-muted hover:text-text-secondary"
                 >
                   Save
-                </button>
+                </Button>
               )}
               {/* Batch mode: save each unsaved JD individually */}
               {append && unsavedChunks.length > 0 && !saving && (
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
+                  size="xs"
                   onClick={handleSaveAll}
-                  className="text-text-muted hover:text-text-secondary cursor-pointer rounded border px-2 py-0.5 text-[10px] transition-colors"
+                  className="text-text-muted hover:text-text-secondary"
                 >
                   Save all ({unsavedChunks.length})
-                </button>
+                </Button>
               )}
-              <label className="text-text-muted hover:text-text-secondary cursor-pointer rounded border px-2 py-0.5 text-[10px] transition-colors">
+              <label className="text-text-muted hover:text-text-secondary hover:bg-bg-hover inline-flex h-6 cursor-pointer items-center justify-center rounded-md px-2 text-[10px] font-medium transition-colors">
                 <input
                   type="file"
                   accept=".txt,.pdf,.doc,.docx"
@@ -255,55 +263,58 @@ export function JdInput({
             {loadedJd.company ? ` · ${loadedJd.company}` : ''}
           </span>
           {isModified && (
-            <button
-              type="button"
+            <Button
+              variant="primary"
+              size="sm"
               onClick={handleUpdateLoaded}
-              className="bg-accent shrink-0 cursor-pointer rounded px-2 py-0.5 text-[10px] text-white hover:opacity-90"
+              className="h-6 rounded-md px-2 text-[10px]"
             >
               Update
-            </button>
+            </Button>
           )}
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setLoadedJdId(null)}
-            className="text-text-muted hover:text-text-secondary shrink-0 cursor-pointer"
+            className="text-text-muted hover:text-text-secondary h-6 w-6 shrink-0 p-0"
           >
             <CloseCircle size={14} variant="Bold" color="currentColor" />
-          </button>
+          </Button>
         </div>
       )}
 
       {/* ─── Inline save form (single mode only) ─────────── */}
       {!append && saving && (
         <div className="bg-bg-secondary mb-1.5 flex flex-wrap items-center gap-1.5 rounded-lg border p-1.5">
-          <input
+          <Input
             value={saveTitle}
             onChange={(e) => setSaveTitle(e.target.value)}
             placeholder="Title"
-            className="border-border-input bg-bg-input text-text focus:ring-accent min-w-[80px] flex-1 rounded border px-2 py-1 text-[10px] focus:ring-1 focus:outline-none"
+            className="h-7 min-w-[80px] flex-1 rounded-md px-2 text-[10px]"
             autoFocus
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleSave();
               if (e.key === 'Escape') setSaving(false);
             }}
           />
-          <input
+          <Input
             value={saveCompany}
             onChange={(e) => setSaveCompany(e.target.value)}
             placeholder="Company"
-            className="border-border-input bg-bg-input text-text focus:ring-accent min-w-[80px] flex-1 rounded border px-2 py-1 text-[10px] focus:ring-1 focus:outline-none"
+            className="h-7 min-w-[80px] flex-1 rounded-md px-2 text-[10px]"
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleSave();
               if (e.key === 'Escape') setSaving(false);
             }}
           />
-          <button
-            type="button"
+          <Button
+            variant="primary"
+            size="sm"
             onClick={handleSave}
-            className="bg-accent shrink-0 cursor-pointer rounded px-2.5 py-1 text-[10px] text-white hover:opacity-90"
+            className="h-7 rounded-md px-3 text-[10px]"
           >
             Save
-          </button>
+          </Button>
           <button
             type="button"
             onClick={() => setSaving(false)}
@@ -317,12 +328,12 @@ export function JdInput({
       {/* ─── Write view ──────────────────────────────────── */}
       {view === 'write' && (
         <>
-          <textarea
+          <Textarea
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
             rows={rows}
-            className="border-border-input bg-bg-input text-text focus:ring-accent w-full resize-y rounded-lg border px-3 py-2 text-xs focus:ring-1 focus:outline-none"
+            className="text-xs"
           />
 
           {/* Recent JDs */}
@@ -389,14 +400,14 @@ export function JdInput({
         >
           {/* Search + sort header */}
           <div className="bg-bg-secondary flex items-center gap-1.5 border-b px-2.5 py-1.5">
-            <input
+            <Input
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
                 setConfirmDeleteId(null);
               }}
               placeholder="Search titles, companies, or content..."
-              className="text-text placeholder:text-text-faint min-w-0 flex-1 bg-transparent text-[10px] outline-none"
+              className="h-7 flex-1 border-none bg-transparent text-[10px] shadow-none ring-0 focus:ring-0"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === 'Escape') setView('write');
@@ -441,10 +452,10 @@ export function JdInput({
                         /* ── Inline edit mode ── */
                         <div className="space-y-1.5 px-3 py-2.5">
                           <div className="flex gap-1.5">
-                            <input
+                            <Input
                               value={editTitle}
                               onChange={(e) => setEditTitle(e.target.value)}
-                              className="border-border-input bg-bg-input text-text focus:ring-accent min-w-0 flex-1 rounded border px-2 py-1 text-[10px] focus:ring-1 focus:outline-none"
+                              className="h-7 flex-1 rounded px-2 py-1 text-[10px]"
                               placeholder="Title"
                               autoFocus
                               onKeyDown={(e) => {
@@ -452,10 +463,10 @@ export function JdInput({
                                 if (e.key === 'Escape') setEditingId(null);
                               }}
                             />
-                            <input
+                            <Input
                               value={editCompany}
                               onChange={(e) => setEditCompany(e.target.value)}
-                              className="border-border-input bg-bg-input text-text focus:ring-accent min-w-0 flex-1 rounded border px-2 py-1 text-[10px] focus:ring-1 focus:outline-none"
+                              className="h-7 flex-1 rounded px-2 py-1 text-[10px]"
                               placeholder="Company"
                               onKeyDown={(e) => {
                                 if (e.key === 'Enter') handleSaveEdit();
@@ -464,20 +475,12 @@ export function JdInput({
                             />
                           </div>
                           <div className="flex justify-end gap-1.5">
-                            <button
-                              type="button"
-                              onClick={() => setEditingId(null)}
-                              className="text-text-muted hover:text-text-secondary cursor-pointer px-2 py-0.5 text-[10px]"
-                            >
+                            <Button variant="ghost" size="xs" onClick={() => setEditingId(null)}>
                               Cancel
-                            </button>
-                            <button
-                              type="button"
-                              onClick={handleSaveEdit}
-                              className="bg-accent cursor-pointer rounded px-2.5 py-0.5 text-[10px] text-white hover:opacity-90"
-                            >
+                            </Button>
+                            <Button size="xs" onClick={handleSaveEdit}>
                               Save
-                            </button>
+                            </Button>
                           </div>
                         </div>
                       ) : (
@@ -521,30 +524,33 @@ export function JdInput({
                       {/* Hover actions */}
                       {editingId !== jd.id && (
                         <div className="bg-bg-secondary/90 absolute top-2 right-2 hidden items-center gap-0.5 rounded border px-1 py-0.5 shadow-sm backdrop-blur-sm group-hover:flex">
-                          <button
-                            type="button"
+                          <Button
+                            variant="ghost"
+                            size="xs"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleStartEdit(jd);
                             }}
-                            className="text-text-muted hover:text-text-secondary cursor-pointer px-1 text-[10px]"
+                            className="h-5 px-1 font-normal lowercase"
                           >
                             Edit
-                          </button>
-                          <button
-                            type="button"
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="xs"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleDelete(jd.id);
                             }}
-                            className={`cursor-pointer px-1 text-[10px] ${
+                            className={cn(
+                              'h-5 px-1 font-normal lowercase',
                               confirmDeleteId === jd.id
                                 ? 'text-danger font-medium'
-                                : 'text-text-muted hover:text-danger'
-                            }`}
+                                : 'text-text-muted hover:text-danger',
+                            )}
                           >
                             {confirmDeleteId === jd.id ? 'Sure?' : 'Del'}
-                          </button>
+                          </Button>
                         </div>
                       )}
                     </div>

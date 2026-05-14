@@ -1,9 +1,9 @@
-import { useResumeStore, activeSlot } from '../../store/resumeStore';
-import { useT } from '../../i18n';
-import { Slider } from '../ui/Slider';
-import { ColorPicker } from '../ui/ColorPicker';
-import { Select } from '../ui/Select';
-import { Toggle } from '../ui/Toggle';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
+import { useT } from '@/i18n';
+import { Slider } from '@/components/ui/Slider';
+import { ColorPicker } from '@/components/ui/ColorPicker';
+import { Select } from '@/components/ui/Select';
+import { Toggle } from '@/components/ui/Toggle';
 
 const THEME_DEFAULT = '__default__';
 

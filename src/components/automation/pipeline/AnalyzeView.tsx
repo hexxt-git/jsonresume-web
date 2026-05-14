@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { CombinedAnalysis, AuditCategory } from './types';
 import { scoreTextCls, scoreBgCls } from './types';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 
 /* ── Small pieces ───────────────────────────────────────── */
 
@@ -11,7 +13,7 @@ function ScoreBadge({ label, score }: { label: string; score: number }) {
   return (
     <div className="bg-bg-secondary/30 border-border/50 flex items-center gap-3 rounded-2xl border p-2 pr-5">
       <div
-        className={`text-bg flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-base font-bold shadow-md ${scoreBgCls(score)}`}
+        className={`text-bg flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-base font-bold ${scoreBgCls(score)}`}
       >
         {score}
       </div>
@@ -29,7 +31,7 @@ function AuditCategoryRow({ category }: { category: AuditCategory }) {
   const highCount = category.issues.filter((i) => i.severity === 'high').length;
 
   return (
-    <div className="bg-bg-secondary/10 overflow-hidden rounded-2xl border shadow-sm transition-all">
+    <div className="bg-bg-secondary/10 overflow-hidden rounded-2xl border transition-all">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -37,14 +39,10 @@ function AuditCategoryRow({ category }: { category: AuditCategory }) {
       >
         <span className="text-text text-xs font-bold tracking-tight">{category.label}</span>
         <div className="flex items-center gap-3">
-          {highCount > 0 && (
-            <span className="text-danger bg-danger/10 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-tighter uppercase">
-              {highCount} CRITICAL
-            </span>
-          )}
-          <span className="text-text-muted text-[10px] font-bold tracking-widest uppercase">
+          {highCount > 0 && <Badge variant="danger">{highCount} CRITICAL</Badge>}
+          <Badge variant="default">
             {category.issues.length} {category.issues.length !== 1 ? 'ISSUES' : 'ISSUE'}
-          </span>
+          </Badge>
           <span className={`w-8 text-right text-sm font-bold ${scoreTextCls(category.score)}`}>
             {category.score}
           </span>
@@ -64,7 +62,7 @@ function AuditCategoryRow({ category }: { category: AuditCategory }) {
               className="hover:bg-bg-secondary/50 flex items-start gap-3 rounded-xl px-4 py-3 transition-colors"
             >
               <span
-                className={`mt-1.5 h-2 w-2 shrink-0 rounded-full shadow-sm ${severityDotCls(issue.severity)}`}
+                className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${severityDotCls(issue.severity)}`}
               />
               <div className="min-w-0">
                 <span className="text-text-secondary text-xs font-bold">{issue.description}</span>
@@ -97,49 +95,52 @@ export function AnalyzeView({ analysis, onEditJd }: Props) {
         <ScoreBadge label="Job Match" score={match.overallScore} />
         <ScoreBadge label="ATS Score" score={audit.overallScore} />
         <div className="flex-1" />
-        <button
-          onClick={onEditJd}
-          className="text-text-muted hover:text-accent cursor-pointer rounded-full border px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-all"
-        >
+        <Button variant="outline" size="sm" onClick={onEditJd} className="px-4 py-2">
           Edit JD
-        </button>
+        </Button>
       </div>
 
       {/* Keywords */}
-      <div className="bg-bg overflow-hidden rounded-2xl border shadow-sm">
+      <div className="bg-bg overflow-hidden rounded-2xl border">
         <div className="bg-bg-secondary/30 border-border/50 flex items-center justify-between border-b px-6 py-4">
           <span className="text-text text-xs font-bold tracking-widest uppercase">Keywords</span>
-          <span className="text-text-muted space-x-3 text-[10px] font-bold tracking-tighter uppercase">
-            <span className="text-diff-add bg-diff-add-line border-diff-add-word rounded-full border px-2 py-0.5">
-              {match.matchingKeywords.length} MATCH
-            </span>
-            <span className="text-diff-rm bg-diff-rm-line border-diff-rm-word rounded-full border px-2 py-0.5">
-              {match.missingKeywords.length} MISSING
-            </span>
-          </span>
+          <Badge
+            variant="accent"
+            className="bg-diff-add-line border-diff-add-word text-diff-add border px-2"
+          >
+            {match.matchingKeywords.length} MATCH
+          </Badge>
+          <Badge
+            variant="danger"
+            className="bg-diff-rm-line border-diff-rm-word text-diff-rm border px-2"
+          >
+            {match.missingKeywords.length} MISSING
+          </Badge>
         </div>
         <div className="space-y-4 px-6 py-5">
           {match.matchingKeywords.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {match.matchingKeywords.map((k) => (
-                <span
+                <Badge
                   key={k}
-                  className="diff-word-add border-diff-add-word/30 rounded-full border px-3 py-1 text-[10px] font-bold tracking-tight uppercase shadow-sm"
+                  variant="accent"
+                  className="diff-word-add border-diff-add-word/30 px-3 py-1"
                 >
                   {k}
-                </span>
+                </Badge>
               ))}
             </div>
           )}
           {match.missingKeywords.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {match.missingKeywords.map((k) => (
-                <span
+                <Badge
                   key={k}
-                  className="diff-word-rm border-diff-rm-word/30 rounded-full border px-3 py-1 text-[10px] font-bold tracking-tight uppercase shadow-sm"
+                  variant="danger"
+                  className="diff-word-rm border-diff-rm-word/30 px-3 py-1"
                 >
                   {k}
-                </span>
+                </Badge>
               ))}
             </div>
           )}
@@ -147,7 +148,7 @@ export function AnalyzeView({ analysis, onEditJd }: Props) {
       </div>
 
       {/* Section scores */}
-      <div className="bg-bg overflow-hidden rounded-2xl border shadow-sm">
+      <div className="bg-bg overflow-hidden rounded-2xl border">
         <div className="bg-bg-secondary/30 text-text border-border/50 border-b px-6 py-4 text-xs font-bold tracking-widest uppercase">
           Sections
         </div>
@@ -180,9 +181,9 @@ export function AnalyzeView({ analysis, onEditJd }: Props) {
             <span className="text-text text-xs font-bold tracking-widest uppercase">
               ATS Issues
             </span>
-            <span className="text-text-muted bg-bg-secondary rounded-full px-3 py-1 text-[10px] font-bold tracking-widest uppercase">
+            <Badge variant="default" className="px-3 py-1">
               {audit.categories.reduce((n, c) => n + c.issues.length, 0)} TOTAL
-            </span>
+            </Badge>
           </div>
           <div className="space-y-3">
             {audit.categories.map((cat) => (
@@ -194,7 +195,7 @@ export function AnalyzeView({ analysis, onEditJd }: Props) {
 
       {/* Recommendations */}
       {match.recommendations.length > 0 && (
-        <div className="bg-bg overflow-hidden rounded-2xl border shadow-sm">
+        <div className="bg-bg overflow-hidden rounded-2xl border">
           <div className="bg-bg-secondary/30 text-text border-border/50 border-b px-6 py-4 text-xs font-bold tracking-widest uppercase">
             Recommendations
           </div>

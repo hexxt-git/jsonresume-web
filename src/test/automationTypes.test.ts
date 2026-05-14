@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { scoreTextCls, scoreBgCls } from '../components/automation/pipeline/types';
+import { scoreTextCls, scoreBgCls } from '@/components/automation/pipeline/types';
 
 describe('scoreTextCls', () => {
   it('returns green for score >= 75', () => {

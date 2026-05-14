@@ -91,7 +91,11 @@ import {
 } from 'simple-icons';
 import { useState, useRef, useEffect } from 'react';
 import * as Popover from '@radix-ui/react-popover';
-import { useT } from '../../i18n';
+import { useT } from '@/i18n';
+import { GlobeIcon } from '@/assets/Icons';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { cn } from '@/utils/cn';
 
 interface BrandIcon {
   path: string;
@@ -243,38 +247,30 @@ export function NetworkPickerButton({
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
-        <button
-          type="button"
-          className="border-border-input bg-bg-input hover:bg-bg-hover flex h-[34px] shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full border px-3 transition-colors"
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-[34px] shrink-0 gap-2 px-3"
           title={value || t('basics.network')}
+          leftIcon={
+            value && ICONS[value] ? (
+              <NetworkIcon name={value} size={18} />
+            ) : (
+              <GlobeIcon className="text-text-muted" />
+            )
+          }
         >
-          {value && ICONS[value] ? (
-            <NetworkIcon name={value} size={18} />
-          ) : (
-            <svg
-              width={16}
-              height={16}
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              className="text-text-muted"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-            </svg>
-          )}
-          {value && <span className="text-text-muted text-xs">{value}</span>}
-        </button>
+          {value && <span className="text-text-muted text-xs font-normal">{value}</span>}
+        </Button>
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
-          className="border-border bg-bg z-50 w-[280px] rounded-lg border shadow-lg"
+          className="border-border bg-bg z-50 w-[280px] rounded-lg border"
           sideOffset={4}
           align="start"
         >
           <div className="border-b p-2">
-            <input
+            <Input
               ref={inputRef}
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
@@ -285,39 +281,46 @@ export function NetworkPickerButton({
                 }
               }}
               placeholder={t('combo.search')}
-              className="bg-bg-input border-border-input text-text focus:ring-accent focus:border-accent w-full rounded-full border px-2 py-1 text-xs focus:ring-1 focus:outline-none"
+              className="h-8 px-2 py-1 text-xs"
             />
           </div>
           <div className="max-h-[240px] overflow-y-auto p-1">
             <div className="grid grid-cols-2 gap-0.5">
               {filtered.map((name) => (
-                <button
+                <Button
                   key={name}
-                  type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => {
                     onChange(name);
                     setOpen(false);
                   }}
-                  className={`flex cursor-pointer items-center gap-2 truncate rounded-full px-2 py-1.5 text-left text-xs ${value === name ? 'bg-bg-accent text-accent-text font-medium' : 'hover:bg-bg-hover text-text-secondary'}`}
+                  className={cn(
+                    'flex items-center justify-start gap-2 truncate px-2 text-left text-xs font-normal',
+                    value === name
+                      ? 'bg-bg-accent text-accent-text font-medium'
+                      : 'text-text-secondary',
+                  )}
+                  leftIcon={<NetworkIcon name={name} size={14} />}
                 >
-                  <NetworkIcon name={name} size={14} />
                   <span className="truncate">{name}</span>
-                </button>
+                </Button>
               ))}
             </div>
           </div>
           {filter.trim() && filtered.length === 0 && (
             <div className="px-2 pb-2">
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="xs"
                 onClick={() => {
                   onChange(filter.trim());
                   setOpen(false);
                 }}
-                className="text-accent w-full cursor-pointer py-1 text-xs hover:underline"
+                className="text-accent w-full hover:bg-transparent hover:underline"
               >
                 {t('combo.use')} &ldquo;{filter.trim()}&rdquo;
-              </button>
+              </Button>
             </div>
           )}
         </Popover.Content>

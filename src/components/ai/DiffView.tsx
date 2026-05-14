@@ -6,6 +6,8 @@
  */
 
 import { useState } from 'react';
+import { Badge } from '@/components/ui/Badge';
+import { cn } from '@/utils/cn';
 
 /* ── Key sorting for stable diffs ─────────────────────── */
 
@@ -397,18 +399,18 @@ export function ListDiffView({ items }: { items: ListDiffItem[] }) {
   return (
     <div className="flex flex-wrap gap-1">
       {items.map((item, i) => (
-        <span
+        <Badge
           key={i}
-          className={`rounded px-2 py-0.5 text-xs ${
-            item.type === 'remove'
-              ? 'diff-word-rm'
-              : item.type === 'add'
-                ? 'diff-word-add'
-                : 'bg-bg-tertiary text-text'
-          }`}
+          variant={item.type === 'remove' ? 'danger' : item.type === 'add' ? 'accent' : 'default'}
+          className={cn(
+            'rounded px-2 py-0.5 text-xs',
+            item.type === 'remove' && 'diff-word-rm',
+            item.type === 'add' && 'diff-word-add',
+            item.type === 'equal' && 'bg-bg-tertiary text-text border-none',
+          )}
         >
           {item.text}
-        </span>
+        </Badge>
       ))}
     </div>
   );

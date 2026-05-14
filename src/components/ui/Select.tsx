@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import * as RadixSelect from '@radix-ui/react-select';
 import { ArrowDown2, TickCircle } from 'iconsax-react';
+import { cn } from '@/utils/cn';
 
 export interface SelectOption {
   value: string;
@@ -25,13 +26,17 @@ export function Select({
   size = 'md',
   className,
 }: SelectProps) {
-  const trigger = size === 'sm' ? 'text-xs px-4 py-1.5 gap-2' : 'text-xs px-5 py-2.5 gap-2.5';
   const selected = options.find((o) => o.value === value);
 
   return (
     <RadixSelect.Root value={value} onValueChange={onValueChange}>
       <RadixSelect.Trigger
-        className={`bg-bg text-text-secondary hover:bg-bg-hover data-placeholder:text-text-muted inline-flex cursor-pointer items-center justify-between rounded-full border transition-colors outline-none ${trigger} ${className}`}
+        className={cn(
+          'bg-bg text-text-secondary hover:bg-bg-hover data-placeholder:text-text-muted inline-flex cursor-pointer items-center justify-between rounded-full border transition-all outline-none',
+          'focus:ring-accent/30 focus:border-accent focus:ring-3',
+          size === 'sm' ? 'gap-2 px-4 py-1.5 text-xs' : 'gap-2.5 px-5 py-2.5 text-xs',
+          className,
+        )}
       >
         <span className="flex items-center gap-2">
           {selected?.icon}

@@ -1,5 +1,5 @@
-import { useResumeStore, activeSlot } from '../../store/resumeStore';
-import { useT } from '../../i18n';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
+import { useT } from '@/i18n';
 import { FormField } from './FormField';
 import { ChipInput } from './ChipInput';
 import { RepeatableSection } from './RepeatableSection';

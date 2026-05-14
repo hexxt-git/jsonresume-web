@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage, type StateStorage } from 'zustand/middleware';
-import type { ResumeSchema } from '../types/resume';
-import type { AnyMessage, ToolCall } from '../lib/ai';
-import { sampleResume } from '../utils/sample';
+import type { ResumeSchema } from '@/types/resume';
+import type { AnyMessage, ToolCall } from '@/lib/ai';
+import { sampleResume } from '@/utils/sample';
 import { defaultCustomization, type ThemeCustomization } from './themeCustomStore';
 
 /* ── Types ───────────────────────────────────────────────── */

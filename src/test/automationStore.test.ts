@@ -6,7 +6,7 @@ import {
   getCoverLetterDirective,
   getAuditDirective,
   ALL_SECTIONS,
-} from '../store/automationStore';
+} from '@/store/automationStore';
 
 beforeEach(() => {
   useAutomationStore.getState().reset();

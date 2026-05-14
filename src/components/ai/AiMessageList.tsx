@@ -1,11 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { useAiStore } from '../../store/aiStore';
-import { getAtPath, setAtPath } from '../../lib/ai/resume-tools';
-import { useResumeStore, activeSlot } from '../../store/resumeStore';
-import { useT } from '../../i18n';
-import { Markdown } from '../Markdown';
+import { useAiStore } from '@/store/aiStore';
+import { getAtPath, setAtPath } from '@/lib/ai/resume-tools';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
+import { useT } from '@/i18n';
+import { Markdown } from '@/components/Markdown';
 import { BlockDiffView } from './DiffView';
-import type { AnyMessage, ToolResultMessage } from '../../lib/ai';
+import type { AnyMessage, ToolResultMessage } from '@/lib/ai';
+import { CopyIcon } from '@/assets/Icons';
+import { cn } from '@/utils/cn';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
 
 /* ── Badge for tool results ─────────────────────────── */
 
@@ -55,14 +59,9 @@ function ToolResultBadge({ msg, hideDiffs }: { msg: ToolResultMessage; hideDiffs
   return (
     <div className="w-full space-y-2">
       <div className="flex items-center gap-3 text-xs">
-        <span
-          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[10px] font-bold tracking-tight ${
-            msg.success
-              ? msg.undone
-                ? 'line-through opacity-60'
-                : ''
-              : 'bg-danger/10 text-danger border-danger/20'
-          }`}
+        <Badge
+          variant={msg.success ? 'default' : 'danger'}
+          className={cn('px-3 py-1', msg.success && msg.undone && 'line-through opacity-60')}
           style={
             msg.success
               ? {
@@ -74,26 +73,30 @@ function ToolResultBadge({ msg, hideDiffs }: { msg: ToolResultMessage; hideDiffs
           }
         >
           {msg.success ? (msg.undone ? '\u21A9' : '\u2713') : '\u2717'} {msg.result.toUpperCase()}
-        </span>
+        </Badge>
         {msg.success && msg.path.length > 0 && (
-          <button
+          <Button
+            variant="ghost"
+            size="xs"
             onClick={handleToggle}
-            className="text-text-muted hover:text-accent cursor-pointer text-[10px] font-bold tracking-wide underline transition-all"
+            className="tracking-wide underline hover:bg-transparent"
           >
             {(msg.undone ? t('ai.redo') : t('ai.undo')).toUpperCase()}
-          </button>
+          </Button>
         )}
         {!hideDiffs && hasDiff && beforeStr !== afterStr && (
-          <button
+          <Button
+            variant="ghost"
+            size="xs"
             onClick={() => setShowDiff(!showDiff)}
-            className="text-text-muted hover:text-text-secondary cursor-pointer text-[10px] font-bold tracking-wide transition-all"
+            className="tracking-wide hover:bg-transparent"
           >
             {(showDiff ? 'hide diff' : 'diff').toUpperCase()}
-          </button>
+          </Button>
         )}
       </div>
       {showDiff && !hideDiffs && hasDiff && beforeStr !== afterStr && (
-        <div className="mt-2 overflow-hidden rounded-2xl shadow-sm">
+        <div className="mt-2 overflow-hidden rounded-2xl">
           <BlockDiffView oldText={beforeStr} newText={afterStr} />
         </div>
       )}
@@ -142,9 +145,6 @@ export function AiMessageList({
     return (
       <div className="bg-bg flex flex-1 flex-col items-center justify-center gap-10 px-8">
         <div className="max-w-sm space-y-4 text-center">
-          <div className="bg-accent/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl">
-            <span className="text-accent text-2xl">&#10024;</span>
-          </div>
           <p className="text-text text-lg font-bold tracking-tight">
             {name ? `Let's work on ${name}'s resume` : `Let's work on your resume`}
           </p>
@@ -154,13 +154,14 @@ export function AiMessageList({
         </div>
         <div className="flex max-w-lg flex-wrap justify-center gap-3">
           {PRESETS.map((p) => (
-            <button
+            <Button
               key={p.label}
+              variant="outline"
               onClick={() => onSend?.(p.prompt)}
-              className="text-text-secondary hover:bg-bg-secondary hover:text-accent cursor-pointer rounded-full border px-5 py-2.5 text-xs font-bold shadow-sm transition-all"
+              className="px-5 py-2.5"
             >
               {p.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -174,13 +175,14 @@ export function AiMessageList({
       ))}
       {error && (
         <div className="flex justify-start">
-          <div
-            className="bg-danger/10 text-danger border-danger/20 max-w-[90%] cursor-pointer rounded-2xl border px-4 py-3 text-xs font-medium"
+          <Badge
+            variant="danger"
             onClick={() => setError(null)}
+            className="max-w-[90%] cursor-pointer rounded-2xl px-4 py-3 text-xs font-medium lowercase normal-case"
             title={t('ai.clickDismiss')}
           >
             {error}
-          </div>
+          </Badge>
         </div>
       )}
       <div ref={endRef} />
@@ -211,23 +213,27 @@ function MessageRow({ message: m, hideDiffs }: { message: AnyMessage; hideDiffs?
   return (
     <div className="space-y-1.5">
       <div
-        className={`text-text-muted flex items-center gap-2 text-[10px] font-bold tracking-wider uppercase ${isUser ? 'flex-row-reverse' : ''}`}
+        className={cn(
+          'text-text-muted flex items-center gap-2 text-[10px] font-bold tracking-wider uppercase',
+          isUser && 'flex-row-reverse',
+        )}
       >
         {isUser ? 'USER' : 'ASSISTANT'}
         <span className="font-normal opacity-50">{timestamp}</span>
       </div>
-      <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} group items-end gap-2`}>
+      <div className={cn('group flex items-end gap-2', isUser ? 'justify-end' : 'justify-start')}>
         {isUser && hasContent && (
           <div className="pb-1">
             <CopyButton text={m.content} />
           </div>
         )}
         <div
-          className={`max-w-[85%] px-5 py-3 text-sm shadow-sm transition-all ${
+          className={cn(
+            'max-w-[85%] px-5 py-3 text-sm transition-all',
             isUser
               ? 'bg-accent rounded-3xl rounded-br-lg font-medium text-white'
-              : 'bg-bg-secondary text-text border-border/50 rounded-3xl rounded-bl-lg border'
-          }`}
+              : 'bg-bg-secondary text-text border-border/50 rounded-3xl rounded-bl-lg border',
+          )}
         >
           {hasContent ? (
             isUser ? (
@@ -261,28 +267,14 @@ function CopyButton({ text }: { text: string }) {
     setTimeout(() => setCopied(false), 2000);
   };
   return (
-    <button
+    <Button
+      variant="ghost"
+      size="icon"
       onClick={handleCopy}
-      className="text-text-muted hover:text-text-secondary cursor-pointer p-1 opacity-0 transition-colors group-hover:opacity-100"
+      className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
       title="Copy message"
     >
-      {copied ? (
-        '✓'
-      ) : (
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-        </svg>
-      )}
-    </button>
+      {copied ? <span className="text-xs">✓</span> : <CopyIcon className="h-3 w-3" />}
+    </Button>
   );
 }

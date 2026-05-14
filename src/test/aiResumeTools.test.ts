@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useResumeStore, activeSlot } from '../store/resumeStore';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
 import {
   resumeToolDeclarations,
   executeResumeTool,
   getAtPath,
   setAtPath,
-} from '../lib/ai/resume-tools';
-import type { ToolCall } from '../lib/ai';
+} from '@/lib/ai/resume-tools';
+import type { ToolCall } from '@/lib/ai';
 
 describe('resumeToolDeclarations', () => {
   it('exports tool declarations array', () => {

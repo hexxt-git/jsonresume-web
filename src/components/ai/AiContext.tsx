@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { useResumeStore, activeSlot } from '../../store/resumeStore';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
 
 /**
  * Provides AI writing tools with context about what's being edited.

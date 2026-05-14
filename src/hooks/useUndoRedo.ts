@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
-import { useResumeStore, activeSlot } from '../store/resumeStore';
-import { useUndoStore, type SlotSnapshot } from '../store/undoStore';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
+import { useUndoStore, type SlotSnapshot } from '@/store/undoStore';
 
 /* ── Module-level singleton state ─────────────────────── */
 /* These are intentionally module-scoped — the undo capture

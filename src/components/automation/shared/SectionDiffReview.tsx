@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { BlockDiffView } from '../../ai/DiffView';
+import { BlockDiffView } from '@/components/ai/DiffView';
 import { TickCircle, CloseCircle } from 'iconsax-react';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 
 export interface SectionChange {
   sectionKey: string;
@@ -81,20 +83,22 @@ export function SectionDiffReview({
             {pendingCount} change{pendingCount !== 1 ? 's' : ''} to review
           </span>
           <div className="flex gap-2">
-            <button
+            <Button
+              variant="secondary"
               onClick={handleRejectAll}
-              className="text-text-muted hover:text-danger border-border/50 hover:bg-danger/5 flex cursor-pointer items-center gap-1.5 rounded-full border px-4 py-2 text-[10px] font-bold tracking-wide uppercase transition-all"
+              className="hover:text-danger hover:bg-danger/5 h-9 rounded-full px-4 text-[10px]"
             >
               <CloseCircle size={14} variant="Bold" color="currentColor" />
               Reject all
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="primary"
               onClick={handleAcceptAll}
-              className="text-accent border-accent/20 bg-accent/5 flex cursor-pointer items-center gap-1.5 rounded-full border px-4 py-2 text-[10px] font-bold tracking-wide uppercase transition-all hover:opacity-80"
+              className="h-9 rounded-full px-4 text-[10px]"
             >
               <TickCircle size={14} variant="Bold" color="currentColor" />
               Accept all
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -106,11 +110,11 @@ export function SectionDiffReview({
           return (
             <div
               key={change.sectionKey}
-              className={`overflow-hidden rounded-3xl border-2 shadow-sm transition-all ${
+              className={`overflow-hidden rounded-3xl border-2 transition-all ${
                 status === 'rejected'
                   ? 'border-border/30 scale-98 opacity-40'
                   : status === 'accepted'
-                    ? 'border-accent ring-accent/5 shadow-lg ring-4'
+                    ? 'border-accent ring-accent/5 ring-4'
                     : 'bg-bg'
               }`}
             >
@@ -119,14 +123,14 @@ export function SectionDiffReview({
                   {change.label}
                 </span>
                 {status === 'accepted' && (
-                  <span className="text-accent bg-accent/10 rounded-full px-3 py-1 text-[10px] font-black tracking-tighter uppercase">
+                  <Badge variant="accent" className="px-3 py-1 font-black">
                     ACCEPTED
-                  </span>
+                  </Badge>
                 )}
                 {status === 'rejected' && (
-                  <span className="text-danger bg-danger/10 rounded-full px-3 py-1 text-[10px] font-black tracking-tighter uppercase">
+                  <Badge variant="danger" className="px-3 py-1 font-black">
                     REJECTED
-                  </span>
+                  </Badge>
                 )}
               </div>
               {change.explanation && (
@@ -144,20 +148,22 @@ export function SectionDiffReview({
               </div>
               {status === 'pending' && (
                 <div className="border-border/50 bg-bg-secondary/10 flex justify-end gap-3 border-t px-6 py-4">
-                  <button
+                  <Button
+                    variant="secondary"
                     onClick={() => handleReject(change)}
-                    className="text-text-muted hover:text-danger border-border/50 hover:bg-danger/5 flex cursor-pointer items-center gap-1.5 rounded-full border px-4 py-2 text-[10px] font-bold tracking-wide uppercase transition-all"
+                    className="hover:text-danger hover:bg-danger/5 h-9 rounded-full px-4 text-[10px]"
                   >
                     <CloseCircle size={14} variant="Bold" color="currentColor" />
                     Reject
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="primary"
                     onClick={() => handleAccept(change)}
-                    className="text-accent border-accent/20 bg-accent/5 flex cursor-pointer items-center gap-1.5 rounded-full border px-4 py-2 text-[10px] font-bold tracking-wide uppercase transition-all hover:opacity-80"
+                    className="h-9 rounded-full px-4 text-[10px]"
                   >
                     <TickCircle size={14} variant="Bold" color="currentColor" />
                     Accept
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
@@ -167,9 +173,12 @@ export function SectionDiffReview({
 
       {/* Summary */}
       {pendingCount === 0 && changes.length > 0 && (
-        <div className="text-text-muted bg-bg-secondary/20 border-border/50 rounded-full border border-dashed py-4 text-center text-[10px] font-bold tracking-widest uppercase">
+        <Badge
+          variant="outline"
+          className="w-full justify-center py-4 text-center lowercase first-letter:uppercase"
+        >
           {acceptedCount} of {changes.length} changes applied
-        </div>
+        </Badge>
       )}
     </div>
   );

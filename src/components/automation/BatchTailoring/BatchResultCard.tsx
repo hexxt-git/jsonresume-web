@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+import { cn } from '@/utils/cn';
 import { BlockDiffView, normalizeDiffText } from '../../ai/DiffView';
 import { Printer } from 'iconsax-react';
-import type { ResumeSchema } from '../../../types/resume';
+import type { ResumeSchema } from '@/types/resume';
 import type { BatchJob } from './types';
 import { SECTION_LABELS } from './types';
 import { ResumePreviewThumbnail } from './ResumePreviewThumbnail';
@@ -73,10 +76,10 @@ export function BatchResultCard({
   const lineChanges = countLineChanges(originalResume, result.tailoredResume);
 
   return (
-    <div className="border-border/40 bg-bg group/card overflow-hidden rounded-3xl border-2 transition-all hover:shadow-2xl">
+    <div className="border-border/40 bg-bg group/card hover:border-accent/40 overflow-hidden rounded-3xl border-2 transition-all">
       {/* Preview thumbnail */}
       <div className="bg-bg-secondary/20 group-hover/card:bg-bg-secondary/40 p-4 transition-colors">
-        <div className="overflow-hidden rounded-2xl border shadow-md">
+        <div className="overflow-hidden rounded-2xl border">
           <ResumePreviewThumbnail html={previewHtml} title={result.jobTitle} />
         </div>
       </div>
@@ -88,78 +91,91 @@ export function BatchResultCard({
         </div>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {changedSections.map((s) => (
-            <span
+            <Badge
               key={s}
-              className="diff-word-add border-diff-add-word/30 rounded-full border px-3 py-1 text-[10px] font-bold tracking-tight uppercase shadow-sm"
+              variant="accent"
+              className="diff-word-add border-diff-add-word/30 px-3 py-1"
             >
               {SECTION_LABELS[s] || s}
-            </span>
+            </Badge>
           ))}
           {changedSections.length === 0 && (
-            <span className="diff-word-rm border-diff-rm-word/30 rounded-full border px-3 py-1 text-[10px] font-bold tracking-tight uppercase opacity-60 shadow-sm">
+            <Badge
+              variant="danger"
+              className="diff-word-rm border-diff-rm-word/30 px-3 py-1 opacity-60"
+            >
               No changes
-            </span>
+            </Badge>
           )}
-          <span className="text-text-muted bg-bg-secondary border-border/50 ml-1 rounded-full border px-2 py-1 text-[10px] font-bold tracking-widest uppercase">
+          <Badge variant="default" className="ml-1 px-2 py-1">
             · {lineChanges} LINES CHANGED
-          </span>
+          </Badge>
         </div>
       </div>
 
       {/* Primary actions */}
       <div className="border-border/50 bg-bg flex gap-4 border-t px-6 py-5">
-        <button
+        <Button
           onClick={() => onSetCurrent(result.tailoredResume)}
-          className="bg-accent flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-full py-3 text-xs font-bold tracking-widest text-white uppercase shadow-lg transition-all hover:opacity-90"
+          className="bg-accent h-12 flex-1 gap-2 rounded-full text-xs font-bold text-white"
         >
           Print <Printer size={16} variant="Bold" color="currentColor" />
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="secondary"
           onClick={() => onSetCurrent(result.tailoredResume)}
-          className="bg-bg-secondary text-text hover:bg-bg-hover border-border/50 flex-1 cursor-pointer rounded-full border py-3 text-xs font-bold tracking-widest uppercase transition-all"
+          className="h-12 flex-1 rounded-full text-xs font-bold"
         >
           Set as current
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="outline"
           onClick={() => onSaveSlot(job)}
-          className="border-accent/30 text-accent bg-accent/5 hover:bg-accent/10 flex-1 cursor-pointer rounded-full border py-3 text-xs font-bold tracking-widest uppercase transition-all"
+          className="border-accent/30 text-accent bg-accent/5 hover:bg-accent/10 h-12 flex-1 rounded-full text-xs font-bold"
         >
           Save to new slot
-        </button>
+        </Button>
       </div>
 
       {/* Secondary actions */}
       <div className="border-border/50 bg-bg-secondary/10 flex items-center gap-3 border-t px-6 py-4">
         <div className="flex gap-2">
           {['json', 'yaml', 'html'].map((fmt) => (
-            <button
+            <Button
               key={fmt}
+              variant="outline"
+              size="sm"
               onClick={() => onDownload(result.tailoredResume, result.jobTitle, fmt)}
-              className="bg-bg border-border/50 text-text-muted hover:text-accent cursor-pointer rounded-full border px-3 py-1.5 text-[9px] font-black tracking-widest uppercase shadow-sm transition-all"
+              className="bg-bg text-text-muted hover:text-accent h-7 min-w-0 rounded-full px-3 text-[9px] font-black"
             >
               {fmt}
-            </button>
+            </Button>
           ))}
         </div>
         <div className="bg-border/50 mx-1 h-6 w-px" />
-        <button
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => onGenerateCL(job)}
           disabled={generatingCL}
-          className="bg-accent/5 border-accent/20 text-accent hover:bg-accent cursor-pointer rounded-full border px-3 py-1.5 text-[9px] font-black tracking-widest uppercase shadow-sm transition-all hover:text-white disabled:opacity-50"
+          className="bg-accent/5 border-accent/20 text-accent hover:bg-accent h-7 rounded-full px-3 text-[9px] font-black hover:text-white disabled:opacity-50"
         >
           {generatingCL ? '...' : job.coverLetter ? 'Redo Cover Letter' : 'Cover letter'}
-        </button>
+        </Button>
         <div className="flex-1" />
-        <button
+        <Button
+          variant={showDiff ? 'primary' : 'outline'}
+          size="sm"
           onClick={() => setShowDiff(!showDiff)}
-          className={`cursor-pointer rounded-full border px-4 py-1.5 text-[9px] font-black tracking-widest uppercase transition-all ${
+          className={cn(
+            'h-7 rounded-full px-4 text-[9px] font-black',
             showDiff
-              ? 'bg-bg text-accent border-accent/30 shadow-inner'
-              : 'bg-bg text-text-muted border-border/50 hover:text-text hover:bg-bg-secondary shadow-sm'
-          }`}
+              ? 'border-accent/30 shadow-inner'
+              : 'text-text-muted border-border/50 hover:text-text hover:bg-bg-secondary',
+          )}
         >
           {showDiff ? 'Hide diff' : 'View diff'}
-        </button>
+        </Button>
       </div>
 
       {/* Diff view */}

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage, type StateStorage } from 'zustand/middleware';
-import type { ResumeSchema } from '../types/resume';
+import type { ResumeSchema } from '@/types/resume';
 import type { ThemeCustomization } from './themeCustomStore';
 
 /* ── Types ───────────────────────────────────────────────── */

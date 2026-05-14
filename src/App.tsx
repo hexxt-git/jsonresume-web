@@ -1,20 +1,23 @@
 import { useState, useCallback, useRef, useEffect, type ReactNode } from 'react';
-import { ResumeEditor } from './components/editor/ResumeEditor';
-import { ResumePreview } from './components/preview/ResumePreview';
-import { ErrorBoundary } from './components/ErrorBoundary';
-import { ImportDialog } from './components/import-export/ImportDialog';
-import { ExportDialog } from './components/import-export/ExportDialog';
-import { useResumeStore, activeSlot } from './store/resumeStore';
+import { ResumeEditor } from '@/components/editor/ResumeEditor';
+import { ResumePreview } from '@/components/preview/ResumePreview';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { ImportDialog } from '@/components/import-export/ImportDialog';
+import { ExportDialog } from '@/components/import-export/ExportDialog';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
 
-import { SlotsPicker } from './components/slots/SlotsPicker';
-import { sampleResume } from './utils/sample';
-import { parseResumeFile } from './parser';
-import { useSettingsStore, type ColorMode } from './store/settingsStore';
-import { useT, locales, type Locale } from './i18n';
-import { Select } from './components/ui/Select';
-import { OnboardingDialog } from './components/OnboardingDialog';
-import { useUndoRedo } from './hooks/useUndoRedo';
+import { SlotsPicker } from '@/components/slots/SlotsPicker';
+import { sampleResume } from '@/utils/sample';
+import { parseResumeFile } from '@/parser';
+import { useSettingsStore, type ColorMode } from '@/store/settingsStore';
+import { useT, locales, type Locale } from '@/i18n';
+import { Select } from '@/components/ui/Select';
+import { OnboardingDialog } from '@/components/OnboardingDialog';
+import { useUndoRedo } from '@/hooks/useUndoRedo';
 import { Sun1, Moon, Monitor } from 'iconsax-react';
+import { Button } from '@/components/ui/Button';
+import { cn } from '@/utils/cn';
+import { Tabs } from '@/components/ui/Tabs';
 
 const colorModeOptions = [
   { value: 'light', label: 'Light', icon: <Sun1 size={12} variant="Bold" color="currentColor" /> },
@@ -63,35 +66,6 @@ const colorModes: { value: ColorMode; label: string; icon: ReactNode }[] = [
   },
 ];
 
-function ButtonGroup<T extends string>({
-  options,
-  value,
-  onChange,
-}: {
-  options: { value: T; label: string; icon?: ReactNode }[];
-  value: T;
-  onChange: (v: T) => void;
-}) {
-  return (
-    <div className="border-border bg-bg-secondary/50 flex overflow-hidden rounded-full border p-1">
-      {options.map((o) => (
-        <button
-          key={o.value}
-          onClick={() => onChange(o.value)}
-          className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-medium transition-all ${
-            value === o.value
-              ? 'bg-accent text-white shadow-sm'
-              : 'text-text-tertiary hover:text-text-secondary hover:bg-bg-hover bg-transparent'
-          }`}
-        >
-          {o.icon}
-          {o.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 function MobileMenu({
   reset,
   onImport,
@@ -116,67 +90,71 @@ function MobileMenu({
 
   return (
     <div className="relative sm:hidden">
-      <button
-        onClick={() => setOpen(!open)}
-        className="border-border hover:bg-bg-hover text-text-secondary cursor-pointer rounded-full border px-2.5 py-1.5 text-xs transition-colors"
-      >
+      <Button variant="outline" size="sm" onClick={() => setOpen(!open)} className="px-2.5">
         &#8943;
-      </button>
+      </Button>
       {open && (
         <>
           <div className="fixed inset-0 z-40 bg-black/5" onClick={() => setOpen(false)} />
-          <div className="bg-bg absolute top-full right-0 z-50 mt-2 w-56 space-y-3 rounded-2xl border p-3 shadow-2xl">
+          <div className="bg-bg absolute top-full right-0 z-50 mt-2 w-56 space-y-3 rounded-2xl border p-3">
             <div className="flex gap-2">
-              <button
+              <Button
+                variant="outline"
                 onClick={() => {
                   undo();
                   setOpen(false);
                 }}
                 disabled={!canUndo}
-                className="text-text-secondary hover:bg-bg-hover border-border/50 flex-1 cursor-pointer rounded-xl border px-2 py-2 text-xs transition-colors disabled:cursor-default disabled:opacity-30"
+                className="flex-1 py-2 text-xs"
               >
                 {t('undo.undo')}
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="outline"
                 onClick={() => {
                   redo();
                   setOpen(false);
                 }}
                 disabled={!canRedo}
-                className="text-text-secondary hover:bg-bg-hover border-border/50 flex-1 cursor-pointer rounded-xl border px-2 py-2 text-xs transition-colors disabled:cursor-default disabled:opacity-30"
+                className="flex-1 py-2 text-xs"
               >
                 {t('undo.redo')}
-              </button>
+              </Button>
             </div>
             <div className="border-border border-t pt-3">
-              <button
+              <Button
+                variant="ghost"
+                fullWidth
                 onClick={() => {
                   onImport();
                   setOpen(false);
                 }}
-                className="text-text-secondary hover:bg-bg-hover w-full cursor-pointer rounded-xl px-3 py-2 text-left text-xs transition-colors"
+                className="justify-start px-3 text-xs"
               >
                 {t('app.import')}
-              </button>
+              </Button>
             </div>
             <div className="border-border space-y-3 border-t pt-3">
-              <ButtonGroup options={colorModes} value={colorMode} onChange={setColorMode} />
-              <ButtonGroup
+              <Tabs options={colorModes} value={colorMode} onChange={setColorMode} size="sm" />
+              <Tabs
                 options={locales.map((l) => ({ value: l.id, label: l.label }))}
                 value={locale}
                 onChange={(v) => setLocale(v as Locale)}
+                size="sm"
               />
             </div>
             <div className="border-border border-t pt-3">
-              <button
+              <Button
+                variant="ghost"
+                fullWidth
                 onClick={() => {
                   reset();
                   setOpen(false);
                 }}
-                className="text-danger hover:bg-danger/10 w-full cursor-pointer rounded-xl px-3 py-2 text-left text-xs transition-colors"
+                className="text-danger hover:bg-danger/10 justify-start px-3 text-xs"
               >
                 {t('app.reset')}
-              </button>
+              </Button>
             </div>
           </div>
         </>
@@ -233,9 +211,10 @@ function SplitPane({
       <style>{`@media(min-width:640px){.split-editor{width:${pct}% !important}}`}</style>
 
       <div
-        className={`split-editor h-full shrink-0 overflow-hidden ${
-          mobileView === 'preview' ? 'hidden sm:block' : ''
-        }`}
+        className={cn(
+          'split-editor h-full shrink-0 overflow-hidden',
+          mobileView === 'preview' ? 'hidden sm:block' : '',
+        )}
         style={{ width: '100%' }}
       >
         <ResumeEditor onShowPreview={() => setMobileView('preview')} />
@@ -248,17 +227,20 @@ function SplitPane({
         <div className="bg-text-muted/40 h-8 w-0.5 rounded-full" />
       </div>
       <div
-        className={`h-full min-w-0 flex-1 flex-col overflow-hidden ${
-          mobileView === 'editor' ? 'hidden sm:flex' : 'flex'
-        }`}
+        className={cn(
+          'h-full min-w-0 flex-1 flex-col overflow-hidden',
+          mobileView === 'editor' ? 'hidden sm:flex' : 'flex',
+        )}
       >
         {/* Mobile: back to editor button */}
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => setMobileView('editor')}
-          className="text-accent-text hover:bg-bg-hover flex shrink-0 cursor-pointer items-center gap-1 border-b px-3 py-1.5 text-xs sm:hidden"
+          className="text-accent hover:bg-bg-hover flex shrink-0 cursor-pointer items-center gap-1 rounded-none border-b px-3 py-1.5 text-xs sm:hidden"
         >
           &larr; {t('app.editor')}
-        </button>
+        </Button>
         {children}
       </div>
     </div>
@@ -303,19 +285,18 @@ function App() {
             <LocalePicker />
           </div>
           <SlotsPicker />
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => setImportOpen(true)}
-            className="border-border hover:bg-bg-hover text-text-secondary hidden cursor-pointer rounded-full border px-3 py-1.5 text-xs transition-all sm:inline-flex"
+            className="hidden sm:inline-flex"
           >
             {t('app.import')}
-          </button>
+          </Button>
           <div className="relative">
-            <button
-              onClick={() => setExportOpen(!exportOpen)}
-              className="bg-accent cursor-pointer rounded-full px-4 py-1.5 text-xs font-medium text-white shadow-sm transition-all hover:opacity-90"
-            >
+            <Button size="sm" onClick={() => setExportOpen(!exportOpen)}>
               {t('app.export')}
-            </button>
+            </Button>
             <ExportDialog open={exportOpen} onClose={() => setExportOpen(false)} />
           </div>
           <MobileMenu
@@ -382,9 +363,10 @@ function EmptyState({
           onDragLeave={() => setDragging(false)}
           onDrop={handleDrop}
           onClick={() => fileRef.current?.click()}
-          className={`cursor-pointer rounded-3xl border-2 border-dashed p-12 transition-all ${
-            dragging ? 'border-accent bg-bg-accent' : 'hover:border-accent hover:bg-bg-hover'
-          }`}
+          className={cn(
+            'cursor-pointer rounded-3xl border-2 border-dashed p-12 transition-all',
+            dragging ? 'border-accent bg-bg-accent' : 'hover:border-accent hover:bg-bg-hover',
+          )}
         >
           <input
             ref={fileRef}
@@ -403,18 +385,12 @@ function EmptyState({
           {t('empty.or')}
         </div>
         <div className="flex justify-center gap-3">
-          <button
-            onClick={onSample}
-            className="border-border hover:bg-bg-hover text-text-secondary cursor-pointer rounded-full border px-5 py-2 text-xs font-medium transition-all"
-          >
+          <Button variant="outline" size="md" onClick={onSample}>
             {t('empty.loadSample')}
-          </button>
-          <button
-            onClick={onImport}
-            className="border-border hover:bg-bg-hover text-text-secondary cursor-pointer rounded-full border px-5 py-2 text-xs font-medium transition-all"
-          >
+          </Button>
+          <Button variant="outline" size="md" onClick={onImport}>
             {t('empty.pasteJson')}
-          </button>
+          </Button>
         </div>
         <p className="text-text-faint text-xs italic">{t('empty.hint')}</p>
       </div>

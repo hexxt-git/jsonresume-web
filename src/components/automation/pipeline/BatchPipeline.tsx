@@ -2,17 +2,17 @@ import { useState, useRef, useMemo } from 'react';
 import { Stepper } from '../shared/Stepper';
 import { JdInput } from '../shared/JdInput';
 import { useAiStream } from '../shared/useAiStream';
-import { useResumeStore, activeSlot } from '../../../store/resumeStore';
-import { captureBeforeDiscreteMutation } from '../../../hooks/useUndoRedo';
-import { getProvider } from '../../../lib/ai';
-import { useAiStore } from '../../../store/aiStore';
-import { resumeToolDeclarations } from '../../../lib/ai/resume-tools';
-import type { ResumeSchema } from '../../../types/resume';
-import type { ToolCall } from '../../../lib/ai';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
+import { captureBeforeDiscreteMutation } from '@/hooks/useUndoRedo';
+import { getProvider } from '@/lib/ai';
+import { useAiStore } from '@/store/aiStore';
+import { resumeToolDeclarations } from '@/lib/ai/resume-tools';
+import type { ResumeSchema } from '@/types/resume';
+import type { ToolCall } from '@/lib/ai';
 import { saveAs } from 'file-saver';
 import YAML from 'yaml';
-import { getThemeById } from '../../../themes';
-import { buildCustomCss } from '../../../store/themeCustomStore';
+import { getThemeById } from '@/themes';
+import { buildCustomCss } from '@/store/themeCustomStore';
 import {
   useAutomationStore,
   getPromptDirectives,
@@ -21,13 +21,17 @@ import {
   ALL_SECTIONS,
   SECTION_DISPLAY,
   type Creativity,
-} from '../../../store/automationStore';
+} from '@/store/automationStore';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+import { Tabs } from '@/components/ui/Tabs';
+import { Checkbox } from '@/components/ui/Checkbox';
 import type { BatchJob } from '../BatchTailoring/types';
 import { BatchProcessing } from '../BatchTailoring/BatchProcessing';
 import { BatchResultCard } from '../BatchTailoring/BatchResultCard';
 import { BatchFailedCard } from '../BatchTailoring/BatchFailedCard';
 import { splitJds } from '../shared/helpers';
-import { filterVisible } from '../../../utils/resume';
+import { filterVisible } from '@/utils/resume';
 
 /* ── Constants ──────────────────────────────────────────── */
 
@@ -344,12 +348,14 @@ export function BatchPipeline({ onBack }: Props) {
       <div className="bg-bg-secondary/20 shrink-0 border-b px-6 py-4">
         <div className="flex items-center justify-between">
           <Stepper steps={STEP_LABELS} currentIndex={stepIndex} onStepClick={handleStepClick} />
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={step === 'jd' ? onBack : handleReset}
-            className="text-text-muted hover:text-accent border-border/50 hover:bg-bg-secondary ml-4 shrink-0 cursor-pointer rounded-full border px-3 py-1.5 text-[10px] font-bold tracking-widest uppercase transition-all"
+            className="ml-4 shrink-0"
           >
             {step === 'jd' ? 'Back' : 'Start over'}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -357,9 +363,9 @@ export function BatchPipeline({ onBack }: Props) {
       <div className="flex-1 overflow-y-auto p-6">
         <div className="mx-auto max-w-4xl space-y-6">
           {error && (
-            <div className="text-danger bg-danger/10 border-danger/20 rounded-2xl border px-6 py-4 text-xs font-medium shadow-sm">
+            <Badge variant="danger" className="w-full justify-start rounded-2xl px-6 py-4 text-xs">
               {error}
-            </div>
+            </Badge>
           )}
 
           {/* Step 1: JD Input */}
@@ -387,35 +393,30 @@ export function BatchPipeline({ onBack }: Props) {
 
                 {detectedJds.length > 0 && (
                   <div className="flex justify-center">
-                    <p className="text-accent bg-accent/5 border-accent/20 rounded-full border px-4 py-1 text-[10px] font-bold tracking-widest uppercase">
+                    <Badge variant="accent" className="px-4 py-1">
                       {detectedJds.length} {detectedJds.length !== 1 ? 'positions' : 'position'}{' '}
                       detected
-                    </p>
+                    </Badge>
                   </div>
                 )}
               </div>
 
               {/* Inline settings */}
-              <div className="bg-bg-secondary/30 border-border/50 space-y-6 rounded-3xl border p-6 shadow-sm">
+              <div className="bg-bg-secondary/30 border-border/50 space-y-6 rounded-3xl border p-6">
                 <div className="flex flex-wrap items-center gap-6">
                   <span className="text-text-muted text-[10px] font-bold tracking-widest uppercase">
                     Approach
                   </span>
-                  <div className="bg-bg border-border/50 flex gap-2 rounded-full border p-1 shadow-sm">
-                    {(['conservative', 'balanced', 'creative'] as Creativity[]).map((c) => (
-                      <button
-                        key={c}
-                        onClick={() => setCreativity(c)}
-                        className={`cursor-pointer rounded-full px-4 py-1.5 text-[10px] font-bold tracking-tight uppercase transition-all ${
-                          creativity === c
-                            ? 'bg-accent text-white shadow-md'
-                            : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
-                        }`}
-                      >
-                        {c}
-                      </button>
-                    ))}
-                  </div>
+                  <Tabs
+                    value={creativity}
+                    onChange={(v) => setCreativity(v as Creativity)}
+                    options={[
+                      { value: 'conservative', label: 'conservative' },
+                      { value: 'balanced', label: 'balanced' },
+                      { value: 'creative', label: 'creative' },
+                    ]}
+                    size="sm"
+                  />
                 </div>
 
                 <details className="group" open>
@@ -428,11 +429,9 @@ export function BatchPipeline({ onBack }: Props) {
                         key={s}
                         className="text-text-secondary group/item hover:text-accent flex cursor-pointer items-center gap-2.5 text-[11px] font-medium transition-colors select-none"
                       >
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={sectionsToTailor.includes(s)}
                           onChange={() => toggleSection(s)}
-                          className="border-border-input accent-accent h-4 w-4 cursor-pointer rounded-full"
                         />
                         {SECTION_DISPLAY[s] || s}
                       </label>
@@ -496,21 +495,26 @@ export function BatchPipeline({ onBack }: Props) {
       {/* Footer */}
       <div className="bg-bg-secondary/10 shrink-0 border-t px-8 py-6">
         {step === 'jd' && (
-          <button
+          <Button
             onClick={handleStart}
             disabled={!detectedJds.length}
-            className="bg-accent w-full cursor-pointer rounded-full py-4 text-sm font-bold tracking-widest text-white uppercase shadow-xl transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30"
+            size="lg"
+            fullWidth
+            className="font-bold tracking-widest uppercase disabled:opacity-30"
           >
             Process{detectedJds.length > 0 ? ` (${detectedJds.length} positions)` : ' All'}
-          </button>
+          </Button>
         )}
         {step === 'results' && (
-          <button
+          <Button
+            variant="outline"
+            size="lg"
+            fullWidth
             onClick={handleReset}
-            className="hover:bg-bg-hover text-text-secondary w-full cursor-pointer rounded-full border-2 py-4 text-sm font-bold tracking-widest uppercase shadow-sm transition-all"
+            className="text-text-secondary font-bold tracking-widest uppercase"
           >
             New Batch
-          </button>
+          </Button>
         )}
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import YAML from 'yaml';
-import { sampleResume } from '../utils/sample';
-import type { ResumeSchema } from '../types/resume';
+import { sampleResume } from '@/utils/sample';
+import type { ResumeSchema } from '@/types/resume';
 
 describe('YAML support', () => {
   it('round-trips resume through YAML stringify/parse', () => {

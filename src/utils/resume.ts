@@ -1,4 +1,4 @@
-import type { ResumeSchema } from '../types/resume';
+import type { ResumeSchema } from '@/types/resume';
 
 /**
  * Filter out items that have visible: false set.

@@ -1,4 +1,4 @@
-import { useSettingsStore } from '../../store/settingsStore';
+import { useSettingsStore } from '@/store/settingsStore';
 
 /** Navigate to AI tab from anywhere in the editor tree. */
 export function useGoToAi() {

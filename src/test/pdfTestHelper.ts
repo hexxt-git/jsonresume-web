@@ -1,7 +1,7 @@
-import type { TextItems } from '../parser/types';
-import { groupIntoLines } from '../parser/line-grouper';
-import { groupIntoSections } from '../parser/section-grouper';
-import { extractAllSections } from '../parser/extractors';
+import type { TextItems } from '@/parser/types';
+import { groupIntoLines } from '@/parser/line-grouper';
+import { groupIntoSections } from '@/parser/section-grouper';
+import { extractAllSections } from '@/parser/extractors';
 
 export async function extractTextItemsFromPdfBuffer(data: Uint8Array): Promise<TextItems> {
   const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');

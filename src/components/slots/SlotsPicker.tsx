@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { useResumeStore, slotDisplayName } from '../../store/resumeStore';
-import { useUndoStore } from '../../store/undoStore';
-import { useT } from '../../i18n';
+import { useResumeStore, slotDisplayName } from '@/store/resumeStore';
+import { useUndoStore } from '@/store/undoStore';
+import { useT } from '@/i18n';
+import { Button } from '../ui/Button';
 
 function formatDate(ts: number): string {
   const d = new Date(ts);
@@ -68,33 +69,40 @@ export function SlotsPicker() {
 
   return (
     <div className="relative">
-      <button
+      <Button
+        variant="outline"
+        size="sm"
         onClick={() => setOpen(!open)}
-        className="hover:bg-bg-hover text-text-secondary flex max-w-[120px] cursor-pointer items-center gap-2 rounded-full border px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase shadow-sm transition-all sm:max-w-[200px]"
+        className="text-text-secondary flex max-w-[120px] items-center gap-2 px-3 text-[10px] font-bold tracking-wider uppercase transition-all sm:max-w-[200px]"
       >
         <span className="truncate">
           {currentSlot ? slotDisplayName(currentSlot) : t('slots.resumes')}
         </span>
         <span className="text-accent shrink-0">({slots.length})</span>
-      </button>
+      </Button>
 
       {open && (
         <>
           <div className="fixed inset-0 z-40 bg-black/5" onClick={() => setOpen(false)} />
-          <div className="bg-bg border-border absolute top-full right-0 z-50 mt-2 w-80 space-y-1 overflow-hidden rounded-3xl border p-2 shadow-2xl">
+          <div className="bg-bg border-border absolute top-full right-0 z-50 mt-2 w-80 space-y-1 overflow-hidden rounded-3xl border p-2">
             <div className="border-border mb-1 flex gap-2 border-b p-2">
-              <button
+              <Button
                 onClick={handleNew}
-                className="bg-accent flex-1 cursor-pointer rounded-full px-3 py-2 text-[10px] font-bold tracking-widest text-white uppercase shadow-md transition-all hover:opacity-90"
+                size="sm"
+                fullWidth
+                className="text-[10px] font-bold tracking-widest uppercase transition-all"
               >
                 {t('slots.new')}
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                fullWidth
                 onClick={handleDuplicate}
-                className="border-border hover:bg-bg-hover text-text-secondary flex-1 cursor-pointer rounded-full border px-3 py-2 text-[10px] font-bold tracking-widest uppercase transition-all"
+                className="text-text-secondary text-[10px] font-bold tracking-widest uppercase transition-all"
               >
                 {t('slots.duplicate')}
-              </button>
+              </Button>
             </div>
 
             {slots.length === 0 ? (
@@ -121,7 +129,7 @@ export function SlotsPicker() {
                           onBlur={handleFinishRename}
                           onKeyDown={(e) => e.key === 'Enter' && handleFinishRename()}
                           autoFocus
-                          className="border-accent bg-bg-input text-text flex-1 rounded-full border px-3 py-1 text-xs shadow-sm outline-none"
+                          className="border-accent bg-bg-input text-text focus:ring-accent/30 flex-1 rounded-full border px-3 py-1 text-xs outline-none focus:ring-2"
                         />
                       ) : (
                         <button
