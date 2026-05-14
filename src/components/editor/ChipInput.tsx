@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo, type KeyboardEvent } from 'react';
 import { useT } from '../../i18n';
-import { AiWritingTools } from '../ai/AiWritingTools';
-import { useAiContext } from '../ai/AiContext';
+import { AiWritingTools } from '@/components//ai/AiWritingTools';
+import { useAiContext } from '@/components/ai/AiContext';
 import { CloseCircle } from 'iconsax-react';
 import {
   DndContext,
@@ -96,7 +96,7 @@ export function ChipInput({ label, items, onChange, placeholder }: ChipInputProp
     <div className="space-y-1.5">
       <label className="text-text-secondary ml-1 block text-xs font-medium">{label}</label>
       <AiWritingTools mode="list" items={items} onChange={onChange} context={aiContext}>
-        <div className="border-border-input bg-bg-input focus-within:ring-accent focus-within:border-accent relative flex min-h-[42px] flex-wrap gap-2 rounded-3xl border p-3 pr-10 transition-all focus-within:ring-1">
+        <div className="border-border-input bg-bg-input focus-within:ring-accent/30 focus-within:border-accent relative flex min-h-[42px] flex-wrap gap-2 rounded-3xl border p-3 pr-10 transition-all focus-within:ring-3">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}

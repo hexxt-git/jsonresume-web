@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getProvider } from '../lib/ai';
-import type { AiProvider, AnyMessage, StreamEvent } from '../lib/ai';
+import { getProvider } from '@/lib/ai';
+import type { AiProvider, AnyMessage, StreamEvent } from '@/lib/ai';
 
 const mockGenerateContentStream = vi.fn();
 const mockGenerateContent = vi.fn();

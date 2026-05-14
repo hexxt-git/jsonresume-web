@@ -1,4 +1,4 @@
-import type { ResumeSchema } from '../types/resume';
+import type { ResumeSchema } from '@/types/resume';
 
 export interface ThemeDefinition {
   id: string;

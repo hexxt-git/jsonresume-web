@@ -1,4 +1,5 @@
 import { Component, type ReactNode, type ErrorInfo } from 'react';
+import { Button } from '@/components/ui/Button';
 
 interface Props {
   children: ReactNode;
@@ -35,12 +36,12 @@ export class ErrorBoundary extends Component<Props, State> {
           <p className="text-text-muted mb-3 max-w-xs text-xs">
             {this.state.error.message || 'An unexpected error occurred.'}
           </p>
-          <button
+          <Button
             onClick={() => this.setState({ error: null })}
-            className="bg-accent cursor-pointer rounded-full px-6 py-2.5 text-xs font-bold tracking-widest text-white uppercase shadow-md transition-all hover:opacity-90"
+            className="px-6 py-2.5 font-bold tracking-widest uppercase"
           >
             Try again
-          </button>
+          </Button>
         </div>
       );
     }

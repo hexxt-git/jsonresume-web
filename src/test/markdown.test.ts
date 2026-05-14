@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { md } from '../themes/helpers';
-import { themes } from '../themes';
-import type { ResumeSchema } from '../types/resume';
+import { md } from '@/themes/helpers';
+import { themes } from '@/themes';
+import type { ResumeSchema } from '@/types/resume';
 
 describe('md helper', () => {
   it('renders bold', () => {

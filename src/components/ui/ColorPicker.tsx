@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import * as Popover from '@radix-ui/react-popover';
-import { useT } from '../../i18n';
+import { useT } from '@/i18n';
 
 interface ColorPickerProps {
   label: string;

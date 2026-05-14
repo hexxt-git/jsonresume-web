@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { useResumeStore, activeSlot } from '../../store/resumeStore';
-import { themes } from '../../themes';
-import { sampleResume } from '../../utils/sample';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
+import { themes } from '@/themes';
+import { sampleResume } from '@/utils/sample';
 
 export function ThemePicker() {
   const selectedThemeId = useResumeStore((s) => activeSlot(s).themeId);

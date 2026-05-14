@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { useAiStore } from '../../store/aiStore';
-import { PROVIDERS, getProvider } from '../../lib/ai';
-import { useT } from '../../i18n';
+import { useAiStore } from '@/store/aiStore';
+import { PROVIDERS, getProvider } from '@/lib/ai';
+import { useT } from '@/i18n';
 import { Eye, EyeSlash, Setting, ExportSquare } from 'iconsax-react';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 /* ── Provider settings ───────────────────────────────── */
 
@@ -119,19 +121,23 @@ function ProviderRow({
         {hasKey && (
           <div className="flex items-center gap-2">
             {!isActive && (
-              <button
+              <Button
+                variant="ghost"
+                size="xs"
                 onClick={onActivate}
-                className="text-accent cursor-pointer text-[10px] hover:underline"
+                className="text-accent px-0 hover:bg-transparent hover:underline"
               >
                 {t('ai.use')}
-              </button>
+              </Button>
             )}
-            <button
+            <Button
+              variant="ghost"
+              size="xs"
               onClick={onRemove}
-              className="text-text-muted hover:text-danger cursor-pointer text-[10px]"
+              className="text-text-muted hover:text-danger px-0 hover:bg-transparent"
             >
               {t('ai.remove')}
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -141,38 +147,41 @@ function ProviderRow({
           <span className="text-text-muted bg-bg-secondary flex-1 rounded px-2.5 py-1.5 font-mono text-xs">
             {maskedKey}
           </span>
-          <button
+          <Button
+            variant="ghost"
+            size="xs"
             onClick={() => setEditing(true)}
-            className="text-text-muted hover:text-text-secondary shrink-0 cursor-pointer text-[10px]"
+            className="text-text-muted hover:text-text-secondary shrink-0 px-0 hover:bg-transparent"
           >
             {t('ai.change')}
-          </button>
+          </Button>
         </div>
       )}
 
       {(!hasKey || editing) && (
         <div className="space-y-2">
           <div className="relative">
-            <input
+            <Input
               type={showKey ? 'text' : 'password'}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSave()}
               placeholder={placeholder}
               autoFocus={!hasKey}
-              className="border-border-input bg-bg-input text-text focus:ring-accent w-full rounded-full border px-3 py-1.5 pr-8 text-sm focus:ring-1 focus:outline-none"
+              className="pr-8"
             />
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => setShowKey(!showKey)}
-              className="text-text-muted hover:text-text-secondary absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer"
+              className="text-text-muted hover:text-text-secondary absolute top-1/2 right-2 h-6 w-6 -translate-y-1/2"
             >
               {showKey ? (
                 <EyeSlash size={14} variant="Bold" color="currentColor" />
               ) : (
                 <Eye size={14} variant="Bold" color="currentColor" />
               )}
-            </button>
+            </Button>
           </div>
           {error && <p className="text-danger text-xs">{error}</p>}
           <div className="flex items-center justify-between">
@@ -187,24 +196,22 @@ function ProviderRow({
             </a>
             <div className="flex gap-1.5">
               {editing && (
-                <button
+                <Button
+                  variant="ghost"
+                  size="xs"
                   onClick={() => {
                     setEditing(false);
                     setInput('');
                     setError('');
                   }}
-                  className="text-text-muted hover:text-text-secondary cursor-pointer text-xs"
+                  className="text-text-muted hover:text-text-secondary px-0 hover:bg-transparent"
                 >
                   {t('ai.cancel')}
-                </button>
+                </Button>
               )}
-              <button
-                onClick={handleSave}
-                disabled={validating || !input.trim()}
-                className="bg-accent cursor-pointer rounded-full px-3 py-1 text-xs text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-              >
+              <Button size="sm" onClick={handleSave} disabled={validating || !input.trim()}>
                 {validating ? t('ai.keyValidating') : t('ai.save')}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -239,12 +246,9 @@ export function AiSetupPrompt({ onSetup }: { onSetup: () => void }) {
           </a>
           {t('ai.setupDesc').split(t('ai.setupOpenSource'))[1]}
         </p>
-        <button
-          onClick={onSetup}
-          className="bg-accent cursor-pointer rounded-full px-4 py-2 text-xs text-white hover:opacity-90"
-        >
+        <Button onClick={onSetup} size="sm">
           {t('ai.setupButton')}
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -264,13 +268,15 @@ export function AiGate({ children, onSetup }: { children: React.ReactNode; onSet
 export function AiSettingsButton({ onClick }: { onClick: () => void }) {
   const t = useT();
   return (
-    <button
+    <Button
+      variant="secondary"
+      size="sm"
       onClick={onClick}
-      className="text-text-secondary hover:text-text bg-bg-secondary border-border/50 hover:bg-bg-hover flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-bold transition-all"
+      leftIcon={<Setting size={14} variant="Bold" color="currentColor" />}
+      className="hover:text-text border-border/50 hover:bg-bg-hover border px-3 text-[10px] font-bold"
       title={t('ai.settings')}
     >
-      <Setting size={14} variant="Bold" color="currentColor" />
-      {t('ai.settings').toUpperCase()}
-    </button>
+      {t('ai.settings')}
+    </Button>
   );
 }

@@ -1,7 +1,10 @@
 import { useState, useRef, useEffect, type ReactNode } from 'react';
 import * as Popover from '@radix-ui/react-popover';
 import { ArrowDown2, TickCircle } from 'iconsax-react';
-import { useT } from '../../i18n';
+import { useT } from '@/i18n';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { cn } from '@/utils/cn';
 
 interface Option {
   value: string;
@@ -52,20 +55,17 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
     }
   }, [open]);
 
-  const cls =
-    'w-full px-4 py-2 text-sm border border-border-input bg-bg-input text-text rounded-full focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all';
-
   return (
     <div className="space-y-1.5">
       <label className="text-text-secondary ml-1 block text-xs font-medium">{label}</label>
       <Popover.Root open={open} onOpenChange={setOpen}>
         <Popover.Trigger asChild>
-          <button
-            type="button"
-            className={`${cls} hover:bg-bg-hover flex cursor-pointer items-center gap-2.5 text-left`}
+          <Button
+            variant="outline"
+            className="hover:bg-bg-hover flex w-full items-center gap-2.5 px-4 py-2 text-left text-sm font-normal"
           >
             {selectedOption && <OptionIcon opt={selectedOption} />}
-            <span className={`flex-1 truncate ${value ? '' : 'text-text-muted'}`}>
+            <span className={cn('flex-1 truncate', !value && 'text-text-muted')}>
               {selectedOption?.label || value || placeholder || 'Select...'}
             </span>
             <ArrowDown2
@@ -74,16 +74,16 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
               variant="Bold"
               color="currentColor"
             />
-          </button>
+          </Button>
         </Popover.Trigger>
         <Popover.Portal>
           <Popover.Content
-            className="bg-bg z-50 w-[var(--radix-popover-trigger-width)] overflow-hidden rounded-2xl border shadow-xl"
+            className="bg-bg z-50 w-[var(--radix-popover-trigger-width)] overflow-hidden rounded-2xl border"
             sideOffset={8}
             align="start"
           >
             <div className="border-border bg-bg-secondary/30 border-b p-3">
-              <input
+              <Input
                 ref={inputRef}
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
@@ -94,7 +94,7 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
                   }
                 }}
                 placeholder={t('combo.search')}
-                className="bg-bg-input border-border-input text-text focus:ring-accent focus:border-accent w-full rounded-full border px-3 py-1.5 text-sm focus:ring-1 focus:outline-none"
+                className="h-9 px-3 py-1.5 text-sm"
               />
             </div>
             <div className="max-h-[240px] overflow-y-auto p-2">
@@ -117,14 +117,19 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
                 </div>
               ) : (
                 filtered.map((o) => (
-                  <button
+                  <Button
                     key={o.value}
-                    type="button"
+                    variant="ghost"
                     onClick={() => {
                       onChange(o.value);
                       setOpen(false);
                     }}
-                    className={`flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs transition-colors ${value === o.value ? 'bg-bg-accent text-accent-text font-medium' : 'hover:bg-bg-hover text-text-secondary'}`}
+                    className={cn(
+                      'flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-normal',
+                      value === o.value
+                        ? 'bg-bg-accent text-accent-text hover:bg-bg-accent font-medium'
+                        : 'text-text-secondary',
+                    )}
                   >
                     <OptionIcon opt={o} />
                     <span className="flex-1 truncate">{o.label}</span>
@@ -136,7 +141,7 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
                         className="text-accent shrink-0"
                       />
                     )}
-                  </button>
+                  </Button>
                 ))
               )}
             </div>

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Locale } from '../i18n';
+import type { Locale } from '@/i18n';
 
 export type ColorMode = 'light' | 'dark' | 'system';
 export type EditorTab = 'form' | 'json' | 'themes' | 'ai' | 'auto';

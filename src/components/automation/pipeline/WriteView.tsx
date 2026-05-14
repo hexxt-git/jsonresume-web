@@ -8,7 +8,7 @@ import {
   getCoverLetterDirective,
   type Tone,
   type CoverLetterLength,
-} from '../../../store/automationStore';
+} from '@/store/automationStore';
 import type { CombinedAnalysis } from './types';
 
 /* ── Constants ──────────────────────────────────────────── */
@@ -111,14 +111,14 @@ export function WriteView({ jd, analysis }: Props) {
             <span className="text-text-muted text-[10px] font-bold tracking-widest uppercase">
               Tone
             </span>
-            <div className="bg-bg border-border/50 flex gap-2 rounded-full border p-1 shadow-sm">
+            <div className="bg-bg border-border/50 flex gap-2 rounded-full border p-1">
               {(['formal', 'professional', 'casual'] as Tone[]).map((t) => (
                 <button
                   key={t}
                   onClick={() => setTone(t)}
                   className={`cursor-pointer rounded-full px-4 py-1.5 text-[10px] font-bold tracking-tight uppercase transition-all ${
                     tone === t
-                      ? 'bg-accent text-white shadow-md'
+                      ? 'bg-accent text-white'
                       : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
                   }`}
                 >
@@ -132,14 +132,14 @@ export function WriteView({ jd, analysis }: Props) {
               <span className="text-text-muted text-[10px] font-bold tracking-widest uppercase">
                 Length
               </span>
-              <div className="bg-bg border-border/50 flex gap-2 rounded-full border p-1 shadow-sm">
+              <div className="bg-bg border-border/50 flex gap-2 rounded-full border p-1">
                 {(['brief', 'standard', 'detailed'] as CoverLetterLength[]).map((l) => (
                   <button
                     key={l}
                     onClick={() => setCoverLetterLength(l)}
                     className={`cursor-pointer rounded-full px-4 py-1.5 text-[10px] font-bold tracking-tight uppercase transition-all ${
                       coverLetterLength === l
-                        ? 'bg-accent text-white shadow-md'
+                        ? 'bg-accent text-white'
                         : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
                     }`}
                   >
@@ -160,7 +160,7 @@ export function WriteView({ jd, analysis }: Props) {
             onClick={() => setTab(id)}
             className={`flex-1 cursor-pointer rounded-full py-2 text-xs font-bold tracking-widest uppercase transition-all ${
               tab === id
-                ? 'bg-bg text-accent border-accent/10 border shadow-md'
+                ? 'bg-bg text-accent border-accent/10 border'
                 : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
             }`}
           >
@@ -189,7 +189,7 @@ export function WriteView({ jd, analysis }: Props) {
           <button
             onClick={handleCoverLetter}
             disabled={isRunning}
-            className="bg-accent w-full cursor-pointer rounded-full py-3.5 text-xs font-bold tracking-widest text-white uppercase shadow-lg transition-all hover:opacity-90 disabled:opacity-50"
+            className="bg-accent w-full cursor-pointer rounded-full py-3.5 text-xs font-bold tracking-widest text-white uppercase transition-all hover:opacity-90 disabled:opacity-50"
           >
             {isRunning
               ? 'Generating...'
@@ -207,7 +207,7 @@ export function WriteView({ jd, analysis }: Props) {
             {questionList.map((q, i) => (
               <div
                 key={i}
-                className="bg-bg border-border/50 text-text-secondary group flex items-start gap-3 rounded-xl border px-4 py-3 text-xs font-medium shadow-sm transition-all"
+                className="bg-bg border-border/50 text-text-secondary group flex items-start gap-3 rounded-xl border px-4 py-3 text-xs font-medium transition-all"
               >
                 <span className="flex-1 leading-relaxed">{q}</span>
                 <button
@@ -252,7 +252,7 @@ export function WriteView({ jd, analysis }: Props) {
           <button
             onClick={handleQuestions}
             disabled={!questionList.length || isRunning}
-            className="bg-accent w-full cursor-pointer rounded-full py-3.5 text-xs font-bold tracking-widest text-white uppercase shadow-lg transition-all hover:opacity-90 disabled:opacity-50"
+            className="bg-accent w-full cursor-pointer rounded-full py-3.5 text-xs font-bold tracking-widest text-white uppercase transition-all hover:opacity-90 disabled:opacity-50"
           >
             {isRunning ? 'Generating...' : 'Generate Answers'}
           </button>
@@ -269,7 +269,7 @@ export function WriteView({ jd, analysis }: Props) {
                 onClick={() => setEmailType(t)}
                 className={`cursor-pointer rounded-full px-5 py-2 text-[10px] font-bold tracking-tight whitespace-nowrap uppercase transition-all ${
                   emailType === t
-                    ? 'bg-accent text-white shadow-md'
+                    ? 'bg-accent text-white'
                     : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
                 }`}
               >
@@ -288,7 +288,7 @@ export function WriteView({ jd, analysis }: Props) {
           <button
             onClick={handleEmail}
             disabled={isRunning}
-            className="bg-accent w-full cursor-pointer rounded-full py-3.5 text-xs font-bold tracking-widest text-white uppercase shadow-lg transition-all hover:opacity-90 disabled:opacity-50"
+            className="bg-accent w-full cursor-pointer rounded-full py-3.5 text-xs font-bold tracking-widest text-white uppercase transition-all hover:opacity-90 disabled:opacity-50"
           >
             {isRunning ? 'Drafting...' : emailDraft ? 'Redraft Email' : 'Draft Email'}
           </button>

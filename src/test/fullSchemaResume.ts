@@ -1,4 +1,4 @@
-import type { ResumeSchema } from '../types/resume';
+import type { ResumeSchema } from '@/types/resume';
 
 /**
  * A resume that populates EVERY field in the JSON Resume v1.0.0 schema.

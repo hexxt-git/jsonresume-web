@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useAiStore } from '../store/aiStore';
-import { useResumeStore, activeSlot } from '../store/resumeStore';
-import type { AnyMessage } from '../lib/ai';
+import { useAiStore } from '@/store/aiStore';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
+import type { AnyMessage } from '@/lib/ai';
 
 function asChat(m: AnyMessage) {
   if (m.role === 'user' || m.role === 'assistant') return m;

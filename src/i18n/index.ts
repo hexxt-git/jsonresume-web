@@ -1,7 +1,7 @@
 import en from './en';
 import fr from './fr';
 import ar from './ar';
-import { useSettingsStore } from '../store/settingsStore';
+import { useSettingsStore } from '@/store/settingsStore';
 
 export type Locale = 'en' | 'fr' | 'ar';
 type TranslationKey = keyof typeof en;

@@ -1,5 +1,5 @@
 import * as RadixSlider from '@radix-ui/react-slider';
-import { useT } from '../../i18n';
+import { useT } from '@/i18n';
 
 interface SliderProps {
   label: string;

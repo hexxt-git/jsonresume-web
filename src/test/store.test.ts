@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useResumeStore, activeSlot } from '../store/resumeStore';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
 
 describe('resumeStore', () => {
   beforeEach(() => {

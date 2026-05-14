@@ -1,3 +1,5 @@
+import { cn } from '@/utils/cn';
+
 interface StepperProps {
   steps: string[];
   currentIndex: number;
@@ -15,27 +17,33 @@ export function Stepper({ steps, currentIndex, onStepClick }: StepperProps) {
         return (
           <div key={label} className="flex items-center gap-3">
             {i > 0 && (
-              <div className={`h-0.5 w-8 rounded-full ${reached ? 'bg-accent' : 'bg-border/50'}`} />
+              <div
+                className={cn('h-0.5 w-8 rounded-full', reached ? 'bg-accent' : 'bg-border/50')}
+              />
             )}
             <button
               type="button"
               onClick={() => clickable && onStepClick(i)}
-              className={`flex items-center gap-2 transition-all ${
+              className={cn(
+                'flex items-center gap-2 transition-all outline-none',
+                'focus:ring-accent/30 focus:border-accent rounded-lg p-1 focus:ring-2',
                 active
                   ? 'text-accent'
                   : reached
                     ? 'text-text-secondary hover:text-accent'
-                    : 'text-text-muted opacity-50'
-              } ${clickable ? 'cursor-pointer' : 'cursor-default'}`}
+                    : 'text-text-muted opacity-50',
+                clickable ? 'cursor-pointer' : 'cursor-default',
+              )}
             >
               <span
-                className={`flex h-6 w-6 items-center justify-center rounded-full border-2 transition-colors ${
+                className={cn(
+                  'flex h-6 w-6 items-center justify-center rounded-full border-2 transition-colors',
                   active
-                    ? 'bg-accent border-accent text-white shadow-md'
+                    ? 'bg-accent border-accent text-white'
                     : reached
                       ? 'border-accent text-accent'
-                      : 'text-text-muted'
-                }`}
+                      : 'text-text-muted',
+                )}
               >
                 {i + 1}
               </span>

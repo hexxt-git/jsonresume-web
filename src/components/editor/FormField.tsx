@@ -1,5 +1,7 @@
-import { AiWritingTools } from '../ai/AiWritingTools';
-import { useAiContext } from '../ai/AiContext';
+import { AiWritingTools } from '@/components/ai/AiWritingTools';
+import { useAiContext } from '@/components/ai/AiContext';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
 
 interface FormFieldProps {
   label: string;
@@ -20,8 +22,7 @@ export function FormField({
 }: FormFieldProps) {
   const aiContext = useAiContext(label);
   const id = label.toLowerCase().replace(/\s+/g, '-');
-  const baseCls =
-    'w-full px-4 py-2 text-sm border border-border-input bg-bg-input text-text focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all';
+
   return (
     <div className="space-y-1.5">
       <label htmlFor={id} className="text-text-secondary ml-1 block text-xs font-medium">
@@ -29,23 +30,24 @@ export function FormField({
       </label>
       {multiline ? (
         <AiWritingTools mode="text" value={value} onChange={onChange} context={aiContext}>
-          <textarea
-            id={id}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder={placeholder}
-            rows={4}
-            className={`${baseCls} resize-y rounded-2xl pr-8`}
-          />
+          <div className="relative">
+            <Textarea
+              id={id}
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder={placeholder}
+              rows={4}
+              className="pr-8"
+            />
+          </div>
         </AiWritingTools>
       ) : (
-        <input
+        <Input
           id={id}
           type={type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className={`${baseCls} rounded-full`}
         />
       )}
     </div>

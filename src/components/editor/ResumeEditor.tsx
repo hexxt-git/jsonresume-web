@@ -1,16 +1,19 @@
 import { useState, lazy, Suspense, useRef, useEffect, useCallback } from 'react';
-import { useResumeStore } from '../../store/resumeStore';
-import type { EditorSection } from '../../store/resumeStore';
-import { useSettingsStore, type EditorTab } from '../../store/settingsStore';
-import { useT } from '../../i18n';
-import { useUndoRedo } from '../../hooks/useUndoRedo';
+import { useResumeStore } from '@/store/resumeStore';
+import type { EditorSection } from '@/store/resumeStore';
+import { useSettingsStore, type EditorTab } from '@/store/settingsStore';
+import { useT } from '@/i18n';
+import { useUndoRedo } from '@/hooks/useUndoRedo';
 import { Undo2, Redo2 } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { cn } from '@/utils/cn';
+import { SparkleIcon } from '@/assets/Icons';
 
-const AiChat = lazy(() => import('../ai/AiChat'));
+const AiChat = lazy(() => import('@/components/ai/AiChat'));
 const JsonEditor = lazy(() => import('./JsonEditor'));
-const AutomationHub = lazy(() => import('../automation/AutomationHub'));
-import { AiGate, AiProviderSettings } from '../ai/AiKeyGate';
-import { ErrorBoundary } from '../ErrorBoundary';
+const AutomationHub = lazy(() => import('@/components/automation/AutomationHub'));
+import { AiGate, AiProviderSettings } from '@/components/ai/AiKeyGate';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 function LazyFallback() {
   const t = useT();
@@ -35,20 +38,8 @@ import {
   InterestsForm,
   ReferencesForm,
 } from './OtherSections';
-import { ThemePicker } from '../themes/ThemePicker';
-import { ThemeCustomizer } from '../themes/ThemeCustomizer';
-
-const Sparkle = () => (
-  <svg
-    width="12"
-    height="12"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    className="-mt-0.5 ml-0.5 inline-block"
-  >
-    <path d="M12 0L14.5 7.5C15 9 15 9 16.5 9.5L24 12L16.5 14.5C15 15 15 15 14.5 16.5L12 24L9.5 16.5C9 15 9 15 7.5 14.5L0 12L7.5 9.5C9 9 9 9 9.5 7.5L12 0Z" />
-  </svg>
-);
+import { ThemePicker } from '@/components/themes/ThemePicker';
+import { ThemeCustomizer } from '@/components/themes/ThemeCustomizer';
 
 const sectionIds: EditorSection[] = [
   'basics',
@@ -106,35 +97,53 @@ function MobileTabBar({
     activeRef.current?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
   }, [activeSection, tab]);
 
-  const tabCls = (active: boolean) =>
-    `shrink-0 px-4 py-2 text-xs font-semibold cursor-pointer whitespace-nowrap transition-all rounded-full ${
-      active ? 'bg-accent text-white shadow-sm' : 'text-text-tertiary hover:bg-bg-hover'
-    }`;
-
-  const sectionCls = (active: boolean) =>
-    `shrink-0 px-3 py-1.5 text-xs font-medium cursor-pointer whitespace-nowrap transition-all rounded-full border ${
-      active
-        ? 'bg-accent text-white border-accent shadow-sm'
-        : 'text-text-muted border hover:bg-bg-hover'
-    }`;
-
   return (
     <div className="bg-bg shrink-0 sm:hidden">
       {/* Row 1: mode tabs */}
       <div className="border-border scrollbar-none bg-bg-secondary/30 flex gap-2 overflow-x-auto border-b p-2">
-        <button onClick={() => setTab('form')} className={tabCls(tab === 'form')}>
+        <button
+          onClick={() => setTab('form')}
+          className={cn(
+            'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
+            tab === 'form' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
+          )}
+        >
           {t('editor.form')}
         </button>
-        <button onClick={() => setTab('json')} className={tabCls(tab === 'json')}>
+        <button
+          onClick={() => setTab('json')}
+          className={cn(
+            'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
+            tab === 'json' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
+          )}
+        >
           {t('editor.json')}
         </button>
-        <button onClick={() => setTab('themes')} className={tabCls(tab === 'themes')}>
+        <button
+          onClick={() => setTab('themes')}
+          className={cn(
+            'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
+            tab === 'themes' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
+          )}
+        >
           {t('editor.themes')}
         </button>
-        <button onClick={() => setTab('ai')} className={tabCls(tab === 'ai')}>
-          {t('editor.ai')} <Sparkle />
+        <button
+          onClick={() => setTab('ai')}
+          className={cn(
+            'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
+            tab === 'ai' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
+          )}
+        >
+          {t('editor.ai')} <SparkleIcon className="-mt-0.5 ml-0.5 inline-block" />
         </button>
-        <button onClick={() => setTab('auto')} className={tabCls(tab === 'auto')}>
+        <button
+          onClick={() => setTab('auto')}
+          className={cn(
+            'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
+            tab === 'auto' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
+          )}
+        >
           {t('editor.auto')}
         </button>
         {onShowPreview && (
@@ -156,7 +165,12 @@ function MobileTabBar({
                 key={id}
                 ref={active ? activeRef : undefined}
                 onClick={() => setActiveSection(id)}
-                className={sectionCls(active)}
+                className={cn(
+                  'shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-all',
+                  active
+                    ? 'bg-accent border-accent text-white'
+                    : 'text-text-muted border-border hover:bg-bg-hover',
+                )}
               >
                 {t(`section.${id}` as Parameters<typeof t>[0])}
               </button>
@@ -188,11 +202,10 @@ function DesktopTabBar({
   canRedo: boolean;
 }) {
   const cls = (active: boolean) =>
-    `px-4 py-2 text-xs font-semibold cursor-pointer transition-all rounded-full ${
-      active
-        ? 'bg-accent text-white shadow-sm'
-        : 'text-text-tertiary hover:text-text hover:bg-bg-hover'
-    }`;
+    cn(
+      'px-4 py-2 text-xs font-semibold cursor-pointer transition-all rounded-full',
+      active ? 'bg-accent text-white' : 'text-text-tertiary hover:text-text hover:bg-bg-hover',
+    );
   const undoCls =
     'p-2 rounded-full hover:bg-bg-hover transition-all cursor-pointer disabled:opacity-30 disabled:cursor-default border border-transparent hover:border-border';
   return (
@@ -207,7 +220,7 @@ function DesktopTabBar({
         {t('editor.themes')}
       </button>
       <button onClick={() => setTab('ai')} className={cls(tab === 'ai')}>
-        {t('editor.ai')} <Sparkle />
+        {t('editor.ai')} <SparkleIcon className="-mt-0.5 ml-0.5 inline-block" />
       </button>
       <button onClick={() => setTab('auto')} className={cls(tab === 'auto')}>
         {t('editor.auto')}
@@ -297,11 +310,12 @@ function FormContent({
           <button
             key={id}
             onClick={() => setActiveSection(id)}
-            className={`w-full cursor-pointer rounded-full px-3 py-2 text-left text-xs font-medium transition-all ${
+            className={cn(
+              'w-full cursor-pointer rounded-full px-3 py-2 text-left text-xs font-medium transition-all',
               activeSection === id
-                ? 'bg-accent text-white shadow-md'
-                : 'text-text-secondary hover:bg-bg-hover hover:text-text'
-            }`}
+                ? 'bg-accent text-white'
+                : 'text-text-secondary hover:bg-bg-hover hover:text-text',
+            )}
           >
             {t(`section.${id}` as Parameters<typeof t>[0])}
           </button>
@@ -318,29 +332,28 @@ function FormContent({
         </div>
         <div className="flex items-center justify-between px-6 pt-4 pb-8">
           {prev ? (
-            <button
+            <Button
+              variant="outline"
               onClick={() => setActiveSection(prev)}
-              className="border-border hover:bg-bg-hover text-text-secondary cursor-pointer rounded-full border px-4 py-2 text-xs font-semibold shadow-sm transition-all"
+              className="px-4 py-2 font-semibold"
             >
               &larr; {t(`section.${prev}` as Parameters<typeof t>[0])}
-            </button>
+            </Button>
           ) : (
             <span />
           )}
           {next ? (
-            <button
+            <Button
+              variant="outline"
               onClick={() => setActiveSection(next)}
-              className="border-border hover:bg-bg-hover text-text-secondary cursor-pointer rounded-full border px-4 py-2 text-xs font-semibold shadow-sm transition-all"
+              className="px-4 py-2 font-semibold"
             >
               {t(`section.${next}` as Parameters<typeof t>[0])} &rarr;
-            </button>
+            </Button>
           ) : (
-            <button
-              onClick={() => onSwitchTab('themes')}
-              className="bg-accent cursor-pointer rounded-full px-4 py-2 text-xs font-bold text-white shadow-md transition-all hover:opacity-90"
-            >
+            <Button onClick={() => onSwitchTab('themes')} className="px-4 py-2">
               {t('editor.themes')} &rarr;
-            </button>
+            </Button>
           )}
         </div>
       </div>

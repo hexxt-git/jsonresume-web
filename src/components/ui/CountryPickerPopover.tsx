@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, type ReactNode } from 'react';
 import * as Popover from '@radix-ui/react-popover';
-import { type CountryData, useCountries, flagUrl } from '../../hooks/useCountries';
-import { useT } from '../../i18n';
+import { type CountryData, useCountries, flagUrl } from '@/hooks/useCountries';
+import { useT } from '@/i18n';
+import { Input } from '@/components/ui/Input';
 
 interface Props {
   children: ReactNode;
@@ -45,17 +46,16 @@ export function CountryPickerPopover({ children, onSelect, showDialCode }: Props
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
-          className="bg-bg z-50 w-[320px] overflow-hidden rounded-2xl border shadow-2xl"
+          className="bg-bg z-50 w-[320px] overflow-hidden rounded-2xl border"
           sideOffset={8}
           align="start"
         >
           <div className="border-border bg-bg-secondary/30 border-b p-3">
-            <input
+            <Input
               ref={inputRef}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t('ui.searchCountries')}
-              className="bg-bg-input border-border-input text-text focus:ring-accent focus:border-accent w-full rounded-full border px-3 py-1.5 text-sm focus:ring-1 focus:outline-none"
             />
           </div>
           <div className="max-h-[280px] overflow-y-auto p-2">
@@ -82,7 +82,7 @@ export function CountryPickerPopover({ children, onSelect, showDialCode }: Props
                     alt=""
                     width={22}
                     height={16}
-                    className="shrink-0 rounded-[3px] shadow-sm"
+                    className="shrink-0 rounded-[3px]"
                     loading="lazy"
                   />
                   <span className="flex-1 truncate font-medium">{c.name}</span>

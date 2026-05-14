@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useResumeStore, activeSlot } from '../store/resumeStore';
-import { buildCustomCss, defaultCustomization } from '../store/themeCustomStore';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
+import { buildCustomCss, defaultCustomization } from '@/store/themeCustomStore';
 
 describe('theme customization in resume store', () => {
   beforeEach(() => {

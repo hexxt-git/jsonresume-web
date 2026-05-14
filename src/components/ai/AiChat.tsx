@@ -1,15 +1,17 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { useAiStore } from '../../store/aiStore';
-import { useResumeStore, activeSlot } from '../../store/resumeStore';
-import { getProvider } from '../../lib/ai';
-import type { ToolCall } from '../../lib/ai';
-import { resumeToolDeclarations, executeResumeTool } from '../../lib/ai/resume-tools';
-import { captureBeforeDiscreteMutation } from '../../hooks/useUndoRedo';
-import { useT } from '../../i18n';
+import { useAiStore } from '@/store/aiStore';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
+import { getProvider } from '@/lib/ai';
+import type { ToolCall } from '@/lib/ai';
+import { resumeToolDeclarations, executeResumeTool } from '@/lib/ai/resume-tools';
+import { captureBeforeDiscreteMutation } from '@/hooks/useUndoRedo';
+import { useT } from '@/i18n';
 import { AiSetupPrompt, AiSettingsButton, AiProviderSettings } from './AiKeyGate';
 import { AiMessageList } from './AiMessageList';
-import { PROVIDERS } from '../../lib/ai';
+import { PROVIDERS } from '@/lib/ai';
 import { Eye, EyeSlash, LampOn, Send2, StopCircle, Trash } from 'iconsax-react';
+import { Button } from '@/components/ui/Button';
+import { cn } from '@/utils/cn';
 
 /* ── Header buttons ──────────────────────────────────── */
 
@@ -17,14 +19,16 @@ function ClearChatButton() {
   const t = useT();
   const clearMessages = useResumeStore((s) => s.clearMessages);
   return (
-    <button
+    <Button
+      variant="secondary"
+      size="sm"
       onClick={clearMessages}
-      className="text-text-secondary hover:text-danger bg-bg-secondary border-border/50 hover:bg-danger/5 flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-bold transition-all"
+      leftIcon={<Trash size={12} variant="Bold" color="currentColor" />}
+      className="hover:text-danger hover:bg-danger/5 border-border/50 border px-3 text-[10px] font-bold"
       title={t('ai.clearChat')}
     >
-      <Trash size={12} variant="Bold" color="currentColor" />
       {t('ai.clearChat').toUpperCase()}
-    </button>
+    </Button>
   );
 }
 
@@ -39,18 +43,20 @@ function ModelPickerButton() {
 
   return (
     <div className="relative">
-      <button
+      <Button
+        variant="secondary"
+        size="sm"
         onClick={() => setOpen(!open)}
-        className="text-text-secondary hover:text-accent bg-bg-secondary border-border/50 hover:bg-accent/5 flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-bold transition-all"
+        className="hover:text-accent border-border/50 hover:bg-accent/5 border px-3 text-[10px] font-bold"
         title={t('ai.changeModel')}
       >
         <LampOn size={12} variant="Bold" color="currentColor" />
         {currentLabel.toUpperCase()}
-      </button>
+      </Button>
       {open && (
         <>
           <div className="fixed inset-0 z-40 bg-black/5" onClick={() => setOpen(false)} />
-          <div className="bg-bg absolute top-full left-0 z-50 mt-2 w-60 overflow-hidden rounded-2xl border p-2 shadow-2xl">
+          <div className="bg-bg absolute top-full left-0 z-50 mt-2 w-60 overflow-hidden rounded-2xl border p-2">
             {providerMeta && (
               <div className="mb-1 border-b px-4 py-2">
                 <span className="text-text-muted text-[10px] font-bold tracking-widest uppercase">
@@ -66,11 +72,12 @@ function ModelPickerButton() {
                     useAiStore.getState().setModel(m.id);
                     setOpen(false);
                   }}
-                  className={`w-full cursor-pointer rounded-xl px-4 py-2.5 text-left text-xs transition-all ${
+                  className={cn(
+                    'w-full cursor-pointer rounded-xl px-4 py-2.5 text-left text-xs transition-all',
                     m.id === model
-                      ? 'bg-bg-accent text-accent-text font-bold shadow-sm'
-                      : 'text-text-secondary hover:bg-bg-hover hover:text-text'
-                  }`}
+                      ? 'bg-bg-accent text-accent-text font-bold'
+                      : 'text-text-secondary hover:bg-bg-hover hover:text-text',
+                  )}
                 >
                   {m.label}
                 </button>
@@ -246,12 +253,13 @@ export default function AiChat() {
       <div className="flex h-full flex-col">
         <div className="flex shrink-0 items-center justify-between px-4 py-2">
           <span className="text-text font-medium">{t('ai.settings')}</span>
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setShowSettings(false)}
-            className="text-accent cursor-pointer text-xs hover:underline"
+            className="text-accent px-0 py-0 text-xs hover:bg-transparent hover:underline"
           >
             {apiKey ? t('ai.backToChat') : t('ai.back')}
-          </button>
+          </Button>
         </div>
         <AiProviderSettings />
       </div>
@@ -261,20 +269,29 @@ export default function AiChat() {
   return (
     <div className="bg-bg flex h-full flex-col">
       {/* Header */}
-      <div className="bg-bg-secondary/20 flex shrink-0 items-center gap-2 border-b px-4 py-3">
+      <div className="bg-bg-secondary/20 flex shrink-0 items-center gap-2 px-4 py-3">
         <ClearChatButton />
-        <button
+        <Button
+          variant="secondary"
+          size="sm"
           onClick={() => setHideDiffs((h) => !h)}
-          className={`flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-bold transition-all ${hideDiffs ? 'text-text-muted bg-bg-hover/20 border-transparent' : 'text-text-secondary bg-bg-secondary border-border/50 hover:bg-bg-hover hover:text-text'}`}
+          leftIcon={
+            hideDiffs ? (
+              <EyeSlash size={12} variant="Bold" color="currentColor" />
+            ) : (
+              <Eye size={12} variant="Bold" color="currentColor" />
+            )
+          }
+          className={cn(
+            'border px-3 text-[10px] font-bold',
+            hideDiffs
+              ? 'bg-bg-hover/20 text-text-muted hover:bg-bg-hover/30 hover:text-text-muted border-transparent'
+              : 'border-border/50',
+          )}
           title={hideDiffs ? 'Enable diffs' : 'Disable diffs'}
         >
-          {hideDiffs ? (
-            <EyeSlash size={12} variant="Bold" color="currentColor" />
-          ) : (
-            <Eye size={12} variant="Bold" color="currentColor" />
-          )}
           DIFFS
-        </button>
+        </Button>
         <ModelPickerButton />
         <div className="flex-1" />
         <AiSettingsButton onClick={() => setShowSettings(true)} />
@@ -284,7 +301,7 @@ export default function AiChat() {
 
       {/* Input */}
       <div className="shrink-0 px-4 pt-2 pb-4 lg:px-16 lg:pb-10">
-        <div className="bg-bg focus-within:ring-accent/10 focus-within:border-accent flex items-end gap-3 rounded-2xl border px-4 py-2 shadow-sm transition-all focus-within:ring-4">
+        <div className="bg-bg focus-within:border-accent focus-within:ring-accent/30 flex items-end gap-3 rounded-3xl border px-4 py-2 transition-all focus-within:ring-3">
           <textarea
             ref={textareaRef}
             value={input}
@@ -297,22 +314,26 @@ export default function AiChat() {
           />
           <div className="pb-1">
             {isStreaming ? (
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={handleStop}
-                className="text-danger hover:bg-danger/10 shrink-0 cursor-pointer rounded-full p-2 transition-all"
+                className="text-danger hover:bg-danger/10"
                 title={t('ai.stop')}
               >
                 <StopCircle size={22} variant="Bold" color="currentColor" />
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => handleSend(input)}
                 disabled={!input.trim()}
-                className="text-accent hover:bg-accent/10 shrink-0 cursor-pointer rounded-full p-2 transition-all disabled:cursor-not-allowed disabled:opacity-20"
+                className="text-accent hover:bg-accent/10"
                 title={t('ai.send')}
               >
                 <Send2 size={22} variant="Bold" color="currentColor" />
-              </button>
+              </Button>
             )}
           </div>
         </div>

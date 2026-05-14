@@ -1,12 +1,16 @@
 import { useMemo } from 'react';
-import { useResumeStore, activeSlot } from '../../store/resumeStore';
-import { useT } from '../../i18n';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
+import { useT } from '@/i18n';
 import { FormField } from './FormField';
 import { RepeatableSection } from './RepeatableSection';
-import { CountryPickerPopover } from '../ui/CountryPickerPopover';
-import { useCountries, detectCountryByPhone, flagUrl } from '../../hooks/useCountries';
+import { CountryPickerPopover } from '@/components/ui/CountryPickerPopover';
+import { useCountries, detectCountryByPhone, flagUrl } from '@/hooks/useCountries';
 import { NetworkPickerButton } from './networkIcons';
 import { UrlField } from './UrlField';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+import { PhoneInput } from '@/components/ui/PhoneInput';
+import { ChevronDownIcon } from '@/assets/Icons';
 
 export function BasicsForm() {
   const t = useT();
@@ -33,9 +37,6 @@ export function BasicsForm() {
       : current.replace(/^\+[\d\s-]+/, '').trimStart();
     updateBasics('phone', local ? `${country.dialCode} ${local}` : country.dialCode);
   };
-
-  const inputCls =
-    'w-full px-4 py-2 text-sm border border-border-input bg-bg-input text-text rounded-full focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all';
 
   return (
     <div className="space-y-4">
@@ -69,37 +70,35 @@ export function BasicsForm() {
           <label className="text-text-secondary ml-1 block text-xs font-medium">
             {t('basics.phone')}
           </label>
-          <div className="group flex transition-all">
-            <CountryPickerPopover onSelect={handlePhoneCountrySelect} showDialCode>
-              <button
-                type="button"
-                className="border-border-input bg-bg-secondary hover:bg-bg-hover group-focus-within:border-accent flex shrink-0 cursor-pointer items-center gap-1.5 rounded-l-full border border-r-0 px-3 py-1.5 text-sm transition-colors"
-              >
-                {phoneCountry ? (
-                  <img
-                    src={flagUrl(phoneCountry.code)}
-                    alt=""
-                    width={20}
-                    height={15}
-                    className="shrink-0 rounded-[3px] shadow-sm"
-                  />
-                ) : (
-                  <span className="text-xs">🌐</span>
-                )}
-                <span className="text-text-muted text-xs font-bold">
-                  {phoneCountry?.dialCode || '+'}
-                </span>
-                <ChevronDown />
-              </button>
-            </CountryPickerPopover>
-            <input
-              type="tel"
-              value={basics.phone || ''}
-              onChange={(e) => updateBasics('phone', e.target.value)}
-              placeholder={t('ph.phone')}
-              className={`border-border-input bg-bg-input text-text focus:ring-accent focus:border-accent min-w-0 flex-1 rounded-r-full border px-4 py-1.5 text-sm transition-all focus:ring-1 focus:outline-none`}
-            />
-          </div>
+          <PhoneInput
+            value={basics.phone || ''}
+            onChange={(v) => updateBasics('phone', v)}
+            placeholder={t('ph.phone')}
+            countryControl={
+              <CountryPickerPopover onSelect={handlePhoneCountrySelect} showDialCode>
+                <Button
+                  variant="outline"
+                  className="bg-bg-secondary group-focus-within:border-accent flex shrink-0 cursor-pointer items-center gap-1.5 rounded-r-none border-r-0 px-3 text-sm"
+                  rightIcon={<ChevronDownIcon className="text-text-muted" />}
+                >
+                  {phoneCountry ? (
+                    <img
+                      src={flagUrl(phoneCountry.code)}
+                      alt=""
+                      width={20}
+                      height={15}
+                      className="shrink-0 rounded-[3px]"
+                    />
+                  ) : (
+                    <span className="text-xs">🌐</span>
+                  )}
+                  <span className="text-text-muted text-xs font-bold">
+                    {phoneCountry?.dialCode || '+'}
+                  </span>
+                </Button>
+              </CountryPickerPopover>
+            }
+          />
         </div>
       </div>
       <div className="grid grid-cols-2 gap-3">
@@ -158,9 +157,10 @@ export function BasicsForm() {
             {t('basics.countryCode')}
           </label>
           <CountryPickerPopover onSelect={(c) => updateBasicsLocation('countryCode', c.code)}>
-            <button
-              type="button"
-              className={`${inputCls} hover:bg-bg-hover flex cursor-pointer items-center gap-3 text-left`}
+            <Button
+              variant="outline"
+              fullWidth
+              className="flex items-center justify-start gap-3 text-left"
             >
               {selectedCountry ? (
                 <>
@@ -169,17 +169,17 @@ export function BasicsForm() {
                     alt=""
                     width={20}
                     height={15}
-                    className="shrink-0 rounded-[3px] shadow-sm"
+                    className="shrink-0 rounded-[3px]"
                   />
                   <span className="flex-1 truncate font-medium">{selectedCountry.name}</span>
-                  <span className="text-text-muted bg-bg-secondary rounded-full px-2 py-0.5 text-[10px] font-bold">
+                  <Badge variant="default" className="px-2 py-0.5">
                     {selectedCountry.code}
-                  </span>
+                  </Badge>
                 </>
               ) : (
                 <span className="text-text-muted">{t('ph.countryCode')}</span>
               )}
-            </button>
+            </Button>
           </CountryPickerPopover>
         </div>
         <FormField
@@ -228,21 +228,5 @@ export function BasicsForm() {
         />
       </div>
     </div>
-  );
-}
-
-function ChevronDown() {
-  return (
-    <svg
-      width="10"
-      height="10"
-      viewBox="0 0 12 12"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      className="text-text-muted"
-    >
-      <path d="M3 4.5L6 7.5L9 4.5" />
-    </svg>
   );
 }

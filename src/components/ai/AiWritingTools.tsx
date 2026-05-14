@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
-import { useAiStore } from '../../store/aiStore';
-import { getProvider } from '../../lib/ai';
+import { useAiStore } from '@/store/aiStore';
+import { getProvider } from '@/lib/ai';
 import {
   MagicStar,
   Edit,
@@ -11,8 +11,10 @@ import {
   CloseCircle,
 } from 'iconsax-react';
 import { useGoToAi } from '../editor/EditorContext';
-import { useResumeStore, activeSlot } from '../../store/resumeStore';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
 import { InlineDiffView, ListDiffView, computeListDiff } from './DiffView';
+import { Button } from '@/components/ui/Button';
+import { cn } from '@/utils/cn';
 
 type Tool = {
   id: string;
@@ -238,23 +240,29 @@ export function AiWritingTools(props: Props) {
     const clickable = !hasKey;
     triggerButton = (
       <div className="group absolute top-1 right-1 z-10 p-1">
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           type="button"
           onClick={clickable ? goToAi : undefined}
           disabled={!clickable}
-          className={`bg-bg-secondary text-text-faint flex h-7 w-7 items-center justify-center rounded-full border opacity-40 transition-all ${clickable ? 'cursor-pointer hover:opacity-70' : 'cursor-not-allowed'}`}
+          className={cn(
+            'bg-bg-secondary text-text-faint h-7 w-7 border opacity-40',
+            clickable ? 'hover:opacity-70' : '',
+          )}
         >
           <MagicStar size={12} variant="Bold" color="currentColor" />
-        </button>
-        <div className="bg-bg-tertiary absolute top-full right-0 z-50 mt-1 hidden rounded-full border px-3 py-1.5 whitespace-nowrap shadow-xl group-hover:block">
+        </Button>
+        <div className="bg-bg-tertiary absolute top-full right-0 z-50 mt-1 hidden rounded-full border px-3 py-1.5 whitespace-nowrap group-hover:block">
           {clickable ? (
-            <button
+            <Button
+              variant="ghost"
               type="button"
               onClick={goToAi}
-              className="text-accent cursor-pointer text-[10px] font-bold tracking-wider uppercase"
+              className="text-accent px-0 py-0 text-[10px] font-bold tracking-wider uppercase hover:bg-transparent hover:underline"
             >
               {disabledReason} &rarr;
-            </button>
+            </Button>
           ) : (
             <span className="text-text-muted text-[10px] font-bold tracking-wider uppercase">
               {disabledReason}
@@ -266,30 +274,34 @@ export function AiWritingTools(props: Props) {
   } else if (isProcessing) {
     triggerButton = (
       <div className="absolute top-1 right-1 z-10 p-1">
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           type="button"
           disabled
-          className="bg-accent/10 border-accent/20 text-accent flex h-7 w-7 animate-pulse cursor-wait items-center justify-center rounded-full border"
+          className="bg-accent/10 border-accent/20 text-accent flex h-7 w-7 animate-pulse items-center justify-center rounded-full border"
         >
           <MagicStar size={12} variant="Bold" color="currentColor" />
-        </button>
+        </Button>
       </div>
     );
   } else if (!isReview) {
     triggerButton = (
       <div className="absolute top-1 right-1 z-10 p-1">
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           type="button"
           onClick={() => setOpen(!open)}
-          className="bg-bg-secondary text-text-muted hover:text-accent hover:bg-bg-hover flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border shadow-sm transition-all"
+          className="bg-bg-secondary text-text-muted hover:text-accent hover:bg-bg-hover h-7 w-7"
           title="AI writing tools"
         >
           <MagicStar size={12} variant="Bold" color="currentColor" />
-        </button>
+        </Button>
         {open && (
           <>
             <div className="fixed inset-0 z-40 bg-black/5" onClick={() => setOpen(false)} />
-            <div className="bg-bg absolute top-9 right-0 z-50 w-56 space-y-3 rounded-2xl border p-3 shadow-2xl">
+            <div className="bg-bg absolute top-9 right-0 z-50 w-56 space-y-3 rounded-2xl border p-3">
               <h3 className="text-text-muted px-2 text-center text-[10px] font-bold tracking-widest uppercase">
                 AI Writing Tools
               </h3>
@@ -297,32 +309,32 @@ export function AiWritingTools(props: Props) {
                 {tools.map((tool) => {
                   const Icon = tool.icon;
                   return (
-                    <button
+                    <Button
                       key={tool.id}
+                      variant="secondary"
                       type="button"
                       onClick={() => run(tool.prompt)}
-                      className="text-text-secondary bg-bg-secondary/50 hover:bg-bg-hover hover:text-accent border-border/40 flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border px-2 py-3 transition-all"
+                      className="hover:text-accent border-border/40 h-auto flex-col gap-1.5 rounded-xl border px-2 py-3"
                     >
                       <Icon size={20} variant="Bold" color="currentColor" />
                       <span className="text-center text-[10px] leading-tight font-bold">
                         {tool.label.toUpperCase()}
                       </span>
-                    </button>
+                    </Button>
                   );
                 })}
-                <button
+                <Button
+                  variant="accent-ghost"
                   type="button"
                   onClick={() => {
                     setOpen(false);
                     goToAi();
                   }}
-                  className="text-accent bg-accent/5 hover:bg-accent/10 border-accent/20 col-span-full flex cursor-pointer items-center justify-center gap-2 rounded-full border px-3 py-2.5 transition-all"
+                  leftIcon={<MessageSquare size={14} variant="Bold" color="currentColor" />}
+                  className="border-accent/20 col-span-full gap-2 border px-3 py-2.5 text-[10px] font-bold tracking-widest uppercase"
                 >
-                  <MessageSquare size={14} variant="Bold" color="currentColor" />
-                  <span className="text-center text-[10px] font-bold tracking-widest uppercase">
-                    Open AI Chat
-                  </span>
-                </button>
+                  Open AI Chat
+                </Button>
               </div>
             </div>
           </>
@@ -362,22 +374,23 @@ export function AiWritingTools(props: Props) {
       {/* Accept/reject below the field, in normal flow */}
       {isReview && (
         <div className="mt-2 flex justify-end gap-2">
-          <button
-            type="button"
+          <Button
+            variant="secondary"
+            size="xs"
             onClick={reject}
-            className="text-text-muted hover:text-danger border-border/50 hover:bg-danger/5 flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-bold tracking-wide uppercase transition-all"
+            leftIcon={<CloseCircle size={14} variant="Bold" color="currentColor" />}
+            className="hover:text-danger hover:bg-danger/5 px-3"
           >
-            <CloseCircle size={14} variant="Bold" color="currentColor" />
             Reject
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            size="xs"
             onClick={accept}
-            className="text-accent border-accent/20 bg-accent/5 flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-bold tracking-wide uppercase transition-all hover:opacity-80"
+            leftIcon={<MagicStar size={14} variant="Bold" color="currentColor" />}
+            className="px-3"
           >
-            <MagicStar size={14} variant="Bold" color="currentColor" />
             Accept
-          </button>
+          </Button>
         </div>
       )}
     </div>

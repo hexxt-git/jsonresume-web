@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { themes, getThemeById } from '../themes';
-import { sampleResume } from '../utils/sample';
+import { themes, getThemeById } from '@/themes';
+import { sampleResume } from '@/utils/sample';
 import { fullSchemaResume } from './fullSchemaResume';
-import type { ResumeSchema } from '../types/resume';
+import type { ResumeSchema } from '@/types/resume';
 
 describe('themes', () => {
   it('has exactly 10 themes', () => {

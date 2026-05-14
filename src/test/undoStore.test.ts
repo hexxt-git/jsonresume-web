@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useUndoStore, type SlotSnapshot } from '../store/undoStore';
-import { defaultCustomization } from '../store/themeCustomStore';
+import { useUndoStore, type SlotSnapshot } from '@/store/undoStore';
+import { defaultCustomization } from '@/store/themeCustomStore';
 
 function snap(name: string): SlotSnapshot {
   return {

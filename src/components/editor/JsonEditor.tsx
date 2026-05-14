@@ -1,9 +1,9 @@
 import { useState, useCallback, useRef } from 'react';
 import Editor, { type OnMount, type BeforeMount } from '@monaco-editor/react';
-import { useResumeStore, activeSlot } from '../../store/resumeStore';
-import { useSettingsStore } from '../../store/settingsStore';
-import { useT } from '../../i18n';
-import resumeSchema from '../../utils/resumeSchema.json';
+import { useResumeStore, activeSlot } from '@/store/resumeStore';
+import { useSettingsStore } from '@/store/settingsStore';
+import { useT } from '@/i18n';
+import resumeSchema from '@/utils/resumeSchema.json';
 import { saveAs } from 'file-saver';
 
 export default function JsonEditor() {

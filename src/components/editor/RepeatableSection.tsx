@@ -1,6 +1,6 @@
 import { type ReactNode, useMemo } from 'react';
-import { useT } from '../../i18n';
-import { AiEntryProvider } from '../ai/AiContext';
+import { useT } from '@/i18n';
+import { AiEntryProvider } from '@/components/ai/AiContext';
 import { Eye, EyeSlash, Trash } from 'iconsax-react';
 import {
   DndContext,
@@ -18,6 +18,10 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+import { cn } from '@/utils/cn';
+import { DragHandleIcon } from '@/assets/Icons';
 
 interface RepeatableSectionProps<T> {
   title: string;
@@ -87,22 +91,16 @@ export function RepeatableSection<T>({
         <h3 className="text-text flex items-center gap-2 text-sm font-bold tracking-widest uppercase">
           {title}
         </h3>
-        <button
-          onClick={add}
-          className="bg-accent cursor-pointer rounded-full px-4 py-1.5 text-[10px] font-black tracking-widest text-white uppercase shadow-md transition-all hover:opacity-90"
-        >
+        <Button onClick={add} size="xs">
           {t('repeatable.add')}
-        </button>
+        </Button>
       </div>
       {items.length === 0 && (
-        <button
-          onClick={add}
-          className="bg-bg-secondary/20 border-border/50 hover:bg-bg-secondary/40 group w-full cursor-pointer rounded-3xl border border-dashed py-8 text-center transition-all"
-        >
+        <Button variant="dashed" onClick={add} className="group w-full py-8 text-center">
           <p className="text-text-muted group-hover:text-accent text-xs italic">
             {t('repeatable.empty')}
           </p>
-        </button>
+        </Button>
       )}
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={ids} strategy={verticalListSortingStrategy}>
@@ -162,54 +160,52 @@ function SortableCard({
     <div
       ref={setNodeRef}
       style={style}
-      className="border-border/60 bg-bg group/card rounded-3xl border shadow-sm transition-all hover:shadow-md"
+      className="border-border/60 bg-bg group/card rounded-3xl border transition-all"
     >
       <div className={`flex items-center justify-between p-4 pb-2 ${!isVisible ? 'p-4!' : ''}`}>
         <div className="flex min-w-0 items-center gap-3">
-          <button
+          <Button
             {...attributes}
             {...listeners}
-            className="bg-bg-secondary text-text-muted hover:text-accent hover:bg-accent/5 flex h-8 w-8 shrink-0 cursor-grab touch-none items-center justify-center rounded-full transition-all active:cursor-grabbing"
+            variant="secondary"
+            size="icon"
+            leftIcon={<DragHandleIcon />}
+            className="hover:text-accent hover:bg-accent/5 cursor-grab touch-none active:cursor-grabbing"
             title="Drag to reorder"
-          >
-            <svg width="14" height="14" viewBox="0 0 12 12" fill="currentColor">
-              <circle cx="4" cy="2" r="1.2" />
-              <circle cx="8" cy="2" r="1.2" />
-              <circle cx="4" cy="6" r="1.2" />
-              <circle cx="8" cy="6" r="1.2" />
-              <circle cx="4" cy="10" r="1.2" />
-              <circle cx="8" cy="10" r="1.2" />
-            </svg>
-          </button>
-          <span
-            className={`text-text-muted bg-bg-secondary inline-flex h-8 max-w-xs items-center truncate rounded-full px-3 py-1 text-[10px] font-black tracking-widest uppercase ${
-              !isVisible ? 'decoration-text-muted/50 line-through' : ''
-            }`}
+          />
+          <Badge
+            variant="default"
+            className={cn(
+              'h-8 max-w-xs truncate px-3',
+              !isVisible && 'decoration-text-muted/50 line-through',
+            )}
           >
             {label}
-          </span>
+          </Badge>
         </div>
         <div className="flex shrink-0 items-center gap-1">
-          <button
+          <Button
+            variant="secondary"
+            size="icon"
             onClick={onToggleVisibility}
-            className={`bg-bg-secondary flex h-8 w-8 cursor-pointer items-center justify-center rounded-full transition-all ${
-              isVisible ? 'text-text-muted hover:text-accent hover:bg-accent/5' : 'text-accent'
-            }`}
+            className={cn(!isVisible ? 'text-accent' : 'hover:text-accent hover:bg-accent/5')}
             title={isVisible ? 'Collapse & Disable' : 'Expand & Enable'}
-          >
-            {isVisible ? (
-              <Eye size={16} variant="Bold" color="currentColor" />
-            ) : (
-              <EyeSlash size={16} variant="Bold" color="currentColor" />
-            )}
-          </button>
-          <button
+            leftIcon={
+              isVisible ? (
+                <Eye size={16} variant="Bold" color="currentColor" />
+              ) : (
+                <EyeSlash size={16} variant="Bold" color="currentColor" />
+              )
+            }
+          />
+          <Button
+            variant="secondary"
+            size="icon"
             onClick={onRemove}
-            className="bg-bg-secondary text-text-muted hover:text-danger hover:bg-danger/5 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full transition-all"
+            className="hover:text-danger hover:bg-danger/5"
             title="Remove entry"
-          >
-            <Trash size={16} variant="Bold" color="currentColor" />
-          </button>
+            leftIcon={<Trash size={16} variant="Bold" color="currentColor" />}
+          />
         </div>
       </div>
       <div className={`relative p-4 pt-2 ${!isVisible ? 'hidden' : 'block'}`}>{children}</div>

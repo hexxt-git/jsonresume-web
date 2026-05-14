@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { splitJds, extractMeta, timeAgo, stringify } from '../components/automation/shared/helpers';
+import { splitJds, extractMeta, timeAgo, stringify } from '@/components/automation/shared/helpers';
 
 /* ── splitJds ───────────────────────────────────────────── */
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { textToResume } from '../parser/textToResume';
+import { textToResume } from '@/parser/textToResume';
 
 describe('textToResume (DOCX/text fallback parser)', () => {
   it('extracts name from first line', () => {

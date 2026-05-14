@@ -1,4 +1,6 @@
 import type { BatchJob } from './types';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
 
 interface Props {
   jobs: BatchJob[];
@@ -19,12 +21,14 @@ export function BatchProcessing({ jobs, doneCount, failCount, onStop }: Props) {
           <span className="text-text-muted text-[10px] font-bold tracking-widest uppercase">
             Processing {current} of {total} variants
           </span>
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={onStop}
-            className="text-danger hover:bg-danger/5 border-danger/20 cursor-pointer rounded-full border px-3 py-1 text-[10px] font-bold tracking-wider uppercase transition-all"
+            className="text-danger hover:bg-danger/5 h-6 rounded-full px-3 text-[10px]"
           >
             Stop
-          </button>
+          </Button>
         </div>
         <div className="bg-bg border-border/50 h-3 overflow-hidden rounded-full border p-0.5 shadow-inner">
           <div
@@ -37,7 +41,7 @@ export function BatchProcessing({ jobs, doneCount, failCount, onStop }: Props) {
         {jobs.map((job) => (
           <div
             key={job.id}
-            className={`flex items-center gap-4 rounded-2xl border px-5 py-4 shadow-sm transition-all ${
+            className={`flex items-center gap-4 rounded-2xl border px-5 py-4 transition-all ${
               job.status === 'processing'
                 ? 'bg-bg border-accent/30 ring-accent/5 ring-4'
                 : 'bg-bg/50 border-border/40'
@@ -60,19 +64,19 @@ export function BatchProcessing({ jobs, doneCount, failCount, onStop }: Props) {
             </span>
             <div className="flex items-center gap-3">
               {job.status === 'processing' && (
-                <span className="text-accent animate-pulse text-[10px] font-black tracking-tighter uppercase">
+                <Badge variant="accent" className="animate-pulse px-2 py-0.5 font-black">
                   WORKING...
-                </span>
+                </Badge>
               )}
               {job.status === 'done' && (
-                <span className="text-diff-add text-[10px] font-black tracking-tighter uppercase">
+                <Badge variant="accent" className="px-2 py-0.5 font-black">
                   DONE
-                </span>
+                </Badge>
               )}
               {job.status === 'failed' && (
-                <span className="text-diff-rm text-[10px] font-black tracking-tighter uppercase">
+                <Badge variant="danger" className="px-2 py-0.5 font-black">
                   FAILED
-                </span>
+                </Badge>
               )}
             </div>
           </div>
