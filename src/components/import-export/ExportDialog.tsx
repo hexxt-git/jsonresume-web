@@ -79,21 +79,21 @@ export function ExportDialog({ open, onClose }: ExportDialogProps) {
   return (
     <>
       <div className="fixed inset-0 z-40 bg-black/5" onClick={onClose} />
-      <div className="absolute right-0 top-full mt-2 z-50 w-64 bg-bg border border-border rounded-2xl shadow-2xl overflow-hidden p-2 space-y-1">
+      <div className="bg-bg absolute top-full right-0 z-50 mt-2 w-64 space-y-1 overflow-hidden rounded-2xl border p-2 shadow-2xl">
         {options.map((opt) => (
           <button
             key={opt.ext}
             onClick={opt.action}
-            className="w-full flex items-center gap-4 px-3 py-3 text-left hover:bg-bg-hover rounded-xl transition-all cursor-pointer group"
+            className="hover:bg-bg-hover group flex w-full cursor-pointer items-center gap-4 rounded-xl px-3 py-3 text-left transition-all"
           >
-            <span className="w-10 h-10 rounded-full bg-bg-secondary flex items-center justify-center text-[10px] font-bold text-text-tertiary shrink-0 group-hover:bg-accent group-hover:text-white transition-all shadow-sm">
+            <span className="bg-bg-secondary text-text-tertiary group-hover:bg-accent flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[10px] font-bold shadow-sm transition-all group-hover:text-white">
               {EXT_ICONS[opt.ext]}
             </span>
             <div className="min-w-0">
-              <div className="text-sm font-bold text-text group-hover:text-accent transition-colors">
+              <div className="text-text group-hover:text-accent text-sm font-bold transition-colors">
                 {opt.label}
               </div>
-              <div className="text-[10px] font-medium text-text-muted truncate mt-0.5">
+              <div className="text-text-muted mt-0.5 truncate text-[10px] font-medium">
                 {opt.sub}
               </div>
             </div>

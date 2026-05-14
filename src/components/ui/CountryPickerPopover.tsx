@@ -45,25 +45,24 @@ export function CountryPickerPopover({ children, onSelect, showDialCode }: Props
       <Popover.Trigger asChild>{children}</Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
-          className="z-50 w-[320px] rounded-2xl border border-border bg-bg shadow-2xl overflow-hidden"
+          className="bg-bg z-50 w-[320px] overflow-hidden rounded-2xl border shadow-2xl"
           sideOffset={8}
           align="start"
         >
-          <div className="p-3 border-b border-border bg-bg-secondary/30">
+          <div className="border-border bg-bg-secondary/30 border-b p-3">
             <input
               ref={inputRef}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t('ui.searchCountries')}
-              className="w-full px-3 py-1.5 text-sm bg-bg-input border border-border-input rounded-full text-text
-                focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
+              className="bg-bg-input border-border-input text-text focus:ring-accent focus:border-accent w-full rounded-full border px-3 py-1.5 text-sm focus:ring-1 focus:outline-none"
             />
           </div>
           <div className="max-h-[280px] overflow-y-auto p-2">
             {loading ? (
-              <div className="px-3 py-6 text-xs text-text-muted text-center">{t('ui.loading')}</div>
+              <div className="text-text-muted px-3 py-6 text-center text-xs">{t('ui.loading')}</div>
             ) : filtered.length === 0 ? (
-              <div className="px-3 py-6 text-xs text-text-muted text-center">
+              <div className="text-text-muted px-3 py-6 text-center text-xs">
                 {t('ui.noResults')}
               </div>
             ) : (
@@ -76,8 +75,7 @@ export function CountryPickerPopover({ children, onSelect, showDialCode }: Props
                     setOpen(false);
                     setSearch('');
                   }}
-                  className="w-full flex items-center gap-3 px-3 py-2 text-xs rounded-xl
-                    hover:bg-bg-hover text-text-secondary text-left cursor-pointer transition-colors"
+                  className="hover:bg-bg-hover text-text-secondary flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-left text-xs transition-colors"
                 >
                   <img
                     src={flagUrl(c.code)}
@@ -88,7 +86,7 @@ export function CountryPickerPopover({ children, onSelect, showDialCode }: Props
                     loading="lazy"
                   />
                   <span className="flex-1 truncate font-medium">{c.name}</span>
-                  <span className="text-text-muted shrink-0 text-[10px] bg-bg-secondary px-1.5 py-0.5 rounded-full">
+                  <span className="text-text-muted bg-bg-secondary shrink-0 rounded-full px-1.5 py-0.5 text-[10px]">
                     {showDialCode ? c.dialCode : c.code}
                   </span>
                 </button>

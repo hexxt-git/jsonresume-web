@@ -34,12 +34,12 @@ export function UrlField({ label, value, onChange, placeholder }: UrlFieldProps)
 
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-xs font-medium text-text-secondary ml-1">
+      <label htmlFor={id} className="text-text-secondary ml-1 block text-xs font-medium">
         {label}
       </label>
-      <div className="flex group transition-all">
+      <div className="group flex transition-all">
         {value || display ? (
-          <span className="flex items-center px-4 py-2 text-xs text-text-muted border border-border-input border-r-0 bg-bg-secondary rounded-l-full select-none shrink-0 transition-colors group-focus-within:border-accent">
+          <span className="text-text-muted border-border-input bg-bg-secondary group-focus-within:border-accent flex shrink-0 items-center rounded-l-full border border-r-0 px-4 py-2 text-xs transition-colors select-none">
             https://
           </span>
         ) : null}
@@ -50,9 +50,7 @@ export function UrlField({ label, value, onChange, placeholder }: UrlFieldProps)
           onChange={(e) => handleChange(e.target.value)}
           onBlur={handleBlur}
           placeholder={placeholder?.replace(/^https?:\/\//i, '') || 'example.com'}
-          className={`flex-1 min-w-0 px-4 py-2 text-sm border border-border-input bg-bg-input text-text
-            focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all
-            ${value || display ? 'rounded-r-full' : 'rounded-full'}`}
+          className={`border-border-input bg-bg-input text-text focus:ring-accent focus:border-accent min-w-0 flex-1 border px-4 py-2 text-sm transition-all focus:ring-1 focus:outline-none ${value || display ? 'rounded-r-full' : 'rounded-full'}`}
         />
       </div>
     </div>

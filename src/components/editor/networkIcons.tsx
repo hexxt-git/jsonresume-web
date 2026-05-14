@@ -245,8 +245,7 @@ export function NetworkPickerButton({
       <Popover.Trigger asChild>
         <button
           type="button"
-          className="h-[34px] shrink-0 flex items-center justify-center gap-2 px-3 border border-border-input bg-bg-input rounded-full
-            hover:bg-bg-hover cursor-pointer transition-colors"
+          className="border-border-input bg-bg-input hover:bg-bg-hover flex h-[34px] shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full border px-3 transition-colors"
           title={value || t('basics.network')}
         >
           {value && ICONS[value] ? (
@@ -265,16 +264,16 @@ export function NetworkPickerButton({
               <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
             </svg>
           )}
-          {value && <span className="text-xs text-text-muted">{value}</span>}
+          {value && <span className="text-text-muted text-xs">{value}</span>}
         </button>
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
-          className="z-50 w-[280px] rounded-lg border border-border bg-bg shadow-lg"
+          className="border-border bg-bg z-50 w-[280px] rounded-lg border shadow-lg"
           sideOffset={4}
           align="start"
         >
-          <div className="p-2 border-b border-border">
+          <div className="border-b p-2">
             <input
               ref={inputRef}
               value={filter}
@@ -286,8 +285,7 @@ export function NetworkPickerButton({
                 }
               }}
               placeholder={t('combo.search')}
-              className="w-full px-2 py-1 text-xs bg-bg-input border border-border-input rounded-full text-text
-                focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
+              className="bg-bg-input border-border-input text-text focus:ring-accent focus:border-accent w-full rounded-full border px-2 py-1 text-xs focus:ring-1 focus:outline-none"
             />
           </div>
           <div className="max-h-[240px] overflow-y-auto p-1">
@@ -300,8 +298,7 @@ export function NetworkPickerButton({
                     onChange(name);
                     setOpen(false);
                   }}
-                  className={`flex items-center gap-2 px-2 py-1.5 text-xs rounded-full text-left cursor-pointer truncate
-                    ${value === name ? 'bg-bg-accent text-accent-text font-medium' : 'hover:bg-bg-hover text-text-secondary'}`}
+                  className={`flex cursor-pointer items-center gap-2 truncate rounded-full px-2 py-1.5 text-left text-xs ${value === name ? 'bg-bg-accent text-accent-text font-medium' : 'hover:bg-bg-hover text-text-secondary'}`}
                 >
                   <NetworkIcon name={name} size={14} />
                   <span className="truncate">{name}</span>
@@ -317,7 +314,7 @@ export function NetworkPickerButton({
                   onChange(filter.trim());
                   setOpen(false);
                 }}
-                className="w-full text-xs text-accent hover:underline cursor-pointer py-1"
+                className="text-accent w-full cursor-pointer py-1 text-xs hover:underline"
               >
                 {t('combo.use')} &ldquo;{filter.trim()}&rdquo;
               </button>

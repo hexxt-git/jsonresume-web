@@ -43,7 +43,7 @@
   --text-muted: #6e6e77;
   --text-faint: #3b3b40;
   --border: #2a2a2f;
-  --border-input: #393944;
+  --border-input: #36363c;
   --accent: #1f70fc;
   --accent-text: #60a5ff;
   --danger: #f98080;
@@ -74,6 +74,15 @@
   --color-accent: var(--accent);
   --color-accent-text: var(--accent-text);
   --color-danger: var(--danger);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-bg text-text;
+  }
 }
 
 /* Hide scrollbar on tab bars */

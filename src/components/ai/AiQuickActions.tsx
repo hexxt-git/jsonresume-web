@@ -29,13 +29,13 @@ const actions = [
 export function AiQuickActions({ onAction, disabled }: Props) {
   const t = useT();
   return (
-    <div className="flex gap-2 px-4 py-2 overflow-x-auto border-t border-border shrink-0">
+    <div className="flex shrink-0 gap-2 overflow-x-auto border-t px-4 py-2">
       {actions.map((a) => (
         <button
           key={a.key}
           onClick={() => onAction(a.prompt)}
           disabled={disabled}
-          className="shrink-0 px-3 py-1 text-xs rounded-full border border-border text-text-secondary hover:bg-bg-hover transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="text-text-secondary hover:bg-bg-hover shrink-0 cursor-pointer rounded-full border px-3 py-1 text-xs transition-colors disabled:cursor-not-allowed disabled:opacity-50"
         >
           {t(a.key)}
         </button>

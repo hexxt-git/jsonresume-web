@@ -93,7 +93,7 @@ Keep analysis sentences under 15 words. Keep suggestions under 20 words.`;
 /* ── Fallback ───────────────────────────────────────────── */
 
 const Fallback = (
-  <div className="h-full flex items-center justify-center text-xs text-text-tertiary">
+  <div className="text-text-tertiary flex h-full items-center justify-center text-xs">
     Loading...
   </div>
 );
@@ -117,8 +117,8 @@ export default function AutomationHub() {
 
   if (!activeTool) {
     return (
-      <div className="h-full flex flex-col p-3 space-y-2 bg-bg">
-        <h2 className="text-sm font-semibold text-text px-1">Automation</h2>
+      <div className="bg-bg flex h-full flex-col space-y-2 p-3">
+        <h2 className="text-text px-1 text-sm font-semibold">Automation</h2>
         <div className="grid grid-rows-2 gap-2">
           {TOOLS.map((tool) => {
             const Icon = tool.icon;
@@ -126,17 +126,17 @@ export default function AutomationHub() {
               <button
                 key={tool.id}
                 onClick={() => setActiveTool(tool.id)}
-                className="flex items-start gap-3 p-4 rounded-xl bg-bg-secondary hover:bg-bg-hover cursor-pointer transition-colors text-left"
+                className="bg-bg-secondary hover:bg-bg-hover flex cursor-pointer items-start gap-3 rounded-xl p-4 text-left transition-colors"
               >
                 <Icon
                   size={20}
                   variant="Bold"
                   color="currentColor"
-                  className="text-text-muted shrink-0 mt-0.5"
+                  className="text-text-muted mt-0.5 shrink-0"
                 />
                 <div>
-                  <div className="text-sm font-medium text-text">{tool.title}</div>
-                  <div className="text-xs text-text-muted mt-0.5 max-w-80">{tool.desc}</div>
+                  <div className="text-text text-sm font-medium">{tool.title}</div>
+                  <div className="text-text-muted mt-0.5 max-w-80 text-xs">{tool.desc}</div>
                 </div>
               </button>
             );
@@ -216,14 +216,14 @@ export default function AutomationHub() {
   /* ── Single pipeline render ───────────────────────────── */
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="px-4 pt-3 pb-2 border-b border-border shrink-0">
+      <div className="border-border shrink-0 border-b px-4 pt-3 pb-2">
         <div className="flex items-center justify-between">
           <Stepper steps={STEP_LABELS} currentIndex={stepIndex} onStepClick={handleStepClick} />
           <button
             onClick={handleBack}
-            className="text-[10px] text-text-muted hover:text-text-secondary cursor-pointer shrink-0 ml-3"
+            className="text-text-muted hover:text-text-secondary ml-3 shrink-0 cursor-pointer text-[10px]"
           >
             {step === 'jd' ? 'Back' : 'Start over'}
           </button>
@@ -234,13 +234,13 @@ export default function AutomationHub() {
       <div className="flex-1 overflow-y-auto p-4">
         <div className="space-y-4">
           {error && (
-            <div className="text-xs text-danger bg-danger/10 rounded-2xl px-3 py-2">{error}</div>
+            <div className="text-danger bg-danger/10 rounded-2xl px-3 py-2 text-xs">{error}</div>
           )}
 
           {/* Step 1: Job Description */}
           {step === 'jd' && (
             <div className="space-y-3">
-              <p className="text-xs text-text-secondary">
+              <p className="text-text-secondary text-xs">
                 Paste a job description to analyze your match, tailor your resume, and generate
                 application materials.
               </p>
@@ -252,18 +252,18 @@ export default function AutomationHub() {
           {step === 'analyze' &&
             (analysis ? (
               <>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[10px] font-medium text-text-muted uppercase tracking-wide">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-text-muted text-[10px] font-medium tracking-wide uppercase">
                     Strictness
                   </span>
                   {(['lenient', 'standard', 'strict'] as AuditStrictness[]).map((s) => (
                     <button
                       key={s}
                       onClick={() => setAuditStrictness(s)}
-                      className={`text-[10px] px-2.5 py-1 rounded-full cursor-pointer transition-colors ${
+                      className={`cursor-pointer rounded-full px-2.5 py-1 text-[10px] transition-colors ${
                         auditStrictness === s
                           ? 'bg-accent text-white'
-                          : 'border border-border text-text-muted hover:text-text-secondary'
+                          : 'text-text-muted hover:text-text-secondary border'
                       }`}
                     >
                       {s.charAt(0).toUpperCase() + s.slice(1)}
@@ -272,7 +272,7 @@ export default function AutomationHub() {
                   <button
                     onClick={handleAnalyze}
                     disabled={isRunning}
-                    className="text-[10px] text-accent hover:underline cursor-pointer ml-auto disabled:opacity-50"
+                    className="text-accent ml-auto cursor-pointer text-[10px] hover:underline disabled:opacity-50"
                   >
                     Re-analyze
                   </button>
@@ -280,15 +280,15 @@ export default function AutomationHub() {
                 <AnalyzeView analysis={analysis} onEditJd={() => setStep('jd')} />
               </>
             ) : (
-              <div className="text-center py-8">
-                <div className="inline-block w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin mb-2" />
-                <p className="text-xs text-text-muted">Analyzing match & ATS compatibility...</p>
+              <div className="py-8 text-center">
+                <div className="border-accent mb-2 inline-block h-5 w-5 animate-spin rounded-full border-2 border-t-transparent" />
+                <p className="text-text-muted text-xs">Analyzing match & ATS compatibility...</p>
                 <button
                   onClick={() => {
                     abort();
                     setStep('jd');
                   }}
-                  className="text-[10px] text-text-muted hover:text-danger cursor-pointer mt-1 font-bold uppercase tracking-widest"
+                  className="text-text-muted hover:text-danger mt-1 cursor-pointer text-[10px] font-bold tracking-widest uppercase"
                 >
                   Cancel
                 </button>
@@ -312,12 +312,12 @@ export default function AutomationHub() {
       </div>
 
       {/* Footer */}
-      <div className="shrink-0 px-6 py-4 border-t border-border bg-bg-secondary/10">
+      <div className="border-border bg-bg-secondary/10 shrink-0 border-t px-6 py-4">
         {step === 'jd' && (
           <button
             onClick={handleAnalyze}
             disabled={!jd.trim() || isRunning}
-            className="w-full text-xs py-3.5 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed font-bold shadow-md transition-all uppercase tracking-widest"
+            className="bg-accent w-full cursor-pointer rounded-full py-3.5 text-xs font-bold tracking-widest text-white uppercase shadow-md transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30"
           >
             {isRunning ? 'Analyzing...' : 'Analyze Match'}
           </button>
@@ -327,13 +327,13 @@ export default function AutomationHub() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setStep('write')}
-              className="text-[10px] font-bold text-text-muted hover:text-text-secondary cursor-pointer shrink-0 uppercase tracking-widest px-4 py-2 rounded-full border border-border"
+              className="text-text-muted hover:text-text-secondary border-border shrink-0 cursor-pointer rounded-full border px-4 py-2 text-[10px] font-bold tracking-widest uppercase"
             >
               Skip to write
             </button>
             <button
               onClick={() => setStep('tailor')}
-              className="flex-1 text-xs py-3.5 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer font-bold shadow-md transition-all uppercase tracking-widest"
+              className="bg-accent flex-1 cursor-pointer rounded-full py-3.5 text-xs font-bold tracking-widest text-white uppercase shadow-md transition-all hover:opacity-90"
             >
               Tailor Resume
             </button>
@@ -344,7 +344,7 @@ export default function AutomationHub() {
           <button
             onClick={() => setStep('write')}
             disabled={!tailorReady}
-            className="w-full text-xs py-3.5 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed font-bold shadow-md transition-all uppercase tracking-widest"
+            className="bg-accent w-full cursor-pointer rounded-full py-3.5 text-xs font-bold tracking-widest text-white uppercase shadow-md transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30"
           >
             Write Materials
           </button>
@@ -353,7 +353,7 @@ export default function AutomationHub() {
         {step === 'write' && (
           <button
             onClick={handleReset}
-            className="w-full text-xs py-3.5 border-2 border-border rounded-full hover:bg-bg-hover cursor-pointer text-text-secondary font-bold transition-all uppercase tracking-widest"
+            className="border-border hover:bg-bg-hover text-text-secondary w-full cursor-pointer rounded-full border-2 py-3.5 text-xs font-bold tracking-widest uppercase transition-all"
           >
             Apply to Another Job
           </button>

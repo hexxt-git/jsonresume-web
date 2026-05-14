@@ -5,11 +5,11 @@ interface Props {
 
 export function ResumePreviewThumbnail({ html, title }: Props) {
   return (
-    <div className="relative w-full h-48 overflow-hidden bg-white flex items-start justify-center">
+    <div className="relative flex h-48 w-full items-start justify-center overflow-hidden bg-white">
       <iframe
         srcDoc={html}
         title={title}
-        className="w-[794px] h-[700px] border-0 pointer-events-none shrink-0"
+        className="pointer-events-none h-[700px] w-[794px] shrink-0 border-0"
         style={{ transform: 'scale(0.42)', transformOrigin: 'top center' }}
         tabIndex={-1}
       />

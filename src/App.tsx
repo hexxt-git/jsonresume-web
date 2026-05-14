@@ -73,15 +73,15 @@ function ButtonGroup<T extends string>({
   onChange: (v: T) => void;
 }) {
   return (
-    <div className="flex rounded-full overflow-hidden border border-border p-1 bg-bg-secondary/50">
+    <div className="border-border bg-bg-secondary/50 flex overflow-hidden rounded-full border p-1">
       {options.map((o) => (
         <button
           key={o.value}
           onClick={() => onChange(o.value)}
-          className={`flex-1 flex items-center justify-center gap-1.5 text-[10px] font-medium px-3 py-1.5 rounded-full cursor-pointer transition-all ${
+          className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-medium transition-all ${
             value === o.value
               ? 'bg-accent text-white shadow-sm'
-              : 'bg-transparent text-text-tertiary hover:text-text-secondary hover:bg-bg-hover'
+              : 'text-text-tertiary hover:text-text-secondary hover:bg-bg-hover bg-transparent'
           }`}
         >
           {o.icon}
@@ -118,14 +118,14 @@ function MobileMenu({
     <div className="relative sm:hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="text-xs px-2.5 py-1.5 border border-border rounded-full hover:bg-bg-hover cursor-pointer text-text-secondary transition-colors"
+        className="border-border hover:bg-bg-hover text-text-secondary cursor-pointer rounded-full border px-2.5 py-1.5 text-xs transition-colors"
       >
         &#8943;
       </button>
       {open && (
         <>
           <div className="fixed inset-0 z-40 bg-black/5" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full mt-2 z-50 w-56 bg-bg border border-border rounded-2xl shadow-2xl p-3 space-y-3">
+          <div className="bg-bg absolute top-full right-0 z-50 mt-2 w-56 space-y-3 rounded-2xl border p-3 shadow-2xl">
             <div className="flex gap-2">
               <button
                 onClick={() => {
@@ -133,7 +133,7 @@ function MobileMenu({
                   setOpen(false);
                 }}
                 disabled={!canUndo}
-                className="flex-1 text-xs px-2 py-2 text-text-secondary hover:bg-bg-hover rounded-xl cursor-pointer disabled:opacity-30 disabled:cursor-default transition-colors border border-border/50"
+                className="text-text-secondary hover:bg-bg-hover border-border/50 flex-1 cursor-pointer rounded-xl border px-2 py-2 text-xs transition-colors disabled:cursor-default disabled:opacity-30"
               >
                 {t('undo.undo')}
               </button>
@@ -143,23 +143,23 @@ function MobileMenu({
                   setOpen(false);
                 }}
                 disabled={!canRedo}
-                className="flex-1 text-xs px-2 py-2 text-text-secondary hover:bg-bg-hover rounded-xl cursor-pointer disabled:opacity-30 disabled:cursor-default transition-colors border border-border/50"
+                className="text-text-secondary hover:bg-bg-hover border-border/50 flex-1 cursor-pointer rounded-xl border px-2 py-2 text-xs transition-colors disabled:cursor-default disabled:opacity-30"
               >
                 {t('undo.redo')}
               </button>
             </div>
-            <div className="border-t border-border pt-3">
+            <div className="border-border border-t pt-3">
               <button
                 onClick={() => {
                   onImport();
                   setOpen(false);
                 }}
-                className="w-full text-xs px-3 py-2 text-left text-text-secondary hover:bg-bg-hover rounded-xl cursor-pointer transition-colors"
+                className="text-text-secondary hover:bg-bg-hover w-full cursor-pointer rounded-xl px-3 py-2 text-left text-xs transition-colors"
               >
                 {t('app.import')}
               </button>
             </div>
-            <div className="border-t border-border pt-3 space-y-3">
+            <div className="border-border space-y-3 border-t pt-3">
               <ButtonGroup options={colorModes} value={colorMode} onChange={setColorMode} />
               <ButtonGroup
                 options={locales.map((l) => ({ value: l.id, label: l.label }))}
@@ -167,13 +167,13 @@ function MobileMenu({
                 onChange={(v) => setLocale(v as Locale)}
               />
             </div>
-            <div className="border-t border-border pt-3">
+            <div className="border-border border-t pt-3">
               <button
                 onClick={() => {
                   reset();
                   setOpen(false);
                 }}
-                className="w-full text-xs px-3 py-2 text-left text-danger hover:bg-danger/10 rounded-xl cursor-pointer transition-colors"
+                className="text-danger hover:bg-danger/10 w-full cursor-pointer rounded-xl px-3 py-2 text-left text-xs transition-colors"
               >
                 {t('app.reset')}
               </button>
@@ -225,7 +225,7 @@ function SplitPane({
   return (
     <div
       ref={containerRef}
-      className="flex-1 flex min-h-0"
+      className="flex min-h-0 flex-1"
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
     >
@@ -233,7 +233,7 @@ function SplitPane({
       <style>{`@media(min-width:640px){.split-editor{width:${pct}% !important}}`}</style>
 
       <div
-        className={`split-editor h-full overflow-hidden shrink-0 ${
+        className={`split-editor h-full shrink-0 overflow-hidden ${
           mobileView === 'preview' ? 'hidden sm:block' : ''
         }`}
         style={{ width: '100%' }}
@@ -243,19 +243,19 @@ function SplitPane({
       {/* Drag handle — desktop only */}
       <div
         onPointerDown={onPointerDown}
-        className="hidden sm:flex w-1.5 shrink-0 cursor-col-resize items-center justify-center bg-border hover:bg-accent/30 transition-colors"
+        className="bg-border hover:bg-accent/30 hidden w-1.5 shrink-0 cursor-col-resize items-center justify-center transition-colors sm:flex"
       >
-        <div className="w-0.5 h-8 rounded-full bg-text-muted/40" />
+        <div className="bg-text-muted/40 h-8 w-0.5 rounded-full" />
       </div>
       <div
-        className={`h-full overflow-hidden flex-col flex-1 min-w-0 ${
+        className={`h-full min-w-0 flex-1 flex-col overflow-hidden ${
           mobileView === 'editor' ? 'hidden sm:flex' : 'flex'
         }`}
       >
         {/* Mobile: back to editor button */}
         <button
           onClick={() => setMobileView('editor')}
-          className="sm:hidden flex items-center gap-1 px-3 py-1.5 text-xs text-accent-text border-b border-border shrink-0 cursor-pointer hover:bg-bg-hover"
+          className="text-accent-text hover:bg-bg-hover flex shrink-0 cursor-pointer items-center gap-1 border-b px-3 py-1.5 text-xs sm:hidden"
         >
           &larr; {t('app.editor')}
         </button>
@@ -294,35 +294,29 @@ function App() {
     !resume.projects?.length;
 
   return (
-    <div className="h-screen flex flex-col bg-bg">
-      <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-bg shrink-0 gap-4">
-        <h1 className="text-sm font-bold text-text tracking-tight shrink-0">{t('app.title')}</h1>
-        <div className="flex items-center gap-2 shrink-0">
+    <div className="bg-bg flex h-screen flex-col">
+      <header className="border-border bg-bg flex shrink-0 items-center justify-between gap-4 border-b px-4 py-3">
+        <h1 className="text-text shrink-0 text-sm font-bold tracking-tight">{t('app.title')}</h1>
+        <div className="flex shrink-0 items-center gap-2">
+          <div className="ml-1 hidden items-center gap-2 sm:flex">
+            <ColorModeToggle />
+            <LocalePicker />
+          </div>
           <SlotsPicker />
           <button
             onClick={() => setImportOpen(true)}
-            className="hidden sm:inline-flex text-xs px-3 py-1.5 border border-border rounded-full hover:bg-bg-hover transition-all cursor-pointer text-text-secondary"
+            className="border-border hover:bg-bg-hover text-text-secondary hidden cursor-pointer rounded-full border px-3 py-1.5 text-xs transition-all sm:inline-flex"
           >
             {t('app.import')}
           </button>
           <div className="relative">
             <button
               onClick={() => setExportOpen(!exportOpen)}
-              className="text-xs px-4 py-1.5 bg-accent text-white rounded-full hover:opacity-90 shadow-sm transition-all cursor-pointer font-medium"
+              className="bg-accent cursor-pointer rounded-full px-4 py-1.5 text-xs font-medium text-white shadow-sm transition-all hover:opacity-90"
             >
               {t('app.export')}
             </button>
             <ExportDialog open={exportOpen} onClose={() => setExportOpen(false)} />
-          </div>
-          <div className="hidden sm:flex items-center gap-2 ml-1">
-            <ColorModeToggle />
-            <LocalePicker />
-            <button
-              onClick={reset}
-              className="text-xs px-3 py-1.5 border border-border rounded-full hover:bg-danger/10 transition-all cursor-pointer text-danger"
-            >
-              {t('app.reset')}
-            </button>
           </div>
           <MobileMenu
             reset={reset}
@@ -378,8 +372,8 @@ function EmptyState({
   };
 
   return (
-    <div className="flex-1 flex items-center justify-center p-6 bg-bg">
-      <div className="max-w-lg w-full text-center space-y-6">
+    <div className="bg-bg flex flex-1 items-center justify-center p-6">
+      <div className="w-full max-w-lg space-y-6 text-center">
         <div
           onDragOver={(e) => {
             e.preventDefault();
@@ -388,10 +382,8 @@ function EmptyState({
           onDragLeave={() => setDragging(false)}
           onDrop={handleDrop}
           onClick={() => fileRef.current?.click()}
-          className={`border-2 border-dashed rounded-3xl p-12 cursor-pointer transition-all ${
-            dragging
-              ? 'border-accent bg-bg-accent'
-              : 'border-border hover:border-accent hover:bg-bg-hover'
+          className={`cursor-pointer rounded-3xl border-2 border-dashed p-12 transition-all ${
+            dragging ? 'border-accent bg-bg-accent' : 'hover:border-accent hover:bg-bg-hover'
           }`}
         >
           <input
@@ -403,28 +395,28 @@ function EmptyState({
               if (e.target.files?.[0]) onFile(e.target.files[0]);
             }}
           />
-          <div className="text-4xl text-text-faint mb-4">+</div>
-          <div className="text-base font-medium text-text-secondary mb-2">{t('empty.drop')}</div>
-          <div className="text-xs text-text-muted">{t('empty.formats')}</div>
+          <div className="text-text-faint mb-4 text-4xl">+</div>
+          <div className="text-text-secondary mb-2 text-base font-medium">{t('empty.drop')}</div>
+          <div className="text-text-muted text-xs">{t('empty.formats')}</div>
         </div>
-        <div className="flex items-center gap-4 text-xs text-text-muted before:flex-1 before:h-px before:bg-border after:flex-1 after:h-px after:bg-border">
+        <div className="text-text-muted before:bg-border after:bg-border flex items-center gap-4 text-xs before:h-px before:flex-1 after:h-px after:flex-1">
           {t('empty.or')}
         </div>
-        <div className="flex gap-3 justify-center">
+        <div className="flex justify-center gap-3">
           <button
             onClick={onSample}
-            className="text-xs px-5 py-2 border border-border rounded-full hover:bg-bg-hover transition-all cursor-pointer text-text-secondary font-medium"
+            className="border-border hover:bg-bg-hover text-text-secondary cursor-pointer rounded-full border px-5 py-2 text-xs font-medium transition-all"
           >
             {t('empty.loadSample')}
           </button>
           <button
             onClick={onImport}
-            className="text-xs px-5 py-2 border border-border rounded-full hover:bg-bg-hover transition-all cursor-pointer text-text-secondary font-medium"
+            className="border-border hover:bg-bg-hover text-text-secondary cursor-pointer rounded-full border px-5 py-2 text-xs font-medium transition-all"
           >
             {t('empty.pasteJson')}
           </button>
         </div>
-        <p className="text-xs text-text-faint italic">{t('empty.hint')}</p>
+        <p className="text-text-faint text-xs italic">{t('empty.hint')}</p>
       </div>
     </div>
   );

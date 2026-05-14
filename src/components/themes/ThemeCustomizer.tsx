@@ -32,7 +32,7 @@ export function ThemeCustomizer() {
       <div className="flex justify-end">
         <button
           onClick={resetCustom}
-          className="text-[10px] font-bold text-danger hover:bg-danger/5 border border-danger/20 px-3 py-1.5 rounded-full transition-all cursor-pointer uppercase tracking-wider"
+          className="text-danger hover:bg-danger/5 border-danger/20 cursor-pointer rounded-full border px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-all"
         >
           {t('customize.reset')}
         </button>
@@ -46,7 +46,7 @@ export function ThemeCustomizer() {
         />
 
         <div className="space-y-1.5">
-          <label className="block text-xs font-medium text-text-secondary ml-1">
+          <label className="text-text-secondary ml-1 block text-xs font-medium">
             {t('customize.fontFamily')}
           </label>
           <Select

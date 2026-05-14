@@ -15,7 +15,7 @@ import { ErrorBoundary } from '../ErrorBoundary';
 function LazyFallback() {
   const t = useT();
   return (
-    <div className="h-full flex items-center justify-center text-xs text-text-tertiary">
+    <div className="text-text-tertiary flex h-full items-center justify-center text-xs">
       {t('ui.loading')}
     </div>
   );
@@ -44,7 +44,7 @@ const Sparkle = () => (
     height="12"
     viewBox="0 0 24 24"
     fill="currentColor"
-    className="inline-block ml-0.5 -mt-0.5"
+    className="-mt-0.5 ml-0.5 inline-block"
   >
     <path d="M12 0L14.5 7.5C15 9 15 9 16.5 9.5L24 12L16.5 14.5C15 15 15 15 14.5 16.5L12 24L9.5 16.5C9 15 9 15 7.5 14.5L0 12L7.5 9.5C9 9 9 9 9.5 7.5L12 0Z" />
   </svg>
@@ -115,13 +115,13 @@ function MobileTabBar({
     `shrink-0 px-3 py-1.5 text-xs font-medium cursor-pointer whitespace-nowrap transition-all rounded-full border ${
       active
         ? 'bg-accent text-white border-accent shadow-sm'
-        : 'text-text-muted border-border hover:bg-bg-hover'
+        : 'text-text-muted border hover:bg-bg-hover'
     }`;
 
   return (
-    <div className="sm:hidden shrink-0 bg-bg">
+    <div className="bg-bg shrink-0 sm:hidden">
       {/* Row 1: mode tabs */}
-      <div className="flex overflow-x-auto p-2 gap-2 border-b border-border scrollbar-none bg-bg-secondary/30">
+      <div className="border-border scrollbar-none bg-bg-secondary/30 flex gap-2 overflow-x-auto border-b p-2">
         <button onClick={() => setTab('form')} className={tabCls(tab === 'form')}>
           {t('editor.form')}
         </button>
@@ -140,7 +140,7 @@ function MobileTabBar({
         {onShowPreview && (
           <button
             onClick={onShowPreview}
-            className="shrink-0 px-4 py-2 text-xs font-bold cursor-pointer whitespace-nowrap text-accent-text border border-accent/20 rounded-full hover:bg-bg-accent transition-all"
+            className="text-accent-text border-accent/20 hover:bg-bg-accent shrink-0 cursor-pointer rounded-full border px-4 py-2 text-xs font-bold whitespace-nowrap transition-all"
           >
             {t('app.preview')} &rarr;
           </button>
@@ -148,7 +148,7 @@ function MobileTabBar({
       </div>
       {/* Row 2: section pills (only in form mode) */}
       {tab === 'form' && (
-        <div className="flex overflow-x-auto p-2 gap-2 border-b border-border bg-bg scrollbar-none">
+        <div className="border-border bg-bg scrollbar-none flex gap-2 overflow-x-auto border-b p-2">
           {sectionIds.map((id) => {
             const active = id === activeSection;
             return (
@@ -188,32 +188,30 @@ function DesktopTabBar({
   canRedo: boolean;
 }) {
   const cls = (active: boolean) =>
-    `px-5 py-2.5 text-xs font-semibold cursor-pointer transition-all rounded-full ${
+    `px-4 py-2 text-xs font-semibold cursor-pointer transition-all rounded-full ${
       active
-        ? 'bg-accent text-white shadow-md'
+        ? 'bg-accent text-white shadow-sm'
         : 'text-text-tertiary hover:text-text hover:bg-bg-hover'
     }`;
   const undoCls =
     'p-2 rounded-full hover:bg-bg-hover transition-all cursor-pointer disabled:opacity-30 disabled:cursor-default border border-transparent hover:border-border';
   return (
-    <div className="hidden sm:flex items-center p-3 gap-2 border-b border-border bg-bg-secondary/30 shrink-0">
-      <div className="flex bg-bg rounded-full p-1 border border-border/50 shadow-sm">
-        <button onClick={() => setTab('form')} className={cls(tab === 'form')}>
-          {t('editor.form')}
-        </button>
-        <button onClick={() => setTab('json')} className={cls(tab === 'json')}>
-          {t('editor.json')}
-        </button>
-        <button onClick={() => setTab('themes')} className={cls(tab === 'themes')}>
-          {t('editor.themes')}
-        </button>
-        <button onClick={() => setTab('ai')} className={cls(tab === 'ai')}>
-          {t('editor.ai')} <Sparkle />
-        </button>
-        <button onClick={() => setTab('auto')} className={cls(tab === 'auto')}>
-          {t('editor.auto')}
-        </button>
-      </div>
+    <div className="border-border hidden shrink-0 items-center gap-2 border-b p-2 sm:flex">
+      <button onClick={() => setTab('form')} className={cls(tab === 'form')}>
+        {t('editor.form')}
+      </button>
+      <button onClick={() => setTab('json')} className={cls(tab === 'json')}>
+        {t('editor.json')}
+      </button>
+      <button onClick={() => setTab('themes')} className={cls(tab === 'themes')}>
+        {t('editor.themes')}
+      </button>
+      <button onClick={() => setTab('ai')} className={cls(tab === 'ai')}>
+        {t('editor.ai')} <Sparkle />
+      </button>
+      <button onClick={() => setTab('auto')} className={cls(tab === 'auto')}>
+        {t('editor.auto')}
+      </button>
       <div className="flex-1" />
       <div className="flex items-center gap-2 pr-2">
         <button
@@ -286,20 +284,20 @@ function FormContent({
   return (
     <div
       ref={containerRef}
-      className="flex flex-1 overflow-hidden bg-bg"
+      className="bg-bg flex flex-1 overflow-hidden"
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
     >
       {/* Desktop sidebar */}
       <nav
-        className="hidden sm:block shrink-0 bg-bg-secondary/50 overflow-y-auto p-2 space-y-0.5"
+        className="bg-bg-secondary/50 hidden shrink-0 space-y-0.5 overflow-y-auto p-2 sm:block"
         style={{ width: `${pct}%` }}
       >
         {sectionIds.map((id) => (
           <button
             key={id}
             onClick={() => setActiveSection(id)}
-            className={`w-full text-left px-3 py-2 text-xs transition-all rounded-full cursor-pointer font-medium ${
+            className={`w-full cursor-pointer rounded-full px-3 py-2 text-left text-xs font-medium transition-all ${
               activeSection === id
                 ? 'bg-accent text-white shadow-md'
                 : 'text-text-secondary hover:bg-bg-hover hover:text-text'
@@ -312,17 +310,17 @@ function FormContent({
       {/* Drag handle */}
       <div
         onPointerDown={onPointerDown}
-        className="hidden sm:flex w-1 shrink-0 cursor-col-resize items-center justify-center bg-border/50 hover:bg-accent/30 transition-all"
+        className="bg-border/50 hover:bg-accent/30 hidden w-1 shrink-0 cursor-col-resize items-center justify-center transition-all sm:flex"
       />
-      <div className="flex-1 overflow-y-auto bg-bg">
-        <div className="p-5 max-w-3xl mx-auto">
+      <div className="bg-bg flex-1 overflow-y-auto">
+        <div className="mx-auto max-w-3xl p-5">
           <ActiveForm />
         </div>
-        <div className="flex items-center justify-between px-6 py-4 border-t border-border bg-bg-secondary/20">
+        <div className="flex items-center justify-between px-6 pt-4 pb-8">
           {prev ? (
             <button
               onClick={() => setActiveSection(prev)}
-              className="text-xs px-4 py-2 border border-border rounded-full hover:bg-bg-hover cursor-pointer text-text-secondary font-semibold transition-all shadow-sm"
+              className="border-border hover:bg-bg-hover text-text-secondary cursor-pointer rounded-full border px-4 py-2 text-xs font-semibold shadow-sm transition-all"
             >
               &larr; {t(`section.${prev}` as Parameters<typeof t>[0])}
             </button>
@@ -332,14 +330,14 @@ function FormContent({
           {next ? (
             <button
               onClick={() => setActiveSection(next)}
-              className="text-xs px-4 py-2 border border-border rounded-full hover:bg-bg-hover cursor-pointer text-text-secondary font-semibold transition-all shadow-sm"
+              className="border-border hover:bg-bg-hover text-text-secondary cursor-pointer rounded-full border px-4 py-2 text-xs font-semibold shadow-sm transition-all"
             >
               {t(`section.${next}` as Parameters<typeof t>[0])} &rarr;
             </button>
           ) : (
             <button
               onClick={() => onSwitchTab('themes')}
-              className="text-xs px-4 py-2 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer font-bold transition-all shadow-md"
+              className="bg-accent cursor-pointer rounded-full px-4 py-2 text-xs font-bold text-white shadow-md transition-all hover:opacity-90"
             >
               {t('editor.themes')} &rarr;
             </button>
@@ -363,7 +361,7 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
   const ActiveForm = formMap[activeSection];
   const { undo, redo, canUndo, canRedo } = useUndoRedo();
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full flex-col">
       <MobileTabBar
         tab={tab}
         setTab={setTab}
@@ -383,12 +381,12 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
       />
 
       {aiSettings && (tab === 'ai' || tab === 'auto') ? (
-        <div className="flex flex-col flex-1 overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-2 border-b border-border shrink-0">
-            <span className="text-xs font-medium text-text">{t('ai.settings')}</span>
+        <div className="flex flex-1 flex-col overflow-hidden">
+          <div className="border-border flex shrink-0 items-center justify-between border-b px-4 py-2">
+            <span className="text-text text-xs font-medium">{t('ai.settings')}</span>
             <button
               onClick={() => setAiSettings(false)}
-              className="text-xs text-accent hover:underline cursor-pointer"
+              className="text-accent cursor-pointer text-xs hover:underline"
             >
               {t('ai.back')}
             </button>
@@ -422,12 +420,12 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
           </ErrorBoundary>
         </div>
       ) : tab === 'themes' ? (
-        <div className="flex-1 overflow-y-auto bg-bg">
+        <div className="bg-bg flex-1 overflow-y-auto">
           <div className="p-4">
-            <div className="border border-border rounded-2xl overflow-hidden bg-bg-secondary/20 mb-6">
+            <div className="border-border bg-bg-secondary/20 mb-6 overflow-hidden rounded-2xl border">
               <button
                 onClick={() => setCustomizeOpen(!customizeOpen)}
-                className="w-full flex items-center justify-between px-6 py-4 text-xs font-bold text-text-secondary hover:bg-bg-hover cursor-pointer transition-all"
+                className="text-text-secondary hover:bg-bg-hover flex w-full cursor-pointer items-center justify-between px-6 py-4 text-xs font-bold transition-all"
               >
                 <span className="flex items-center gap-2">{t('customize.title')}</span>
                 <span

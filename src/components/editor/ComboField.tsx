@@ -22,7 +22,7 @@ interface ComboFieldProps {
 
 function OptionIcon({ opt }: { opt: Option }) {
   if (opt.iconNode) return <>{opt.iconNode}</>;
-  if (opt.icon) return <span className="text-sm shrink-0 leading-none">{opt.icon}</span>;
+  if (opt.icon) return <span className="shrink-0 text-sm leading-none">{opt.icon}</span>;
   return null;
 }
 
@@ -57,12 +57,12 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
 
   return (
     <div className="space-y-1.5">
-      <label className="block text-xs font-medium text-text-secondary ml-1">{label}</label>
+      <label className="text-text-secondary ml-1 block text-xs font-medium">{label}</label>
       <Popover.Root open={open} onOpenChange={setOpen}>
         <Popover.Trigger asChild>
           <button
             type="button"
-            className={`${cls} flex items-center gap-2.5 text-left cursor-pointer hover:bg-bg-hover`}
+            className={`${cls} hover:bg-bg-hover flex cursor-pointer items-center gap-2.5 text-left`}
           >
             {selectedOption && <OptionIcon opt={selectedOption} />}
             <span className={`flex-1 truncate ${value ? '' : 'text-text-muted'}`}>
@@ -78,11 +78,11 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
         </Popover.Trigger>
         <Popover.Portal>
           <Popover.Content
-            className="z-50 w-[var(--radix-popover-trigger-width)] rounded-2xl border border-border bg-bg shadow-xl overflow-hidden"
+            className="bg-bg z-50 w-[var(--radix-popover-trigger-width)] overflow-hidden rounded-2xl border shadow-xl"
             sideOffset={8}
             align="start"
           >
-            <div className="p-3 border-b border-border bg-bg-secondary/30">
+            <div className="border-border bg-bg-secondary/30 border-b p-3">
               <input
                 ref={inputRef}
                 value={filter}
@@ -94,13 +94,12 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
                   }
                 }}
                 placeholder={t('combo.search')}
-                className="w-full px-3 py-1.5 text-sm bg-bg-input border border-border-input rounded-full text-text
-                  focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
+                className="bg-bg-input border-border-input text-text focus:ring-accent focus:border-accent w-full rounded-full border px-3 py-1.5 text-sm focus:ring-1 focus:outline-none"
               />
             </div>
             <div className="max-h-[240px] overflow-y-auto p-2">
               {filtered.length === 0 ? (
-                <div className="px-3 py-4 text-xs text-text-muted text-center">
+                <div className="text-text-muted px-3 py-4 text-center text-xs">
                   {filter.trim() ? (
                     <button
                       type="button"
@@ -108,7 +107,7 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
                         onChange(filter.trim());
                         setOpen(false);
                       }}
-                      className="text-accent hover:underline cursor-pointer font-medium"
+                      className="text-accent cursor-pointer font-medium hover:underline"
                     >
                       {t('combo.use')} &ldquo;{filter.trim()}&rdquo;
                     </button>
@@ -125,8 +124,7 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
                       onChange(o.value);
                       setOpen(false);
                     }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs rounded-xl text-left cursor-pointer transition-colors
-                      ${value === o.value ? 'bg-bg-accent text-accent-text font-medium' : 'hover:bg-bg-hover text-text-secondary'}`}
+                    className={`flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs transition-colors ${value === o.value ? 'bg-bg-accent text-accent-text font-medium' : 'hover:bg-bg-hover text-text-secondary'}`}
                   >
                     <OptionIcon opt={o} />
                     <span className="flex-1 truncate">{o.label}</span>

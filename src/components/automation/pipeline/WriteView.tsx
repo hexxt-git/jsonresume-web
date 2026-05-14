@@ -105,18 +105,18 @@ export function WriteView({ jd, analysis }: Props) {
   return (
     <div className="space-y-6 p-4">
       {/* Inline settings */}
-      <div className="space-y-6 bg-bg-secondary/30 p-5 rounded-2xl border border-border/50">
-        <div className="flex items-center gap-6 flex-wrap">
+      <div className="bg-bg-secondary/30 border-border/50 space-y-6 rounded-2xl border p-5">
+        <div className="flex flex-wrap items-center gap-6">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
+            <span className="text-text-muted text-[10px] font-bold tracking-widest uppercase">
               Tone
             </span>
-            <div className="flex gap-2 bg-bg p-1 rounded-full border border-border/50 shadow-sm">
+            <div className="bg-bg border-border/50 flex gap-2 rounded-full border p-1 shadow-sm">
               {(['formal', 'professional', 'casual'] as Tone[]).map((t) => (
                 <button
                   key={t}
                   onClick={() => setTone(t)}
-                  className={`text-[10px] font-bold px-4 py-1.5 rounded-full cursor-pointer transition-all uppercase tracking-tight ${
+                  className={`cursor-pointer rounded-full px-4 py-1.5 text-[10px] font-bold tracking-tight uppercase transition-all ${
                     tone === t
                       ? 'bg-accent text-white shadow-md'
                       : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
@@ -128,16 +128,16 @@ export function WriteView({ jd, analysis }: Props) {
             </div>
           </div>
           {tab === 'cover-letter' && (
-            <div className="flex items-center gap-2 border-l border-border/50 pl-6">
-              <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
+            <div className="border-border/50 flex items-center gap-2 border-l pl-6">
+              <span className="text-text-muted text-[10px] font-bold tracking-widest uppercase">
                 Length
               </span>
-              <div className="flex gap-2 bg-bg p-1 rounded-full border border-border/50 shadow-sm">
+              <div className="bg-bg border-border/50 flex gap-2 rounded-full border p-1 shadow-sm">
                 {(['brief', 'standard', 'detailed'] as CoverLetterLength[]).map((l) => (
                   <button
                     key={l}
                     onClick={() => setCoverLetterLength(l)}
-                    className={`text-[10px] font-bold px-4 py-1.5 rounded-full cursor-pointer transition-all uppercase tracking-tight ${
+                    className={`cursor-pointer rounded-full px-4 py-1.5 text-[10px] font-bold tracking-tight uppercase transition-all ${
                       coverLetterLength === l
                         ? 'bg-accent text-white shadow-md'
                         : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
@@ -153,14 +153,14 @@ export function WriteView({ jd, analysis }: Props) {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 p-1 bg-bg-secondary/50 rounded-full border border-border/50">
+      <div className="bg-bg-secondary/50 border-border/50 flex gap-2 rounded-full border p-1">
         {TABS.map(([id, label]) => (
           <button
             key={id}
             onClick={() => setTab(id)}
-            className={`flex-1 py-2 text-xs font-bold rounded-full cursor-pointer transition-all uppercase tracking-widest ${
+            className={`flex-1 cursor-pointer rounded-full py-2 text-xs font-bold tracking-widest uppercase transition-all ${
               tab === id
-                ? 'bg-bg text-accent shadow-md border border-accent/10'
+                ? 'bg-bg text-accent border-accent/10 border shadow-md'
                 : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
             }`}
           >
@@ -170,7 +170,7 @@ export function WriteView({ jd, analysis }: Props) {
       </div>
 
       {error && (
-        <div className="text-xs font-medium text-danger bg-danger/10 border border-danger/20 rounded-2xl px-6 py-4">
+        <div className="text-danger bg-danger/10 border-danger/20 rounded-2xl border px-6 py-4 text-xs font-medium">
           {error}
         </div>
       )}
@@ -179,8 +179,8 @@ export function WriteView({ jd, analysis }: Props) {
       {tab === 'cover-letter' && (
         <div className="space-y-6">
           {!coverLetter && !isRunning && (
-            <div className="py-10 text-center bg-bg-secondary/20 rounded-3xl border border-dashed border-border/50">
-              <p className="text-sm font-medium text-text-muted italic">
+            <div className="bg-bg-secondary/20 border-border/50 rounded-3xl border border-dashed py-10 text-center">
+              <p className="text-text-muted text-sm font-medium italic">
                 Generate a cover letter tailored to this position and your resume.
               </p>
             </div>
@@ -189,7 +189,7 @@ export function WriteView({ jd, analysis }: Props) {
           <button
             onClick={handleCoverLetter}
             disabled={isRunning}
-            className="w-full text-xs py-3.5 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer disabled:opacity-50 font-bold shadow-lg transition-all uppercase tracking-widest"
+            className="bg-accent w-full cursor-pointer rounded-full py-3.5 text-xs font-bold tracking-widest text-white uppercase shadow-lg transition-all hover:opacity-90 disabled:opacity-50"
           >
             {isRunning
               ? 'Generating...'
@@ -203,17 +203,17 @@ export function WriteView({ jd, analysis }: Props) {
       {/* Questions Tab */}
       {tab === 'questions' && (
         <div className="space-y-6">
-          <div className="border border-border bg-bg-input rounded-2xl p-4 focus-within:ring-4 focus-within:ring-accent/10 focus-within:border-accent space-y-3 transition-all">
+          <div className="border-border bg-bg-input focus-within:ring-accent/10 focus-within:border-accent space-y-3 rounded-2xl border p-4 transition-all focus-within:ring-4">
             {questionList.map((q, i) => (
               <div
                 key={i}
-                className="flex items-start gap-3 bg-bg shadow-sm border border-border/50 rounded-xl px-4 py-3 text-xs font-medium text-text-secondary group transition-all"
+                className="bg-bg border-border/50 text-text-secondary group flex items-start gap-3 rounded-xl border px-4 py-3 text-xs font-medium shadow-sm transition-all"
               >
                 <span className="flex-1 leading-relaxed">{q}</span>
                 <button
                   type="button"
                   onClick={() => setQuestionList(questionList.filter((_, j) => j !== i))}
-                  className="shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-bg-secondary text-text-muted hover:text-danger cursor-pointer transition-all"
+                  className="bg-bg-secondary text-text-muted hover:text-danger flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-full transition-all"
                 >
                   <CloseCircle size={14} variant="Bold" color="currentColor" />
                 </button>
@@ -234,14 +234,14 @@ export function WriteView({ jd, analysis }: Props) {
                   ? 'Type a question and press Enter...'
                   : 'Add another question...'
               }
-              className="w-full text-sm outline-none bg-transparent text-text px-2 py-1 font-medium placeholder:text-text-muted/50"
+              className="text-text placeholder:text-text-muted/50 w-full bg-transparent px-2 py-1 text-sm font-medium outline-none"
             />
           </div>
           {answers.length > 0 && (
             <div className="space-y-6">
               {answers.map((a, i) => (
                 <div key={i} className="space-y-2">
-                  <p className="text-xs font-bold text-text uppercase tracking-widest ml-1">
+                  <p className="text-text ml-1 text-xs font-bold tracking-widest uppercase">
                     {a.question}
                   </p>
                   <CopyableOutput content={a.answer} format="plain" />
@@ -252,7 +252,7 @@ export function WriteView({ jd, analysis }: Props) {
           <button
             onClick={handleQuestions}
             disabled={!questionList.length || isRunning}
-            className="w-full text-xs py-3.5 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer disabled:opacity-50 font-bold shadow-lg transition-all uppercase tracking-widest"
+            className="bg-accent w-full cursor-pointer rounded-full py-3.5 text-xs font-bold tracking-widest text-white uppercase shadow-lg transition-all hover:opacity-90 disabled:opacity-50"
           >
             {isRunning ? 'Generating...' : 'Generate Answers'}
           </button>
@@ -262,12 +262,12 @@ export function WriteView({ jd, analysis }: Props) {
       {/* Email Tab */}
       {tab === 'email' && (
         <div className="space-y-6">
-          <div className="flex gap-2 bg-bg-secondary/30 p-2 rounded-full border border-border/50 overflow-x-auto scrollbar-none">
+          <div className="bg-bg-secondary/30 border-border/50 scrollbar-none flex gap-2 overflow-x-auto rounded-full border p-2">
             {EMAIL_TYPES.map((t) => (
               <button
                 key={t}
                 onClick={() => setEmailType(t)}
-                className={`text-[10px] font-bold px-5 py-2 rounded-full cursor-pointer transition-all uppercase tracking-tight whitespace-nowrap ${
+                className={`cursor-pointer rounded-full px-5 py-2 text-[10px] font-bold tracking-tight whitespace-nowrap uppercase transition-all ${
                   emailType === t
                     ? 'bg-accent text-white shadow-md'
                     : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
@@ -282,13 +282,13 @@ export function WriteView({ jd, analysis }: Props) {
             onChange={(e) => setEmailContext(e.target.value)}
             placeholder="Additional context (optional)..."
             rows={3}
-            className="w-full px-5 py-4 text-sm border border-border bg-bg-input text-text rounded-2xl focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent resize-y transition-all font-medium"
+            className="bg-bg-input text-text focus:ring-accent/10 focus:border-accent w-full resize-y rounded-2xl border px-5 py-4 text-sm font-medium transition-all focus:ring-4 focus:outline-none"
           />
           {emailDraft && <CopyableOutput content={emailDraft} label="Email Draft" />}
           <button
             onClick={handleEmail}
             disabled={isRunning}
-            className="w-full text-xs py-3.5 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer disabled:opacity-50 font-bold shadow-lg transition-all uppercase tracking-widest"
+            className="bg-accent w-full cursor-pointer rounded-full py-3.5 text-xs font-bold tracking-widest text-white uppercase shadow-lg transition-all hover:opacity-90 disabled:opacity-50"
           >
             {isRunning ? 'Drafting...' : emailDraft ? 'Redraft Email' : 'Draft Email'}
           </button>
