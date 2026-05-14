@@ -13,7 +13,7 @@ const A4_HEIGHT = 1123; // 297mm at 96dpi
 const A4_WIDTH = 794; // 210mm at 96dpi
 const ZOOM_STEPS = [0.5, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 2];
 
-export function ResumePreview() {
+export function ResumePreview({ onBack }: { onBack?: () => void }) {
   const t = useT();
   const resume = useResumeStore((s) => activeSlot(s).resume);
   const themeId = useResumeStore((s) => activeSlot(s).themeId);
@@ -150,9 +150,24 @@ export function ResumePreview() {
   return (
     <div className="bg-bg flex h-full flex-col">
       <div className="bg-bg-secondary/30 flex shrink-0 items-center justify-between border-b px-4 py-2">
-        <span className="text-text-muted text-[10px] font-bold tracking-widest uppercase">
-          {t('app.preview')}
-        </span>
+        <div className="flex items-center gap-2">
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="text-accent-text border-accent/20 hover:bg-bg-accent shrink-0 cursor-pointer rounded-full border px-4 py-2 text-xs font-bold whitespace-nowrap transition-all sm:hidden"
+            >
+              &larr; {t('app.editor')}
+            </button>
+          )}
+          <span
+            className={cn(
+              'text-text-muted text-[10px] font-bold tracking-widest uppercase',
+              onBack && 'hidden sm:inline',
+            )}
+          >
+            {t('app.preview')}
+          </span>
+        </div>
         <div className="bg-bg border-border/50 flex items-center gap-2 rounded-full border p-1">
           <Button
             variant="ghost"
@@ -201,7 +216,7 @@ export function ResumePreview() {
             leftIcon={<Printer size={16} variant="Bold" color="currentColor" />}
             title={t('preview.print')}
           >
-            <span className="hidden lg:inline">{t('preview.print').toUpperCase()}</span>
+            <span className="hidden lg:inline">{t('preview.print')}</span>
           </Button>
         </div>
       </div>

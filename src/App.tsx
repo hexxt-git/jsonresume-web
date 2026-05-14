@@ -232,15 +232,6 @@ function SplitPane({
           mobileView === 'editor' ? 'hidden sm:flex' : 'flex',
         )}
       >
-        {/* Mobile: back to editor button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setMobileView('editor')}
-          className="text-accent hover:bg-bg-hover flex shrink-0 cursor-pointer items-center gap-1 rounded-none border-b px-3 py-1.5 text-xs sm:hidden"
-        >
-          &larr; {t('app.editor')}
-        </Button>
         {children}
       </div>
     </div>
@@ -322,7 +313,7 @@ function App() {
           />
         ) : (
           <ErrorBoundary label="preview">
-            <ResumePreview />
+            <ResumePreview onBack={() => setMobileView('editor')} />
           </ErrorBoundary>
         )}
       </SplitPane>

@@ -318,7 +318,7 @@ export function AiWritingTools(props: Props) {
                     >
                       <Icon size={20} variant="Bold" color="currentColor" />
                       <span className="text-center text-[10px] leading-tight font-bold">
-                        {tool.label.toUpperCase()}
+                        {tool.label}
                       </span>
                     </Button>
                   );
