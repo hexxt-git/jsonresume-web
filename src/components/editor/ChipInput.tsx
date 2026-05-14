@@ -94,9 +94,9 @@ export function ChipInput({ label, items, onChange, placeholder }: ChipInputProp
 
   return (
     <div className="space-y-1.5">
-      <label className="block text-xs font-medium text-text-secondary ml-1">{label}</label>
+      <label className="text-text-secondary ml-1 block text-xs font-medium">{label}</label>
       <AiWritingTools mode="list" items={items} onChange={onChange} context={aiContext}>
-        <div className="flex flex-wrap gap-2 p-3 pr-10 border border-border-input bg-bg-input rounded-3xl focus-within:ring-1 focus-within:ring-accent focus-within:border-accent min-h-[42px] transition-all relative">
+        <div className="border-border-input bg-bg-input focus-within:ring-accent focus-within:border-accent relative flex min-h-[42px] flex-wrap gap-2 rounded-3xl border p-3 pr-10 transition-all focus-within:ring-1">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -124,7 +124,7 @@ export function ChipInput({ label, items, onChange, placeholder }: ChipInputProp
             onKeyDown={handleKey}
             onBlur={addItem}
             placeholder={items.length === 0 ? resolvedPlaceholder : ''}
-            className="flex-1 min-w-[100px] text-sm outline-none bg-transparent text-text"
+            className="text-text min-w-[100px] flex-1 bg-transparent text-sm outline-none"
           />
         </div>
       </AiWritingTools>
@@ -200,7 +200,7 @@ function SortableChip({
       <span
         ref={setNodeRef}
         style={style}
-        className="inline-flex items-center bg-bg-tertiary text-text text-xs px-2 py-1 rounded-2xl ring-1 ring-accent min-w-[60px]"
+        className="bg-bg-tertiary text-text ring-accent inline-flex min-w-[60px] items-center rounded-2xl px-2 py-1 text-xs ring-1"
       >
         <textarea
           ref={inputRef}
@@ -208,7 +208,7 @@ function SortableChip({
           onChange={(e) => setEditValue(e.target.value)}
           onKeyDown={handleEditKeyDown}
           onBlur={() => onFinishEdit(editValue)}
-          className="bg-transparent outline-none text-xs text-text resize-none w-full"
+          className="text-text w-full resize-none bg-transparent text-xs outline-none"
           rows={1}
           style={{ minHeight: '1.2em' }}
         />
@@ -220,12 +220,12 @@ function SortableChip({
     <span
       ref={setNodeRef}
       style={style}
-      className="inline-flex items-center gap-2 bg-bg-tertiary text-text text-xs px-2 py-1 rounded-full cursor-grab active:cursor-grabbing touch-none hover:bg-bg-hover transition-colors border border-border/50 max-w-full"
+      className="bg-bg-tertiary text-text hover:bg-bg-hover border-border/50 inline-flex max-w-full cursor-grab touch-none items-center gap-2 rounded-full border px-2 py-1 text-xs transition-colors active:cursor-grabbing"
       {...attributes}
       {...listeners}
       onClick={handleClick}
     >
-      <span className="truncate flex-1 min-w-0">{text}</span>
+      <span className="min-w-0 flex-1 truncate">{text}</span>
       <button
         type="button"
         onClick={(e) => {
@@ -233,7 +233,7 @@ function SortableChip({
           onRemove();
         }}
         onPointerDown={(e) => e.stopPropagation()}
-        className="text-text-muted hover:text-danger cursor-pointer transition-colors shrink-0"
+        className="text-text-muted hover:text-danger shrink-0 cursor-pointer transition-colors"
       >
         <CloseCircle size={14} variant="Bold" color="currentColor" />
       </button>

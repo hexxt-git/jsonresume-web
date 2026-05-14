@@ -50,15 +50,15 @@ export function CopyableOutput({ content, label, format = 'markdown' }: Copyable
   }, [content]);
 
   return (
-    <div className="border border-border rounded-lg overflow-hidden">
+    <div className="overflow-hidden rounded-lg border">
       {label && (
-        <div className="flex items-center justify-between px-3 py-1.5 bg-bg-secondary border-b border-border">
-          <span className="text-[10px] font-medium text-text-muted uppercase tracking-wide">
+        <div className="bg-bg-secondary border-border flex items-center justify-between border-b px-3 py-1.5">
+          <span className="text-text-muted text-[10px] font-medium tracking-wide uppercase">
             {label}
           </span>
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1 text-[10px] text-text-muted hover:text-text-secondary cursor-pointer transition-colors"
+            className="text-text-muted hover:text-text-secondary flex cursor-pointer items-center gap-1 text-[10px] transition-colors"
           >
             {copied ? (
               <>
@@ -75,18 +75,18 @@ export function CopyableOutput({ content, label, format = 'markdown' }: Copyable
       <div className="px-3 py-2.5">
         {format === 'markdown' ? (
           <div
-            className="markdown-content text-sm text-text"
+            className="markdown-content text-text text-sm"
             dangerouslySetInnerHTML={{ __html: renderMd(content) }}
           />
         ) : (
-          <pre className="text-sm text-text whitespace-pre-wrap">{content}</pre>
+          <pre className="text-text text-sm whitespace-pre-wrap">{content}</pre>
         )}
       </div>
       {!label && (
-        <div className="flex justify-end px-3 py-1.5 border-t border-border">
+        <div className="flex justify-end border-t px-3 py-1.5">
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1 text-[10px] text-text-muted hover:text-text-secondary cursor-pointer transition-colors"
+            className="text-text-muted hover:text-text-secondary flex cursor-pointer items-center gap-1 text-[10px] transition-colors"
           >
             {copied ? (
               <>

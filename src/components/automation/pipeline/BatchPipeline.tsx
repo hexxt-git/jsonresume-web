@@ -339,14 +339,14 @@ export function BatchPipeline({ onBack }: Props) {
   /* ── Render ───────────────────────────────────────────── */
 
   return (
-    <div className="flex flex-col h-full bg-bg">
+    <div className="bg-bg flex h-full flex-col">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-border bg-bg-secondary/20 shrink-0">
+      <div className="bg-bg-secondary/20 shrink-0 border-b px-6 py-4">
         <div className="flex items-center justify-between">
           <Stepper steps={STEP_LABELS} currentIndex={stepIndex} onStepClick={handleStepClick} />
           <button
             onClick={step === 'jd' ? onBack : handleReset}
-            className="text-[10px] font-bold text-text-muted hover:text-accent cursor-pointer shrink-0 ml-4 uppercase tracking-widest transition-all px-3 py-1.5 rounded-full border border-border/50 hover:bg-bg-secondary"
+            className="text-text-muted hover:text-accent border-border/50 hover:bg-bg-secondary ml-4 shrink-0 cursor-pointer rounded-full border px-3 py-1.5 text-[10px] font-bold tracking-widest uppercase transition-all"
           >
             {step === 'jd' ? 'Back' : 'Start over'}
           </button>
@@ -355,9 +355,9 @@ export function BatchPipeline({ onBack }: Props) {
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-6">
-        <div className="max-w-4xl mx-auto space-y-6">
+        <div className="mx-auto max-w-4xl space-y-6">
           {error && (
-            <div className="text-xs font-medium text-danger bg-danger/10 border border-danger/20 rounded-2xl px-6 py-4 shadow-sm">
+            <div className="text-danger bg-danger/10 border-danger/20 rounded-2xl border px-6 py-4 text-xs font-medium shadow-sm">
               {error}
             </div>
           )}
@@ -365,10 +365,10 @@ export function BatchPipeline({ onBack }: Props) {
           {/* Step 1: JD Input */}
           {step === 'jd' && (
             <div className="space-y-6">
-              <div className="bg-bg-secondary/30 p-5 rounded-2xl border border-border/50 space-y-4">
-                <p className="text-sm font-medium text-text-secondary leading-relaxed">
+              <div className="bg-bg-secondary/30 border-border/50 space-y-4 rounded-2xl border p-5">
+                <p className="text-text-secondary text-sm leading-relaxed font-medium">
                   Paste multiple job descriptions separated by{' '}
-                  <code className="text-[11px] px-2 py-0.5 bg-bg-tertiary rounded-full font-bold">
+                  <code className="bg-bg-tertiary rounded-full px-2 py-0.5 text-[11px] font-bold">
                     ---
                   </code>{' '}
                   or blank lines. Each gets a tailored resume variant.
@@ -387,7 +387,7 @@ export function BatchPipeline({ onBack }: Props) {
 
                 {detectedJds.length > 0 && (
                   <div className="flex justify-center">
-                    <p className="text-[10px] font-bold text-accent uppercase tracking-widest bg-accent/5 px-4 py-1 rounded-full border border-accent/20">
+                    <p className="text-accent bg-accent/5 border-accent/20 rounded-full border px-4 py-1 text-[10px] font-bold tracking-widest uppercase">
                       {detectedJds.length} {detectedJds.length !== 1 ? 'positions' : 'position'}{' '}
                       detected
                     </p>
@@ -396,17 +396,17 @@ export function BatchPipeline({ onBack }: Props) {
               </div>
 
               {/* Inline settings */}
-              <div className="bg-bg-secondary/30 p-6 rounded-3xl border border-border/50 space-y-6 shadow-sm">
-                <div className="flex items-center gap-6 flex-wrap">
-                  <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
+              <div className="bg-bg-secondary/30 border-border/50 space-y-6 rounded-3xl border p-6 shadow-sm">
+                <div className="flex flex-wrap items-center gap-6">
+                  <span className="text-text-muted text-[10px] font-bold tracking-widest uppercase">
                     Approach
                   </span>
-                  <div className="flex gap-2 bg-bg p-1 rounded-full border border-border/50 shadow-sm">
+                  <div className="bg-bg border-border/50 flex gap-2 rounded-full border p-1 shadow-sm">
                     {(['conservative', 'balanced', 'creative'] as Creativity[]).map((c) => (
                       <button
                         key={c}
                         onClick={() => setCreativity(c)}
-                        className={`text-[10px] font-bold px-4 py-1.5 rounded-full cursor-pointer transition-all uppercase tracking-tight ${
+                        className={`cursor-pointer rounded-full px-4 py-1.5 text-[10px] font-bold tracking-tight uppercase transition-all ${
                           creativity === c
                             ? 'bg-accent text-white shadow-md'
                             : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
@@ -419,20 +419,20 @@ export function BatchPipeline({ onBack }: Props) {
                 </div>
 
                 <details className="group" open>
-                  <summary className="text-[10px] font-bold text-text-muted cursor-pointer hover:text-text-secondary select-none uppercase tracking-widest flex items-center gap-2">
+                  <summary className="text-text-muted hover:text-text-secondary flex cursor-pointer items-center gap-2 text-[10px] font-bold tracking-widest uppercase select-none">
                     Sections to modify
                   </summary>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-3 mt-4 pl-3">
+                  <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 pl-3 sm:grid-cols-3 lg:grid-cols-4">
                     {ALL_SECTIONS.map((s) => (
                       <label
                         key={s}
-                        className="flex items-center gap-2.5 text-[11px] font-medium text-text-secondary cursor-pointer select-none group/item hover:text-accent transition-colors"
+                        className="text-text-secondary group/item hover:text-accent flex cursor-pointer items-center gap-2.5 text-[11px] font-medium transition-colors select-none"
                       >
                         <input
                           type="checkbox"
                           checked={sectionsToTailor.includes(s)}
                           onChange={() => toggleSection(s)}
-                          className="rounded-full border-border-input accent-accent w-4 h-4 cursor-pointer"
+                          className="border-border-input accent-accent h-4 w-4 cursor-pointer rounded-full"
                         />
                         {SECTION_DISPLAY[s] || s}
                       </label>
@@ -459,7 +459,7 @@ export function BatchPipeline({ onBack }: Props) {
           {step === 'results' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-text-muted">
+                <span className="text-text-muted text-xs">
                   <span className="text-diff-add">{doneCount} succeeded</span>
                   {failCount > 0 && (
                     <span className="text-diff-rm"> &middot; {failCount} failed</span>
@@ -494,12 +494,12 @@ export function BatchPipeline({ onBack }: Props) {
       </div>
 
       {/* Footer */}
-      <div className="shrink-0 px-8 py-6 border-t border-border bg-bg-secondary/10">
+      <div className="bg-bg-secondary/10 shrink-0 border-t px-8 py-6">
         {step === 'jd' && (
           <button
             onClick={handleStart}
             disabled={!detectedJds.length}
-            className="w-full text-sm py-4 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed font-bold shadow-xl transition-all uppercase tracking-widest"
+            className="bg-accent w-full cursor-pointer rounded-full py-4 text-sm font-bold tracking-widest text-white uppercase shadow-xl transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30"
           >
             Process{detectedJds.length > 0 ? ` (${detectedJds.length} positions)` : ' All'}
           </button>
@@ -507,7 +507,7 @@ export function BatchPipeline({ onBack }: Props) {
         {step === 'results' && (
           <button
             onClick={handleReset}
-            className="w-full text-sm py-4 border-2 border-border rounded-full hover:bg-bg-hover cursor-pointer text-text-secondary font-bold shadow-sm transition-all uppercase tracking-widest"
+            className="hover:bg-bg-hover text-text-secondary w-full cursor-pointer rounded-full border-2 py-4 text-sm font-bold tracking-widest uppercase shadow-sm transition-all"
           >
             New Batch
           </button>

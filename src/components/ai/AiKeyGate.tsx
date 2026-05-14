@@ -19,8 +19,8 @@ export function AiProviderSettings() {
     <div className="h-full overflow-y-auto p-4">
       <div className="space-y-4">
         <div>
-          <h3 className="text-sm font-semibold text-text">{t('ai.providersTitle')}</h3>
-          <p className="text-[11px] text-text-muted mt-0.5">{t('ai.providersDesc')}</p>
+          <h3 className="text-text text-sm font-semibold">{t('ai.providersTitle')}</h3>
+          <p className="text-text-muted mt-0.5 text-[11px]">{t('ai.providersDesc')}</p>
         </div>
 
         <div className="space-y-3">
@@ -108,12 +108,12 @@ function ProviderRow({
   };
 
   return (
-    <div className="border border-border rounded-lg p-3 space-y-3">
+    <div className="space-y-3 rounded-lg border p-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-text">{name}</span>
+          <span className="text-text text-xs font-medium">{name}</span>
           {isActive && (
-            <span className="text-[10px] text-accent-text font-medium">{t('ai.active')}</span>
+            <span className="text-accent-text text-[10px] font-medium">{t('ai.active')}</span>
           )}
         </div>
         {hasKey && (
@@ -121,14 +121,14 @@ function ProviderRow({
             {!isActive && (
               <button
                 onClick={onActivate}
-                className="text-[10px] text-accent hover:underline cursor-pointer"
+                className="text-accent cursor-pointer text-[10px] hover:underline"
               >
                 {t('ai.use')}
               </button>
             )}
             <button
               onClick={onRemove}
-              className="text-[10px] text-text-muted hover:text-danger cursor-pointer"
+              className="text-text-muted hover:text-danger cursor-pointer text-[10px]"
             >
               {t('ai.remove')}
             </button>
@@ -138,12 +138,12 @@ function ProviderRow({
 
       {hasKey && !editing && (
         <div className="flex items-center gap-2">
-          <span className="flex-1 text-xs font-mono text-text-muted bg-bg-secondary px-2.5 py-1.5 rounded">
+          <span className="text-text-muted bg-bg-secondary flex-1 rounded px-2.5 py-1.5 font-mono text-xs">
             {maskedKey}
           </span>
           <button
             onClick={() => setEditing(true)}
-            className="text-[10px] text-text-muted hover:text-text-secondary cursor-pointer shrink-0"
+            className="text-text-muted hover:text-text-secondary shrink-0 cursor-pointer text-[10px]"
           >
             {t('ai.change')}
           </button>
@@ -160,12 +160,12 @@ function ProviderRow({
               onKeyDown={(e) => e.key === 'Enter' && handleSave()}
               placeholder={placeholder}
               autoFocus={!hasKey}
-              className="w-full px-3 py-1.5 pr-8 text-sm border border-border-input bg-bg-input text-text rounded-full focus:outline-none focus:ring-1 focus:ring-accent"
+              className="border-border-input bg-bg-input text-text focus:ring-accent w-full rounded-full border px-3 py-1.5 pr-8 text-sm focus:ring-1 focus:outline-none"
             />
             <button
               type="button"
               onClick={() => setShowKey(!showKey)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary cursor-pointer"
+              className="text-text-muted hover:text-text-secondary absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer"
             >
               {showKey ? (
                 <EyeSlash size={14} variant="Bold" color="currentColor" />
@@ -174,13 +174,13 @@ function ProviderRow({
               )}
             </button>
           </div>
-          {error && <p className="text-xs text-danger">{error}</p>}
+          {error && <p className="text-danger text-xs">{error}</p>}
           <div className="flex items-center justify-between">
             <a
               href={keyLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 text-[10px] text-accent hover:underline"
+              className="text-accent flex items-center gap-1 text-[10px] hover:underline"
             >
               {t('ai.getKey')} {keyLinkLabel}{' '}
               <ExportSquare size={9} variant="Bold" color="currentColor" />
@@ -193,7 +193,7 @@ function ProviderRow({
                     setInput('');
                     setError('');
                   }}
-                  className="text-xs text-text-muted hover:text-text-secondary cursor-pointer"
+                  className="text-text-muted hover:text-text-secondary cursor-pointer text-xs"
                 >
                   {t('ai.cancel')}
                 </button>
@@ -201,7 +201,7 @@ function ProviderRow({
               <button
                 onClick={handleSave}
                 disabled={validating || !input.trim()}
-                className="text-xs px-3 py-1 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-accent cursor-pointer rounded-full px-3 py-1 text-xs text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {validating ? t('ai.keyValidating') : t('ai.save')}
               </button>
@@ -218,16 +218,16 @@ function ProviderRow({
 export function AiSetupPrompt({ onSetup }: { onSetup: () => void }) {
   const t = useT();
   return (
-    <div className="h-full flex items-center justify-center p-8">
-      <div className="text-center space-y-3 max-w-sm">
+    <div className="flex h-full items-center justify-center p-8">
+      <div className="max-w-sm space-y-3 text-center">
         <Setting
           size={24}
           variant="Bold"
           color="currentColor"
-          className="mx-auto text-text-faint"
+          className="text-text-faint mx-auto"
         />
-        <h3 className="text-sm font-semibold text-text">{t('ai.setupTitle')}</h3>
-        <p className="text-xs text-text-muted leading-relaxed">
+        <h3 className="text-text text-sm font-semibold">{t('ai.setupTitle')}</h3>
+        <p className="text-text-muted text-xs leading-relaxed">
           {t('ai.setupDesc').split(t('ai.setupOpenSource'))[0]}
           <a
             href="https://github.com/hexxt-git/jsonresume-web/"
@@ -241,7 +241,7 @@ export function AiSetupPrompt({ onSetup }: { onSetup: () => void }) {
         </p>
         <button
           onClick={onSetup}
-          className="text-xs px-4 py-2 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer"
+          className="bg-accent cursor-pointer rounded-full px-4 py-2 text-xs text-white hover:opacity-90"
         >
           {t('ai.setupButton')}
         </button>
@@ -266,7 +266,7 @@ export function AiSettingsButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-1.5 text-[10px] font-bold text-text-secondary hover:text-text transition-all cursor-pointer px-3 py-1.5 rounded-full bg-bg-secondary border border-border/50 hover:bg-bg-hover"
+      className="text-text-secondary hover:text-text bg-bg-secondary border-border/50 hover:bg-bg-hover flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-bold transition-all"
       title={t('ai.settings')}
     >
       <Setting size={14} variant="Bold" color="currentColor" />

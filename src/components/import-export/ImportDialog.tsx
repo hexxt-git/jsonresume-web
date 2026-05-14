@@ -56,29 +56,29 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
       onClick={onClose}
     >
       <div
-        className="bg-bg rounded-3xl shadow-2xl w-full max-w-lg mx-4 p-6 border border-border"
+        className="bg-bg border-border mx-4 w-full max-w-lg rounded-3xl border p-6 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-text tracking-tight">{t('import.title')}</h2>
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-text text-xl font-bold tracking-tight">{t('import.title')}</h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-bg-secondary text-text-muted hover:text-danger transition-all cursor-pointer text-xl"
+            className="bg-bg-secondary text-text-muted hover:text-danger flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-xl transition-all"
           >
             &times;
           </button>
         </div>
 
-        <div className="flex gap-2 mb-6 bg-bg-secondary p-1 rounded-full border border-border/50">
+        <div className="bg-bg-secondary border-border/50 mb-6 flex gap-2 rounded-full border p-1">
           <button
             onClick={() => setTab('file')}
-            className={`flex-1 px-4 py-2 text-xs rounded-full cursor-pointer transition-all font-bold ${tab === 'file' ? 'bg-accent text-white shadow-md' : 'text-text-tertiary hover:bg-bg-hover hover:text-text'}`}
+            className={`flex-1 cursor-pointer rounded-full px-4 py-2 text-xs font-bold transition-all ${tab === 'file' ? 'bg-accent text-white shadow-md' : 'text-text-tertiary hover:bg-bg-hover hover:text-text'}`}
           >
             {t('import.uploadFile')}
           </button>
           <button
             onClick={() => setTab('json')}
-            className={`flex-1 px-4 py-2 text-xs rounded-full cursor-pointer transition-all font-bold ${tab === 'json' ? 'bg-accent text-white shadow-md' : 'text-text-tertiary hover:bg-bg-hover hover:text-text'}`}
+            className={`flex-1 cursor-pointer rounded-full px-4 py-2 text-xs font-bold transition-all ${tab === 'json' ? 'bg-accent text-white shadow-md' : 'text-text-tertiary hover:bg-bg-hover hover:text-text'}`}
           >
             {t('import.pasteJson')}
           </button>
@@ -98,11 +98,11 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
             <button
               onClick={() => fileRef.current?.click()}
               disabled={loading}
-              className="w-full py-12 border-2 border-dashed border-border rounded-2xl text-text-tertiary hover:border-accent hover:bg-accent/5 hover:text-accent transition-all cursor-pointer disabled:opacity-50 font-medium"
+              className="border-border text-text-tertiary hover:border-accent hover:bg-accent/5 hover:text-accent w-full cursor-pointer rounded-2xl border-2 border-dashed py-12 font-medium transition-all disabled:opacity-50"
             >
               {loading ? t('import.parsing') : t('import.dropzone')}
             </button>
-            <p className="text-xs text-text-muted text-center italic">{t('import.dropzoneHint')}</p>
+            <p className="text-text-muted text-center text-xs italic">{t('import.dropzoneHint')}</p>
           </div>
         )}
 
@@ -113,12 +113,12 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
               onChange={(e) => setJsonText(e.target.value)}
               placeholder='{"basics": {"name": "..."}}'
               rows={8}
-              className="w-full px-4 py-3 text-sm border border-border bg-bg-input text-text rounded-2xl font-mono focus:outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent resize-y transition-all"
+              className="border-border bg-bg-input text-text focus:ring-accent/10 focus:border-accent w-full resize-y rounded-2xl border px-4 py-3 font-mono text-sm transition-all focus:ring-4 focus:outline-none"
             />
             <button
               onClick={handleJsonPaste}
               disabled={!jsonText.trim()}
-              className="w-full py-3 bg-accent text-white text-sm rounded-full hover:opacity-90 disabled:opacity-50 cursor-pointer font-bold transition-all shadow-md"
+              className="bg-accent w-full cursor-pointer rounded-full py-3 text-sm font-bold text-white shadow-md transition-all hover:opacity-90 disabled:opacity-50"
             >
               {t('import.importJson')}
             </button>
@@ -126,15 +126,15 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
         )}
 
         {error && (
-          <p className="mt-4 text-xs text-danger text-center bg-danger/10 py-2 rounded-lg font-medium">
+          <p className="text-danger bg-danger/10 mt-4 rounded-lg py-2 text-center text-xs font-medium">
             {error}
           </p>
         )}
 
-        <div className="mt-6 pt-5 border-t border-border flex justify-center">
+        <div className="mt-6 flex justify-center border-t pt-5">
           <button
             onClick={handleSample}
-            className="text-xs font-bold text-accent hover:underline cursor-pointer transition-colors"
+            className="text-accent cursor-pointer text-xs font-bold transition-colors hover:underline"
           >
             {t('import.loadSample')}
           </button>

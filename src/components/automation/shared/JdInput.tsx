@@ -190,17 +190,17 @@ export function JdInput({
   return (
     <div>
       {/* ─── Header ──────────────────────────────────────── */}
-      <div className="flex items-center justify-between mb-1.5">
-        <span className="text-xs font-medium text-text">{label}</span>
+      <div className="mb-1.5 flex items-center justify-between">
+        <span className="text-text text-xs font-medium">{label}</span>
         <div className="flex items-center gap-1.5">
           {savedFeedback && (
-            <span className="text-[10px] text-accent animate-pulse">{savedFeedback}</span>
+            <span className="text-accent animate-pulse text-[10px]">{savedFeedback}</span>
           )}
           {view === 'library' ? (
             <button
               type="button"
               onClick={() => setView('write')}
-              className="text-[10px] px-2 py-0.5 rounded border border-border text-text-muted hover:text-text-secondary cursor-pointer transition-colors"
+              className="text-text-muted hover:text-text-secondary cursor-pointer rounded border px-2 py-0.5 text-[10px] transition-colors"
             >
               <ArrowLeft2 size={12} variant="Bold" color="currentColor" /> Back
             </button>
@@ -211,7 +211,7 @@ export function JdInput({
                 <button
                   type="button"
                   onClick={handleStartSave}
-                  className="text-[10px] px-2 py-0.5 rounded border border-border text-text-muted hover:text-text-secondary cursor-pointer transition-colors"
+                  className="text-text-muted hover:text-text-secondary cursor-pointer rounded border px-2 py-0.5 text-[10px] transition-colors"
                 >
                   Save
                 </button>
@@ -221,12 +221,12 @@ export function JdInput({
                 <button
                   type="button"
                   onClick={handleSaveAll}
-                  className="text-[10px] px-2 py-0.5 rounded border border-border text-text-muted hover:text-text-secondary cursor-pointer transition-colors"
+                  className="text-text-muted hover:text-text-secondary cursor-pointer rounded border px-2 py-0.5 text-[10px] transition-colors"
                 >
                   Save all ({unsavedChunks.length})
                 </button>
               )}
-              <label className="text-[10px] px-2 py-0.5 rounded border border-border text-text-muted hover:text-text-secondary cursor-pointer transition-colors">
+              <label className="text-text-muted hover:text-text-secondary cursor-pointer rounded border px-2 py-0.5 text-[10px] transition-colors">
                 <input
                   type="file"
                   accept=".txt,.pdf,.doc,.docx"
@@ -249,8 +249,8 @@ export function JdInput({
 
       {/* ─── Loaded JD badge (single mode only) ──────────── */}
       {!append && loadedJd && view === 'write' && (
-        <div className="flex items-center gap-2 mb-1.5 px-2.5 py-1.5 bg-bg-secondary rounded-lg border-l-2 border-l-accent">
-          <span className="text-[10px] text-text-secondary truncate flex-1">
+        <div className="bg-bg-secondary border-l-accent mb-1.5 flex items-center gap-2 rounded-lg border-l-2 px-2.5 py-1.5">
+          <span className="text-text-secondary flex-1 truncate text-[10px]">
             {loadedJd.title}
             {loadedJd.company ? ` · ${loadedJd.company}` : ''}
           </span>
@@ -258,7 +258,7 @@ export function JdInput({
             <button
               type="button"
               onClick={handleUpdateLoaded}
-              className="text-[10px] px-2 py-0.5 bg-accent text-white rounded hover:opacity-90 cursor-pointer shrink-0"
+              className="bg-accent shrink-0 cursor-pointer rounded px-2 py-0.5 text-[10px] text-white hover:opacity-90"
             >
               Update
             </button>
@@ -266,7 +266,7 @@ export function JdInput({
           <button
             type="button"
             onClick={() => setLoadedJdId(null)}
-            className="text-text-muted hover:text-text-secondary cursor-pointer shrink-0"
+            className="text-text-muted hover:text-text-secondary shrink-0 cursor-pointer"
           >
             <CloseCircle size={14} variant="Bold" color="currentColor" />
           </button>
@@ -275,12 +275,12 @@ export function JdInput({
 
       {/* ─── Inline save form (single mode only) ─────────── */}
       {!append && saving && (
-        <div className="flex items-center gap-1.5 mb-1.5 p-1.5 border border-border rounded-lg bg-bg-secondary flex-wrap">
+        <div className="bg-bg-secondary mb-1.5 flex flex-wrap items-center gap-1.5 rounded-lg border p-1.5">
           <input
             value={saveTitle}
             onChange={(e) => setSaveTitle(e.target.value)}
             placeholder="Title"
-            className="flex-1 min-w-[80px] px-2 py-1 text-[10px] border border-border-input bg-bg-input text-text rounded focus:outline-none focus:ring-1 focus:ring-accent"
+            className="border-border-input bg-bg-input text-text focus:ring-accent min-w-[80px] flex-1 rounded border px-2 py-1 text-[10px] focus:ring-1 focus:outline-none"
             autoFocus
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleSave();
@@ -291,7 +291,7 @@ export function JdInput({
             value={saveCompany}
             onChange={(e) => setSaveCompany(e.target.value)}
             placeholder="Company"
-            className="flex-1 min-w-[80px] px-2 py-1 text-[10px] border border-border-input bg-bg-input text-text rounded focus:outline-none focus:ring-1 focus:ring-accent"
+            className="border-border-input bg-bg-input text-text focus:ring-accent min-w-[80px] flex-1 rounded border px-2 py-1 text-[10px] focus:ring-1 focus:outline-none"
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleSave();
               if (e.key === 'Escape') setSaving(false);
@@ -300,14 +300,14 @@ export function JdInput({
           <button
             type="button"
             onClick={handleSave}
-            className="text-[10px] px-2.5 py-1 bg-accent text-white rounded hover:opacity-90 cursor-pointer shrink-0"
+            className="bg-accent shrink-0 cursor-pointer rounded px-2.5 py-1 text-[10px] text-white hover:opacity-90"
           >
             Save
           </button>
           <button
             type="button"
             onClick={() => setSaving(false)}
-            className="text-text-muted hover:text-text-secondary cursor-pointer shrink-0"
+            className="text-text-muted hover:text-text-secondary shrink-0 cursor-pointer"
           >
             <CloseCircle size={14} variant="Bold" color="currentColor" />
           </button>
@@ -322,20 +322,20 @@ export function JdInput({
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
             rows={rows}
-            className="w-full px-3 py-2 text-xs border border-border-input bg-bg-input text-text rounded-lg focus:outline-none focus:ring-1 focus:ring-accent resize-y"
+            className="border-border-input bg-bg-input text-text focus:ring-accent w-full resize-y rounded-lg border px-3 py-2 text-xs focus:ring-1 focus:outline-none"
           />
 
           {/* Recent JDs */}
           {items.length > 0 && (
             <div className="mt-2">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[10px] font-medium text-text-muted uppercase tracking-wide">
+              <div className="mb-1.5 flex items-center justify-between">
+                <span className="text-text-muted text-[10px] font-medium tracking-wide uppercase">
                   Recent
                 </span>
                 <button
                   type="button"
                   onClick={openLibrary}
-                  className="text-[10px] text-text-muted hover:text-accent cursor-pointer transition-colors"
+                  className="text-text-muted hover:text-accent cursor-pointer text-[10px] transition-colors"
                 >
                   View all{items.length > 3 ? ` (${items.length})` : ''} →
                 </button>
@@ -349,27 +349,27 @@ export function JdInput({
                       type="button"
                       onClick={() => handleLoad(jd)}
                       disabled={added}
-                      className={`flex-1 min-w-0 text-left px-2.5 py-2 rounded-lg border transition-colors ${
+                      className={`min-w-0 flex-1 rounded-lg border px-2.5 py-2 text-left transition-colors ${
                         added
                           ? 'border-accent/30 bg-accent/5 cursor-default'
                           : loadedJdId === jd.id
                             ? 'border-accent/50 bg-accent/5 cursor-pointer'
-                            : 'border-border hover:bg-bg-hover cursor-pointer'
+                            : 'hover:bg-bg-hover cursor-pointer'
                       }`}
                     >
-                      <div className="flex items-center gap-1 min-w-0">
+                      <div className="flex min-w-0 items-center gap-1">
                         {append && (
                           <span
-                            className={`text-[10px] shrink-0 ${added ? 'text-accent' : 'text-text-muted'}`}
+                            className={`shrink-0 text-[10px] ${added ? 'text-accent' : 'text-text-muted'}`}
                           >
                             {added ? '✓' : '+'}
                           </span>
                         )}
-                        <span className="text-[11px] font-medium text-text truncate">
+                        <span className="text-text truncate text-[11px] font-medium">
                           {jd.title}
                         </span>
                       </div>
-                      <div className="text-[10px] text-text-muted truncate mt-0.5">
+                      <div className="text-text-muted mt-0.5 truncate text-[10px]">
                         {[jd.company, timeAgo(jd.lastUsedAt)].filter(Boolean).join(' · ')}
                       </div>
                     </button>
@@ -384,11 +384,11 @@ export function JdInput({
       {/* ─── Library view ────────────────────────────────── */}
       {view === 'library' && (
         <div
-          className="border border-border-input rounded-lg overflow-hidden"
+          className="border-border-input overflow-hidden rounded-lg border"
           style={{ minHeight: `${rows * 1.5}rem` }}
         >
           {/* Search + sort header */}
-          <div className="flex items-center gap-1.5 px-2.5 py-1.5 border-b border-border bg-bg-secondary">
+          <div className="bg-bg-secondary flex items-center gap-1.5 border-b px-2.5 py-1.5">
             <input
               value={search}
               onChange={(e) => {
@@ -396,7 +396,7 @@ export function JdInput({
                 setConfirmDeleteId(null);
               }}
               placeholder="Search titles, companies, or content..."
-              className="flex-1 min-w-0 text-[10px] bg-transparent text-text outline-none placeholder:text-text-faint"
+              className="text-text placeholder:text-text-faint min-w-0 flex-1 bg-transparent text-[10px] outline-none"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === 'Escape') setView('write');
@@ -405,7 +405,7 @@ export function JdInput({
             <button
               type="button"
               onClick={() => setSort((s) => (s === 'recent' ? 'alpha' : 'recent'))}
-              className="text-[10px] text-text-muted hover:text-text-secondary cursor-pointer shrink-0"
+              className="text-text-muted hover:text-text-secondary shrink-0 cursor-pointer text-[10px]"
             >
               {sort === 'recent' ? 'Recent' : 'A–Z'}
             </button>
@@ -418,33 +418,33 @@ export function JdInput({
           >
             {filteredItems.length === 0 ? (
               <div className="px-3 py-8 text-center">
-                <div className="text-[10px] text-text-muted">
+                <div className="text-text-muted text-[10px]">
                   {items.length === 0 ? 'No saved job descriptions yet' : 'No matches found'}
                 </div>
                 {items.length === 0 && (
                   <button
                     type="button"
                     onClick={() => setView('write')}
-                    className="text-[10px] text-accent hover:underline cursor-pointer mt-1"
+                    className="text-accent mt-1 cursor-pointer text-[10px] hover:underline"
                   >
                     Write one to get started
                   </button>
                 )}
               </div>
             ) : (
-              <div className="divide-y divide-border">
+              <div className="divide-border divide-y">
                 {filteredItems.map((jd) => {
                   const added = isAdded(jd);
                   return (
                     <div key={jd.id} className="group relative">
                       {editingId === jd.id ? (
                         /* ── Inline edit mode ── */
-                        <div className="px-3 py-2.5 space-y-1.5">
+                        <div className="space-y-1.5 px-3 py-2.5">
                           <div className="flex gap-1.5">
                             <input
                               value={editTitle}
                               onChange={(e) => setEditTitle(e.target.value)}
-                              className="flex-1 min-w-0 px-2 py-1 text-[10px] border border-border-input bg-bg-input text-text rounded focus:outline-none focus:ring-1 focus:ring-accent"
+                              className="border-border-input bg-bg-input text-text focus:ring-accent min-w-0 flex-1 rounded border px-2 py-1 text-[10px] focus:ring-1 focus:outline-none"
                               placeholder="Title"
                               autoFocus
                               onKeyDown={(e) => {
@@ -455,7 +455,7 @@ export function JdInput({
                             <input
                               value={editCompany}
                               onChange={(e) => setEditCompany(e.target.value)}
-                              className="flex-1 min-w-0 px-2 py-1 text-[10px] border border-border-input bg-bg-input text-text rounded focus:outline-none focus:ring-1 focus:ring-accent"
+                              className="border-border-input bg-bg-input text-text focus:ring-accent min-w-0 flex-1 rounded border px-2 py-1 text-[10px] focus:ring-1 focus:outline-none"
                               placeholder="Company"
                               onKeyDown={(e) => {
                                 if (e.key === 'Enter') handleSaveEdit();
@@ -467,14 +467,14 @@ export function JdInput({
                             <button
                               type="button"
                               onClick={() => setEditingId(null)}
-                              className="text-[10px] px-2 py-0.5 text-text-muted hover:text-text-secondary cursor-pointer"
+                              className="text-text-muted hover:text-text-secondary cursor-pointer px-2 py-0.5 text-[10px]"
                             >
                               Cancel
                             </button>
                             <button
                               type="button"
                               onClick={handleSaveEdit}
-                              className="text-[10px] px-2.5 py-0.5 bg-accent text-white rounded cursor-pointer hover:opacity-90"
+                              className="bg-accent cursor-pointer rounded px-2.5 py-0.5 text-[10px] text-white hover:opacity-90"
                             >
                               Save
                             </button>
@@ -486,7 +486,7 @@ export function JdInput({
                           type="button"
                           onClick={() => handleLoad(jd)}
                           disabled={added}
-                          className={`w-full text-left px-3 py-2.5 transition-colors ${
+                          className={`w-full px-3 py-2.5 text-left transition-colors ${
                             added
                               ? 'bg-accent/5 cursor-default'
                               : 'hover:bg-bg-hover cursor-pointer'
@@ -495,23 +495,23 @@ export function JdInput({
                           <div className="flex items-center gap-2">
                             {append && (
                               <span
-                                className={`text-[10px] shrink-0 ${added ? 'text-accent' : 'text-text-muted'}`}
+                                className={`shrink-0 text-[10px] ${added ? 'text-accent' : 'text-text-muted'}`}
                               >
                                 {added ? '✓' : '+'}
                               </span>
                             )}
-                            <span className="text-xs font-medium text-text truncate flex-1">
+                            <span className="text-text flex-1 truncate text-xs font-medium">
                               {jd.title}
                               {jd.company && (
-                                <span className="font-normal text-text-muted"> · {jd.company}</span>
+                                <span className="text-text-muted font-normal"> · {jd.company}</span>
                               )}
                             </span>
-                            <span className="text-[10px] text-text-faint shrink-0">
+                            <span className="text-text-faint shrink-0 text-[10px]">
                               {added ? 'Added' : timeAgo(jd.lastUsedAt)}
                             </span>
                           </div>
                           <div
-                            className={`text-[10px] text-text-faint truncate mt-0.5 ${append ? 'ml-4' : ''}`}
+                            className={`text-text-faint mt-0.5 truncate text-[10px] ${append ? 'ml-4' : ''}`}
                           >
                             {jd.content.slice(0, 100)}
                           </div>
@@ -520,14 +520,14 @@ export function JdInput({
 
                       {/* Hover actions */}
                       {editingId !== jd.id && (
-                        <div className="absolute right-2 top-2 hidden group-hover:flex items-center gap-0.5 bg-bg-secondary/90 backdrop-blur-sm rounded px-1 py-0.5 shadow-sm border border-border">
+                        <div className="bg-bg-secondary/90 absolute top-2 right-2 hidden items-center gap-0.5 rounded border px-1 py-0.5 shadow-sm backdrop-blur-sm group-hover:flex">
                           <button
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleStartEdit(jd);
                             }}
-                            className="text-[10px] text-text-muted hover:text-text-secondary cursor-pointer px-1"
+                            className="text-text-muted hover:text-text-secondary cursor-pointer px-1 text-[10px]"
                           >
                             Edit
                           </button>
@@ -537,7 +537,7 @@ export function JdInput({
                               e.stopPropagation();
                               handleDelete(jd.id);
                             }}
-                            className={`text-[10px] cursor-pointer px-1 ${
+                            className={`cursor-pointer px-1 text-[10px] ${
                               confirmDeleteId === jd.id
                                 ? 'text-danger font-medium'
                                 : 'text-text-muted hover:text-danger'

@@ -84,12 +84,12 @@ export function RepeatableSection<T>({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-text uppercase tracking-widest flex items-center gap-2">
+        <h3 className="text-text flex items-center gap-2 text-sm font-bold tracking-widest uppercase">
           {title}
         </h3>
         <button
           onClick={add}
-          className="text-[10px] font-black px-4 py-1.5 bg-accent text-white rounded-full hover:opacity-90 shadow-md transition-all cursor-pointer uppercase tracking-widest"
+          className="bg-accent cursor-pointer rounded-full px-4 py-1.5 text-[10px] font-black tracking-widest text-white uppercase shadow-md transition-all hover:opacity-90"
         >
           {t('repeatable.add')}
         </button>
@@ -97,9 +97,9 @@ export function RepeatableSection<T>({
       {items.length === 0 && (
         <button
           onClick={add}
-          className="w-full py-8 text-center bg-bg-secondary/20 rounded-3xl border border-dashed border-border/50 hover:bg-bg-secondary/40 transition-all cursor-pointer group"
+          className="bg-bg-secondary/20 border-border/50 hover:bg-bg-secondary/40 group w-full cursor-pointer rounded-3xl border border-dashed py-8 text-center transition-all"
         >
-          <p className="text-xs text-text-muted italic group-hover:text-accent">
+          <p className="text-text-muted group-hover:text-accent text-xs italic">
             {t('repeatable.empty')}
           </p>
         </button>
@@ -162,14 +162,14 @@ function SortableCard({
     <div
       ref={setNodeRef}
       style={style}
-      className="border border-border/60 rounded-3xl bg-bg shadow-sm transition-all hover:shadow-md group/card"
+      className="border-border/60 bg-bg group/card rounded-3xl border shadow-sm transition-all hover:shadow-md"
     >
       <div className={`flex items-center justify-between p-4 pb-2 ${!isVisible ? 'p-4!' : ''}`}>
-        <div className="flex items-center gap-3 min-w-0">
+        <div className="flex min-w-0 items-center gap-3">
           <button
             {...attributes}
             {...listeners}
-            className="w-8 h-8 rounded-full flex items-center justify-center bg-bg-secondary text-text-muted hover:text-accent hover:bg-accent/5 cursor-grab active:cursor-grabbing touch-none transition-all shrink-0"
+            className="bg-bg-secondary text-text-muted hover:text-accent hover:bg-accent/5 flex h-8 w-8 shrink-0 cursor-grab touch-none items-center justify-center rounded-full transition-all active:cursor-grabbing"
             title="Drag to reorder"
           >
             <svg width="14" height="14" viewBox="0 0 12 12" fill="currentColor">
@@ -182,17 +182,17 @@ function SortableCard({
             </svg>
           </button>
           <span
-            className={`h-8 inline-flex items-center text-[10px] font-black text-text-muted uppercase tracking-widest bg-bg-secondary px-3 py-1 rounded-full truncate max-w-xs ${
-              !isVisible ? 'line-through decoration-text-muted/50' : ''
+            className={`text-text-muted bg-bg-secondary inline-flex h-8 max-w-xs items-center truncate rounded-full px-3 py-1 text-[10px] font-black tracking-widest uppercase ${
+              !isVisible ? 'decoration-text-muted/50 line-through' : ''
             }`}
           >
             {label}
           </span>
         </div>
-        <div className="flex items-center gap-1 shrink-0">
+        <div className="flex shrink-0 items-center gap-1">
           <button
             onClick={onToggleVisibility}
-            className={`w-8 h-8 flex items-center justify-center rounded-full bg-bg-secondary transition-all cursor-pointer ${
+            className={`bg-bg-secondary flex h-8 w-8 cursor-pointer items-center justify-center rounded-full transition-all ${
               isVisible ? 'text-text-muted hover:text-accent hover:bg-accent/5' : 'text-accent'
             }`}
             title={isVisible ? 'Collapse & Disable' : 'Expand & Enable'}
@@ -205,14 +205,14 @@ function SortableCard({
           </button>
           <button
             onClick={onRemove}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-bg-secondary text-text-muted hover:text-danger hover:bg-danger/5 transition-all cursor-pointer"
+            className="bg-bg-secondary text-text-muted hover:text-danger hover:bg-danger/5 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full transition-all"
             title="Remove entry"
           >
             <Trash size={16} variant="Bold" color="currentColor" />
           </button>
         </div>
       </div>
-      <div className={`p-4 pt-2 relative ${!isVisible ? 'hidden' : 'block'}`}>{children}</div>
+      <div className={`relative p-4 pt-2 ${!isVisible ? 'hidden' : 'block'}`}>{children}</div>
     </div>
   );
 }

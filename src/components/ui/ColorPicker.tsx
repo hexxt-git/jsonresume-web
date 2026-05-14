@@ -48,43 +48,43 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
 
   return (
     <div className="space-y-1.5 py-1">
-      <label className="block text-xs font-medium text-text-secondary ml-1">{label}</label>
+      <label className="text-text-secondary ml-1 block text-xs font-medium">{label}</label>
       <div className="flex items-center gap-3">
         <Popover.Root>
           <Popover.Trigger asChild>
             <button
-              className="w-10 h-10 rounded-full border-2 border-border cursor-pointer transition-all hover:shadow-md focus-visible:ring-4 focus-visible:ring-accent/10 outline-none shrink-0"
+              className="focus-visible:ring-accent/10 h-10 w-10 shrink-0 cursor-pointer rounded-full border-2 transition-all outline-none hover:shadow-md focus-visible:ring-4"
               style={{ backgroundColor: value || 'var(--accent)' }}
               aria-label={`${label}: ${value || 'default'}`}
             />
           </Popover.Trigger>
           <Popover.Portal>
             <Popover.Content
-              className="z-50 rounded-2xl border border-border bg-bg shadow-2xl p-4 w-60 overflow-hidden"
+              className="border-border bg-bg z-50 w-60 overflow-hidden rounded-2xl border p-4 shadow-2xl"
               sideOffset={8}
               align="start"
             >
-              <div className="grid grid-cols-4 gap-2 mb-4">
+              <div className="mb-4 grid grid-cols-4 gap-2">
                 {PRESETS.map((c) => (
                   <button
                     key={c}
                     onClick={() => selectColor(c)}
-                    className={`w-full aspect-square rounded-full cursor-pointer transition-all outline-none focus-visible:ring-4 focus-visible:ring-accent/10 ${
-                      value === c ? 'ring-2 ring-accent ring-offset-2 ring-offset-bg scale-110' : ''
+                    className={`focus-visible:ring-accent/10 aspect-square w-full cursor-pointer rounded-full transition-all outline-none focus-visible:ring-4 ${
+                      value === c ? 'ring-accent ring-offset-bg scale-110 ring-2 ring-offset-2' : ''
                     }`}
                     style={{ backgroundColor: c }}
                     aria-label={c}
                   />
                 ))}
               </div>
-              <div className="relative h-10 w-full mb-1">
+              <div className="relative mb-1 h-10 w-full">
                 <input
                   type="color"
                   value={value || '#2563eb'}
                   onChange={(e) => selectColor(e.target.value)}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
                 />
-                <div className="w-full h-full rounded-xl border border-border pointer-events-none flex items-center justify-center text-[10px] text-text-muted font-medium bg-bg-secondary">
+                <div className="border-border text-text-muted bg-bg-secondary pointer-events-none flex h-full w-full items-center justify-center rounded-xl border text-[10px] font-medium">
                   {t('ui.customColor' as any) || 'Custom Color'}
                 </div>
               </div>
@@ -98,7 +98,7 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
           onChange={(e) => handleInputChange(e.target.value)}
           onBlur={handleInputBlur}
           placeholder={t('customize.themeDefault')}
-          className="flex-1 px-4 py-2 text-xs border border-border-input bg-bg-input text-text rounded-full font-mono outline-none focus:ring-1 focus:ring-accent transition-all"
+          className="border-border-input bg-bg-input text-text focus:ring-accent flex-1 rounded-full border px-4 py-2 font-mono text-xs transition-all outline-none focus:ring-1"
           aria-label={`${label} hex value`}
         />
 
@@ -108,7 +108,7 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
               onChange('');
               setInputValue('');
             }}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-sm text-text-muted hover:bg-bg-hover hover:text-danger cursor-pointer transition-all border border-border"
+            className="text-text-muted hover:bg-bg-hover hover:text-danger border-border flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border text-sm transition-all"
             title={t('ui.resetDefault')}
             aria-label={`Reset ${label}`}
           >

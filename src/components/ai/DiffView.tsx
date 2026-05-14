@@ -256,14 +256,14 @@ export function InlineDiffView({ oldText, newText }: { oldText: string; newText:
   };
 
   return (
-    <div className="w-full text-sm leading-relaxed text-text whitespace-pre-wrap">
+    <div className="text-text w-full text-sm leading-relaxed whitespace-pre-wrap">
       {groups.map((item, i) => {
         if (item.kind === 'collapsed') {
           if (expanded.has(item.groupId)) {
             return (
               <div key={i}>
                 <div
-                  className="text-xs text-text-tertiary hover:text-text-secondary cursor-pointer py-0.5 select-none"
+                  className="text-text-tertiary hover:text-text-secondary cursor-pointer py-0.5 text-xs select-none"
                   onClick={() => toggle(item.groupId)}
                 >
                   ··· collapse {item.lines.length} unchanged lines
@@ -277,7 +277,7 @@ export function InlineDiffView({ oldText, newText }: { oldText: string; newText:
           return (
             <div
               key={i}
-              className="text-xs text-text-tertiary hover:text-text-secondary cursor-pointer py-0.5 select-none"
+              className="text-text-tertiary hover:text-text-secondary cursor-pointer py-0.5 text-xs select-none"
               onClick={() => toggle(item.groupId)}
             >
               ··· {item.lines.length} unchanged lines — click to expand
@@ -326,20 +326,20 @@ export function BlockDiffView({ oldText, newText }: { oldText: string; newText: 
   };
 
   return (
-    <div className="w-full text-xs font-mono rounded-2xl overflow-hidden border border-border whitespace-pre-wrap">
+    <div className="w-full overflow-hidden rounded-2xl border font-mono text-xs whitespace-pre-wrap">
       {groups.map((item, i) => {
         if (item.kind === 'collapsed') {
           if (expanded.has(item.groupId)) {
             return (
               <div key={i}>
                 <div
-                  className="px-2 py-0.5 text-text-tertiary hover:text-text-secondary hover:bg-bg-secondary cursor-pointer select-none"
+                  className="text-text-tertiary hover:text-text-secondary hover:bg-bg-secondary cursor-pointer px-2 py-0.5 select-none"
                   onClick={() => toggle(item.groupId)}
                 >
                   ··· collapse {item.lines.length} unchanged lines
                 </div>
                 {item.lines.map((line, j) => (
-                  <div key={j} className="px-2 py-0.5 text-text-secondary">
+                  <div key={j} className="text-text-secondary px-2 py-0.5">
                     {line.oldLine || '\u00A0'}
                   </div>
                 ))}
@@ -349,7 +349,7 @@ export function BlockDiffView({ oldText, newText }: { oldText: string; newText: 
           return (
             <div
               key={i}
-              className="px-2 py-0.5 text-text-tertiary hover:text-text-secondary hover:bg-bg-secondary cursor-pointer select-none"
+              className="text-text-tertiary hover:text-text-secondary hover:bg-bg-secondary cursor-pointer px-2 py-0.5 select-none"
               onClick={() => toggle(item.groupId)}
             >
               ··· {item.lines.length} unchanged lines — click to expand
@@ -359,7 +359,7 @@ export function BlockDiffView({ oldText, newText }: { oldText: string; newText: 
         const { line } = item;
         if (line.type === 'equal')
           return (
-            <div key={i} className="px-2 py-0.5 text-text-secondary">
+            <div key={i} className="text-text-secondary px-2 py-0.5">
               {line.oldLine || '\u00A0'}
             </div>
           );
@@ -399,7 +399,7 @@ export function ListDiffView({ items }: { items: ListDiffItem[] }) {
       {items.map((item, i) => (
         <span
           key={i}
-          className={`text-xs px-2 py-0.5 rounded ${
+          className={`rounded px-2 py-0.5 text-xs ${
             item.type === 'remove'
               ? 'diff-word-rm'
               : item.type === 'add'

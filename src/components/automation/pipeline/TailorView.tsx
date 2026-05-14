@@ -150,12 +150,12 @@ IMPORTANT: Only modify content relevant to job tailoring (summary, work highligh
 
   if (isRunning) {
     return (
-      <div className="text-center py-8">
-        <div className="inline-block w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin mb-2" />
-        <p className="text-xs text-text-muted">Generating tailored changes...</p>
+      <div className="py-8 text-center">
+        <div className="border-accent mb-2 inline-block h-5 w-5 animate-spin rounded-full border-2 border-t-transparent" />
+        <p className="text-text-muted text-xs">Generating tailored changes...</p>
         <button
           onClick={abort}
-          className="text-[10px] text-text-muted hover:text-danger cursor-pointer mt-1"
+          className="text-text-muted hover:text-danger mt-1 cursor-pointer text-[10px]"
         >
           Cancel
         </button>
@@ -168,13 +168,13 @@ IMPORTANT: Only modify content relevant to job tailoring (summary, work highligh
   if (error && changes.length === 0) {
     return (
       <div className="space-y-4 p-4">
-        <div className="text-xs font-medium text-danger bg-danger/10 border border-danger/20 rounded-2xl px-6 py-4 flex items-center gap-3">
+        <div className="text-danger bg-danger/10 border-danger/20 flex items-center gap-3 rounded-2xl border px-6 py-4 text-xs font-medium">
           <span className="text-lg">&times;</span>
           {error}
         </div>
         <button
           onClick={handleRegenerate}
-          className="text-xs font-bold text-accent hover:bg-accent/5 px-4 py-2 rounded-full border border-accent/20 transition-all cursor-pointer uppercase tracking-widest"
+          className="text-accent hover:bg-accent/5 border-accent/20 cursor-pointer rounded-full border px-4 py-2 text-xs font-bold tracking-widest uppercase transition-all"
         >
           Try again
         </button>
@@ -186,13 +186,13 @@ IMPORTANT: Only modify content relevant to job tailoring (summary, work highligh
 
   if (changes.length === 0 && !isRunning) {
     return (
-      <div className="text-center py-16 space-y-4 bg-bg-secondary/20 rounded-3xl border border-dashed border-border/50">
-        <p className="text-sm font-medium text-text-muted italic">
+      <div className="bg-bg-secondary/20 border-border/50 space-y-4 rounded-3xl border border-dashed py-16 text-center">
+        <p className="text-text-muted text-sm font-medium italic">
           No changes needed — your resume already matches well.
         </p>
         <button
           onClick={handleRegenerate}
-          className="text-xs font-bold text-accent hover:bg-accent/5 px-6 py-2.5 rounded-full border border-accent/30 transition-all cursor-pointer uppercase tracking-widest"
+          className="text-accent hover:bg-accent/5 border-accent/30 cursor-pointer rounded-full border px-6 py-2.5 text-xs font-bold tracking-widest uppercase transition-all"
         >
           Try with different settings
         </button>
@@ -205,17 +205,17 @@ IMPORTANT: Only modify content relevant to job tailoring (summary, work highligh
   return (
     <div className="space-y-6 p-4">
       {/* Inline settings */}
-      <div className="space-y-6 bg-bg-secondary/30 p-5 rounded-2xl border border-border/50">
-        <div className="flex items-center gap-4 flex-wrap">
-          <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
+      <div className="bg-bg-secondary/30 border-border/50 space-y-6 rounded-2xl border p-5">
+        <div className="flex flex-wrap items-center gap-4">
+          <span className="text-text-muted text-[10px] font-bold tracking-widest uppercase">
             Approach
           </span>
-          <div className="flex gap-2 bg-bg p-1 rounded-full border border-border/50 shadow-sm">
+          <div className="bg-bg border-border/50 flex gap-2 rounded-full border p-1 shadow-sm">
             {(['conservative', 'balanced', 'creative'] as Creativity[]).map((c) => (
               <button
                 key={c}
                 onClick={() => setCreativity(c)}
-                className={`text-[10px] font-bold px-4 py-1.5 rounded-full cursor-pointer transition-all uppercase tracking-tight ${
+                className={`cursor-pointer rounded-full px-4 py-1.5 text-[10px] font-bold tracking-tight uppercase transition-all ${
                   creativity === c
                     ? 'bg-accent text-white shadow-md'
                     : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
@@ -227,27 +227,27 @@ IMPORTANT: Only modify content relevant to job tailoring (summary, work highligh
           </div>
           <button
             onClick={handleRegenerate}
-            className="text-[10px] font-bold text-accent hover:text-accent/80 cursor-pointer ml-auto uppercase tracking-widest border-b-2 border-accent/20 hover:border-accent transition-all pb-0.5"
+            className="text-accent hover:text-accent/80 border-accent/20 hover:border-accent ml-auto cursor-pointer border-b-2 pb-0.5 text-[10px] font-bold tracking-widest uppercase transition-all"
           >
             Regenerate
           </button>
         </div>
 
         <details className="group">
-          <summary className="text-[10px] font-bold text-text-muted cursor-pointer hover:text-text-secondary select-none uppercase tracking-widest flex items-center gap-2">
+          <summary className="text-text-muted hover:text-text-secondary flex cursor-pointer items-center gap-2 text-[10px] font-bold tracking-widest uppercase select-none">
             Sections to modify
           </summary>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3 mt-4 pl-3">
+          <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 pl-3 sm:grid-cols-3">
             {ALL_SECTIONS.map((s) => (
               <label
                 key={s}
-                className="flex items-center gap-2.5 text-[11px] font-medium text-text-secondary cursor-pointer select-none group/item hover:text-accent transition-colors"
+                className="text-text-secondary group/item hover:text-accent flex cursor-pointer items-center gap-2.5 text-[11px] font-medium transition-colors select-none"
               >
                 <input
                   type="checkbox"
                   checked={sectionsToTailor.includes(s)}
                   onChange={() => toggleSection(s)}
-                  className="rounded-full border-border-input accent-accent w-4 h-4 cursor-pointer"
+                  className="border-border-input accent-accent h-4 w-4 cursor-pointer rounded-full"
                 />
                 {SECTION_DISPLAY[s] || s}
               </label>
@@ -257,7 +257,7 @@ IMPORTANT: Only modify content relevant to job tailoring (summary, work highligh
       </div>
 
       {error && (
-        <div className="text-xs font-medium text-danger bg-danger/10 border border-danger/20 rounded-2xl px-6 py-4">
+        <div className="text-danger bg-danger/10 border-danger/20 rounded-2xl border px-6 py-4 text-xs font-medium">
           {error}
         </div>
       )}

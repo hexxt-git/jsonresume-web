@@ -7,7 +7,7 @@ interface StepperProps {
 
 export function Stepper({ steps, currentIndex, onStepClick }: StepperProps) {
   return (
-    <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest">
+    <div className="flex items-center gap-3 text-[10px] font-bold tracking-widest uppercase">
       {steps.map((label, i) => {
         const reached = i <= currentIndex;
         const active = i === currentIndex;
@@ -15,7 +15,7 @@ export function Stepper({ steps, currentIndex, onStepClick }: StepperProps) {
         return (
           <div key={label} className="flex items-center gap-3">
             {i > 0 && (
-              <div className={`w-8 h-0.5 rounded-full ${reached ? 'bg-accent' : 'bg-border/50'}`} />
+              <div className={`h-0.5 w-8 rounded-full ${reached ? 'bg-accent' : 'bg-border/50'}`} />
             )}
             <button
               type="button"
@@ -29,12 +29,12 @@ export function Stepper({ steps, currentIndex, onStepClick }: StepperProps) {
               } ${clickable ? 'cursor-pointer' : 'cursor-default'}`}
             >
               <span
-                className={`w-6 h-6 rounded-full flex items-center justify-center border-2 transition-colors ${
+                className={`flex h-6 w-6 items-center justify-center rounded-full border-2 transition-colors ${
                   active
                     ? 'bg-accent border-accent text-white shadow-md'
                     : reached
                       ? 'border-accent text-accent'
-                      : 'border-border text-text-muted'
+                      : 'text-text-muted'
                 }`}
               >
                 {i + 1}

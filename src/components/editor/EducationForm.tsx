@@ -51,7 +51,7 @@ export function EducationForm() {
               placeholder={t('ph.area')}
             />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <FormField
               label={t('edu.startDate')}
               value={item.startDate || ''}

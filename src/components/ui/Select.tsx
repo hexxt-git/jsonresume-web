@@ -31,9 +31,7 @@ export function Select({
   return (
     <RadixSelect.Root value={value} onValueChange={onValueChange}>
       <RadixSelect.Trigger
-        className={`inline-flex items-center justify-between rounded-full border border-border bg-bg
-          text-text-secondary hover:bg-bg-hover outline-none cursor-pointer transition-colors
-          data-placeholder:text-text-muted ${trigger} ${className}`}
+        className={`bg-bg text-text-secondary hover:bg-bg-hover data-placeholder:text-text-muted inline-flex cursor-pointer items-center justify-between rounded-full border transition-colors outline-none ${trigger} ${className}`}
       >
         <span className="flex items-center gap-2">
           {selected?.icon}
@@ -46,7 +44,7 @@ export function Select({
 
       <RadixSelect.Portal>
         <RadixSelect.Content
-          className="z-50 overflow-hidden rounded-2xl border border-border bg-bg shadow-xl"
+          className="bg-bg z-50 overflow-hidden rounded-2xl border shadow-xl"
           position="popper"
           sideOffset={8}
           align="start"
@@ -56,12 +54,9 @@ export function Select({
               <RadixSelect.Item
                 key={opt.value}
                 value={opt.value}
-                className="flex items-center gap-2.5 rounded-xl px-4 py-2 text-xs text-text-secondary
-                  outline-none cursor-pointer select-none
-                  data-[highlighted]:bg-bg-hover data-[highlighted]:text-text
-                  data-[state=checked]:text-accent-text data-[state=checked]:font-medium"
+                className="text-text-secondary data-[highlighted]:bg-bg-hover data-[highlighted]:text-text data-[state=checked]:text-accent-text flex cursor-pointer items-center gap-2.5 rounded-xl px-4 py-2 text-xs outline-none select-none data-[state=checked]:font-medium"
               >
-                <RadixSelect.ItemIndicator className="w-4 text-accent">
+                <RadixSelect.ItemIndicator className="text-accent w-4">
                   <TickCircle size={14} variant="Bold" color="currentColor" />
                 </RadixSelect.ItemIndicator>
                 {opt.icon && <span className="shrink-0">{opt.icon}</span>}

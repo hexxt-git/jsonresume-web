@@ -9,19 +9,19 @@ export function CoverLetterSection({ content }: Props) {
   const [copied, setCopied] = useState(false);
 
   return (
-    <div className="px-3 py-2 border-t border-border">
+    <div className="border-t px-3 py-2">
       <div
-        className={`text-xs text-text-secondary whitespace-pre-wrap bg-bg-secondary p-1 ${
+        className={`text-text-secondary bg-bg-secondary p-1 text-xs whitespace-pre-wrap ${
           !expanded ? 'line-clamp-3' : ''
         }`}
       >
         {content}
       </div>
-      <div className="flex items-center gap-2 mt-1">
+      <div className="mt-1 flex items-center gap-2">
         <button
           type="button"
           onClick={() => setExpanded(!expanded)}
-          className="text-[10px] text-text-muted hover:text-accent cursor-pointer"
+          className="text-text-muted hover:text-accent cursor-pointer text-[10px]"
         >
           {expanded ? 'Show less' : 'View full'}
         </button>
@@ -32,7 +32,7 @@ export function CoverLetterSection({ content }: Props) {
             setCopied(true);
             setTimeout(() => setCopied(false), 1500);
           }}
-          className="text-[10px] text-text-muted hover:text-accent cursor-pointer"
+          className="text-text-muted hover:text-accent cursor-pointer text-[10px]"
         >
           {copied ? 'Copied' : 'Copy'}
         </button>

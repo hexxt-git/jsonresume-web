@@ -70,7 +70,7 @@ export function SlotsPicker() {
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="text-[10px] font-bold px-3 py-1.5 border border-border rounded-full hover:bg-bg-hover transition-all cursor-pointer text-text-secondary flex items-center gap-2 max-w-[120px] sm:max-w-[200px] shadow-sm uppercase tracking-wider"
+        className="hover:bg-bg-hover text-text-secondary flex max-w-[120px] cursor-pointer items-center gap-2 rounded-full border px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase shadow-sm transition-all sm:max-w-[200px]"
       >
         <span className="truncate">
           {currentSlot ? slotDisplayName(currentSlot) : t('slots.resumes')}
@@ -81,36 +81,36 @@ export function SlotsPicker() {
       {open && (
         <>
           <div className="fixed inset-0 z-40 bg-black/5" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full mt-2 z-50 w-80 bg-bg border border-border rounded-3xl shadow-2xl overflow-hidden p-2 space-y-1">
-            <div className="p-2 border-b border-border flex gap-2 mb-1">
+          <div className="bg-bg border-border absolute top-full right-0 z-50 mt-2 w-80 space-y-1 overflow-hidden rounded-3xl border p-2 shadow-2xl">
+            <div className="border-border mb-1 flex gap-2 border-b p-2">
               <button
                 onClick={handleNew}
-                className="flex-1 text-[10px] font-bold px-3 py-2 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer shadow-md transition-all uppercase tracking-widest"
+                className="bg-accent flex-1 cursor-pointer rounded-full px-3 py-2 text-[10px] font-bold tracking-widest text-white uppercase shadow-md transition-all hover:opacity-90"
               >
                 {t('slots.new')}
               </button>
               <button
                 onClick={handleDuplicate}
-                className="flex-1 text-[10px] font-bold px-3 py-2 border border-border rounded-full hover:bg-bg-hover cursor-pointer text-text-secondary transition-all uppercase tracking-widest"
+                className="border-border hover:bg-bg-hover text-text-secondary flex-1 cursor-pointer rounded-full border px-3 py-2 text-[10px] font-bold tracking-widest uppercase transition-all"
               >
                 {t('slots.duplicate')}
               </button>
             </div>
 
             {slots.length === 0 ? (
-              <div className="p-6 text-xs text-text-muted text-center italic">
+              <div className="text-text-muted p-6 text-center text-xs italic">
                 {t('slots.empty')}
               </div>
             ) : (
-              <div className="max-h-72 overflow-y-auto space-y-1 rounded-2xl">
+              <div className="max-h-72 space-y-1 overflow-y-auto rounded-2xl p-0.5">
                 {[...slots]
                   .sort((a, b) => b.updatedAt - a.updatedAt)
                   .map((slot) => (
                     <div
                       key={slot.id}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${
+                      className={`flex items-center gap-3 rounded-2xl px-4 py-3 transition-all ${
                         slot.id === activeSlotId
-                          ? 'bg-bg-accent ring-1 ring-accent/20'
+                          ? 'bg-bg-accent ring-accent/20 ring-1'
                           : 'hover:bg-bg-hover'
                       }`}
                     >
@@ -121,19 +121,19 @@ export function SlotsPicker() {
                           onBlur={handleFinishRename}
                           onKeyDown={(e) => e.key === 'Enter' && handleFinishRename()}
                           autoFocus
-                          className="flex-1 px-3 py-1 text-xs border border-accent rounded-full outline-none bg-bg-input text-text shadow-sm"
+                          className="border-accent bg-bg-input text-text flex-1 rounded-full border px-3 py-1 text-xs shadow-sm outline-none"
                         />
                       ) : (
                         <button
                           onClick={() => handleLoad(slot.id)}
-                          className="flex-1 text-left truncate cursor-pointer group"
+                          className="group flex-1 cursor-pointer truncate text-left"
                         >
                           <div
-                            className={`text-xs font-bold truncate ${slot.id === activeSlotId ? 'text-accent' : 'text-text'}`}
+                            className={`truncate text-xs font-bold ${slot.id === activeSlotId ? 'text-accent' : 'text-text'}`}
                           >
                             {slotDisplayName(slot)}
                           </div>
-                          <div className="text-[10px] text-text-muted mt-0.5 font-medium">
+                          <div className="text-text-muted mt-0.5 text-[10px] font-medium">
                             {formatDate(slot.updatedAt)}
                           </div>
                         </button>
@@ -141,14 +141,14 @@ export function SlotsPicker() {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => handleStartRename(slot.id, slotDisplayName(slot))}
-                          className="w-7 h-7 flex items-center justify-center text-text-muted hover:text-accent hover:bg-accent/5 rounded-full cursor-pointer transition-all"
+                          className="text-text-muted hover:text-accent hover:bg-accent/5 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full transition-all"
                           title={t('slots.rename')}
                         >
                           &#9998;
                         </button>
                         <button
                           onClick={() => handleDelete(slot.id)}
-                          className="w-7 h-7 flex items-center justify-center text-text-muted hover:text-danger hover:bg-danger/5 rounded-full cursor-pointer transition-all"
+                          className="text-text-muted hover:text-danger hover:bg-danger/5 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full transition-all"
                           title={t('slots.delete')}
                         >
                           &times;

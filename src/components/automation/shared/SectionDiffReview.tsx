@@ -76,21 +76,21 @@ export function SectionDiffReview({
     <div className="space-y-6">
       {/* Bulk actions */}
       {pendingCount > 0 && (
-        <div className="flex items-center justify-between px-2 bg-bg-secondary/30 p-3 rounded-full border border-border/50">
-          <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest ml-3">
+        <div className="bg-bg-secondary/30 border-border/50 flex items-center justify-between rounded-full border p-3 px-2">
+          <span className="text-text-muted ml-3 text-[10px] font-bold tracking-widest uppercase">
             {pendingCount} change{pendingCount !== 1 ? 's' : ''} to review
           </span>
           <div className="flex gap-2">
             <button
               onClick={handleRejectAll}
-              className="flex items-center gap-1.5 text-[10px] font-bold text-text-muted hover:text-danger cursor-pointer transition-all px-4 py-2 rounded-full border border-border/50 hover:bg-danger/5 uppercase tracking-wide"
+              className="text-text-muted hover:text-danger border-border/50 hover:bg-danger/5 flex cursor-pointer items-center gap-1.5 rounded-full border px-4 py-2 text-[10px] font-bold tracking-wide uppercase transition-all"
             >
               <CloseCircle size={14} variant="Bold" color="currentColor" />
               Reject all
             </button>
             <button
               onClick={handleAcceptAll}
-              className="flex items-center gap-1.5 text-[10px] font-bold text-accent hover:opacity-80 cursor-pointer transition-all px-4 py-2 rounded-full border border-accent/20 bg-accent/5 uppercase tracking-wide"
+              className="text-accent border-accent/20 bg-accent/5 flex cursor-pointer items-center gap-1.5 rounded-full border px-4 py-2 text-[10px] font-bold tracking-wide uppercase transition-all hover:opacity-80"
             >
               <TickCircle size={14} variant="Bold" color="currentColor" />
               Accept all
@@ -106,36 +106,36 @@ export function SectionDiffReview({
           return (
             <div
               key={change.sectionKey}
-              className={`border-2 rounded-3xl overflow-hidden transition-all shadow-sm ${
+              className={`overflow-hidden rounded-3xl border-2 shadow-sm transition-all ${
                 status === 'rejected'
-                  ? 'border-border/30 opacity-40 scale-98'
+                  ? 'border-border/30 scale-98 opacity-40'
                   : status === 'accepted'
-                    ? 'border-accent shadow-lg ring-4 ring-accent/5'
-                    : 'border-border bg-bg'
+                    ? 'border-accent ring-accent/5 shadow-lg ring-4'
+                    : 'bg-bg'
               }`}
             >
-              <div className="flex items-center justify-between px-6 py-4 bg-bg-secondary/30 border-b border-border/50">
-                <span className="text-xs font-bold text-text uppercase tracking-widest">
+              <div className="bg-bg-secondary/30 border-border/50 flex items-center justify-between border-b px-6 py-4">
+                <span className="text-text text-xs font-bold tracking-widest uppercase">
                   {change.label}
                 </span>
                 {status === 'accepted' && (
-                  <span className="text-[10px] font-black text-accent bg-accent/10 px-3 py-1 rounded-full uppercase tracking-tighter">
+                  <span className="text-accent bg-accent/10 rounded-full px-3 py-1 text-[10px] font-black tracking-tighter uppercase">
                     ACCEPTED
                   </span>
                 )}
                 {status === 'rejected' && (
-                  <span className="text-[10px] font-black text-danger bg-danger/10 px-3 py-1 rounded-full uppercase tracking-tighter">
+                  <span className="text-danger bg-danger/10 rounded-full px-3 py-1 text-[10px] font-black tracking-tighter uppercase">
                     REJECTED
                   </span>
                 )}
               </div>
               {change.explanation && (
-                <div className="px-6 py-3 text-[11px] font-medium text-text-muted italic border-b border-border/50 bg-bg">
+                <div className="text-text-muted border-border/50 bg-bg border-b px-6 py-3 text-[11px] font-medium italic">
                   {change.explanation}
                 </div>
               )}
-              <div className="p-4 bg-bg">
-                <div className="rounded-2xl overflow-hidden border border-border/50">
+              <div className="bg-bg p-4">
+                <div className="border-border/50 overflow-hidden rounded-2xl border">
                   <BlockDiffView
                     oldText={stringify(change.beforeValue)}
                     newText={stringify(change.afterValue)}
@@ -143,17 +143,17 @@ export function SectionDiffReview({
                 </div>
               </div>
               {status === 'pending' && (
-                <div className="flex justify-end gap-3 px-6 py-4 border-t border-border/50 bg-bg-secondary/10">
+                <div className="border-border/50 bg-bg-secondary/10 flex justify-end gap-3 border-t px-6 py-4">
                   <button
                     onClick={() => handleReject(change)}
-                    className="flex items-center gap-1.5 text-[10px] font-bold text-text-muted hover:text-danger cursor-pointer transition-all px-4 py-2 rounded-full border border-border/50 hover:bg-danger/5 uppercase tracking-wide"
+                    className="text-text-muted hover:text-danger border-border/50 hover:bg-danger/5 flex cursor-pointer items-center gap-1.5 rounded-full border px-4 py-2 text-[10px] font-bold tracking-wide uppercase transition-all"
                   >
                     <CloseCircle size={14} variant="Bold" color="currentColor" />
                     Reject
                   </button>
                   <button
                     onClick={() => handleAccept(change)}
-                    className="flex items-center gap-1.5 text-[10px] font-bold text-accent hover:opacity-80 cursor-pointer transition-all px-4 py-2 rounded-full border border-accent/20 bg-accent/5 uppercase tracking-wide"
+                    className="text-accent border-accent/20 bg-accent/5 flex cursor-pointer items-center gap-1.5 rounded-full border px-4 py-2 text-[10px] font-bold tracking-wide uppercase transition-all hover:opacity-80"
                   >
                     <TickCircle size={14} variant="Bold" color="currentColor" />
                     Accept
@@ -167,7 +167,7 @@ export function SectionDiffReview({
 
       {/* Summary */}
       {pendingCount === 0 && changes.length > 0 && (
-        <div className="text-center text-[10px] font-bold text-text-muted py-4 uppercase tracking-widest bg-bg-secondary/20 rounded-full border border-dashed border-border/50">
+        <div className="text-text-muted bg-bg-secondary/20 border-border/50 rounded-full border border-dashed py-4 text-center text-[10px] font-bold tracking-widest uppercase">
           {acceptedCount} of {changes.length} changes applied
         </div>
       )}

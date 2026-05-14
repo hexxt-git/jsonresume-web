@@ -53,10 +53,10 @@ function ToolResultBadge({ msg, hideDiffs }: { msg: ToolResultMessage; hideDiffs
   const afterStr = currentValue != null ? sortedStringify(currentValue) : '';
 
   return (
-    <div className="space-y-2 w-full">
+    <div className="w-full space-y-2">
       <div className="flex items-center gap-3 text-xs">
         <span
-          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-[10px] tracking-tight border ${
+          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[10px] font-bold tracking-tight ${
             msg.success
               ? msg.undone
                 ? 'line-through opacity-60'
@@ -78,7 +78,7 @@ function ToolResultBadge({ msg, hideDiffs }: { msg: ToolResultMessage; hideDiffs
         {msg.success && msg.path.length > 0 && (
           <button
             onClick={handleToggle}
-            className="text-text-muted hover:text-accent transition-all cursor-pointer underline font-bold text-[10px] tracking-wide"
+            className="text-text-muted hover:text-accent cursor-pointer text-[10px] font-bold tracking-wide underline transition-all"
           >
             {(msg.undone ? t('ai.redo') : t('ai.undo')).toUpperCase()}
           </button>
@@ -86,14 +86,14 @@ function ToolResultBadge({ msg, hideDiffs }: { msg: ToolResultMessage; hideDiffs
         {!hideDiffs && hasDiff && beforeStr !== afterStr && (
           <button
             onClick={() => setShowDiff(!showDiff)}
-            className="text-text-muted hover:text-text-secondary transition-all cursor-pointer text-[10px] font-bold tracking-wide"
+            className="text-text-muted hover:text-text-secondary cursor-pointer text-[10px] font-bold tracking-wide transition-all"
           >
             {(showDiff ? 'hide diff' : 'diff').toUpperCase()}
           </button>
         )}
       </div>
       {showDiff && !hideDiffs && hasDiff && beforeStr !== afterStr && (
-        <div className="mt-2 rounded-2xl overflow-hidden shadow-sm">
+        <div className="mt-2 overflow-hidden rounded-2xl shadow-sm">
           <BlockDiffView oldText={beforeStr} newText={afterStr} />
         </div>
       )}
@@ -140,24 +140,24 @@ export function AiMessageList({
 
   if (messages.length === 0 && !error) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center px-8 gap-10 bg-bg">
-        <div className="text-center max-w-sm space-y-4">
-          <div className="w-16 h-16 bg-accent/10 rounded-3xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl text-accent">&#10024;</span>
+      <div className="bg-bg flex flex-1 flex-col items-center justify-center gap-10 px-8">
+        <div className="max-w-sm space-y-4 text-center">
+          <div className="bg-accent/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl">
+            <span className="text-accent text-2xl">&#10024;</span>
           </div>
-          <p className="text-lg font-bold text-text tracking-tight">
+          <p className="text-text text-lg font-bold tracking-tight">
             {name ? `Let's work on ${name}'s resume` : `Let's work on your resume`}
           </p>
-          <p className="text-sm text-text-tertiary leading-relaxed px-4 font-medium">
+          <p className="text-text-tertiary px-4 text-sm leading-relaxed font-medium">
             Ask me to rewrite, translate, review, or tailor your resume for a specific role.
           </p>
         </div>
-        <div className="flex flex-wrap justify-center gap-3 max-w-lg">
+        <div className="flex max-w-lg flex-wrap justify-center gap-3">
           {PRESETS.map((p) => (
             <button
               key={p.label}
               onClick={() => onSend?.(p.prompt)}
-              className="text-xs px-5 py-2.5 border border-border rounded-full text-text-secondary hover:bg-bg-secondary hover:text-accent cursor-pointer transition-all font-bold shadow-sm"
+              className="text-text-secondary hover:bg-bg-secondary hover:text-accent cursor-pointer rounded-full border px-5 py-2.5 text-xs font-bold shadow-sm transition-all"
             >
               {p.label}
             </button>
@@ -168,14 +168,14 @@ export function AiMessageList({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
+    <div className="flex-1 space-y-6 overflow-y-auto px-6 py-4">
       {messages.map((m) => (
         <MessageRow key={m.id} message={m} hideDiffs={hideDiffs} />
       ))}
       {error && (
         <div className="flex justify-start">
           <div
-            className="max-w-[90%] rounded-2xl px-4 py-3 text-xs bg-danger/10 text-danger cursor-pointer font-medium border border-danger/20"
+            className="bg-danger/10 text-danger border-danger/20 max-w-[90%] cursor-pointer rounded-2xl border px-4 py-3 text-xs font-medium"
             onClick={() => setError(null)}
             title={t('ai.clickDismiss')}
           >
@@ -191,7 +191,7 @@ export function AiMessageList({
 function MessageRow({ message: m, hideDiffs }: { message: AnyMessage; hideDiffs?: boolean }) {
   if (m.role === 'tool_result') {
     return (
-      <div className="flex justify-start pl-4 py-1">
+      <div className="flex justify-start py-1 pl-4">
         <ToolResultBadge msg={m} hideDiffs={hideDiffs} />
       </div>
     );
@@ -211,7 +211,7 @@ function MessageRow({ message: m, hideDiffs }: { message: AnyMessage; hideDiffs?
   return (
     <div className="space-y-1.5">
       <div
-        className={`flex items-center gap-2 text-[10px] font-bold text-text-muted tracking-wider uppercase ${isUser ? 'flex-row-reverse' : ''}`}
+        className={`text-text-muted flex items-center gap-2 text-[10px] font-bold tracking-wider uppercase ${isUser ? 'flex-row-reverse' : ''}`}
       >
         {isUser ? 'USER' : 'ASSISTANT'}
         <span className="font-normal opacity-50">{timestamp}</span>
@@ -225,20 +225,20 @@ function MessageRow({ message: m, hideDiffs }: { message: AnyMessage; hideDiffs?
         <div
           className={`max-w-[85%] px-5 py-3 text-sm shadow-sm transition-all ${
             isUser
-              ? 'bg-accent text-white rounded-3xl rounded-br-lg font-medium'
-              : 'bg-bg-secondary text-text rounded-3xl rounded-bl-lg border border-border/50'
+              ? 'bg-accent rounded-3xl rounded-br-lg font-medium text-white'
+              : 'bg-bg-secondary text-text border-border/50 rounded-3xl rounded-bl-lg border'
           }`}
         >
           {hasContent ? (
             isUser ? (
-              <span className="whitespace-pre-wrap leading-relaxed">{m.content}</span>
+              <span className="leading-relaxed whitespace-pre-wrap">{m.content}</span>
             ) : (
               <Markdown text={m.content} />
             )
           ) : (
             showSpinner && (
               <div className="py-1">
-                <span className="inline-block w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                <span className="border-accent inline-block h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
               </div>
             )
           )}
@@ -263,7 +263,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="text-text-muted hover:text-text-secondary transition-colors cursor-pointer p-1 opacity-0 group-hover:opacity-100"
+      className="text-text-muted hover:text-text-secondary cursor-pointer p-1 opacity-0 transition-colors group-hover:opacity-100"
       title="Copy message"
     >
       {copied ? (

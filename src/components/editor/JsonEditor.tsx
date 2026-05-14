@@ -115,14 +115,14 @@ export default function JsonEditor() {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between px-3 py-1.5 bg-bg-secondary border-b border-border shrink-0">
-        <span className="text-xs text-text-muted">
+    <div className="flex h-full flex-col">
+      <div className="bg-bg-secondary flex shrink-0 items-center justify-between border-b px-3 py-1.5">
+        <span className="text-text-muted text-xs">
           {error ? <span className="text-danger">{error}</span> : t('jsonEditor.schema')}
         </span>
         <button
           onClick={handleFormat}
-          className="text-xs px-2 py-0.5 text-text-tertiary hover:text-text hover:bg-bg-tertiary rounded cursor-pointer"
+          className="text-text-tertiary hover:text-text hover:bg-bg-tertiary cursor-pointer rounded px-2 py-0.5 text-xs"
         >
           {t('jsonEditor.format')}
         </button>

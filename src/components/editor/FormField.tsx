@@ -24,7 +24,7 @@ export function FormField({
     'w-full px-4 py-2 text-sm border border-border-input bg-bg-input text-text focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent transition-all';
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-xs font-medium text-text-secondary ml-1">
+      <label htmlFor={id} className="text-text-secondary ml-1 block text-xs font-medium">
         {label}
       </label>
       {multiline ? (
@@ -35,7 +35,7 @@ export function FormField({
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
             rows={4}
-            className={`${baseCls} rounded-2xl resize-y pr-8`}
+            className={`${baseCls} resize-y rounded-2xl pr-8`}
           />
         </AiWritingTools>
       ) : (

@@ -60,7 +60,7 @@ export function OnboardingDialog() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
       <div
-        className="bg-bg rounded-3xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden border border-border"
+        className="bg-bg mx-4 w-full max-w-lg overflow-hidden rounded-3xl border shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Screenshot for feature slides */}
@@ -69,20 +69,20 @@ export function OnboardingDialog() {
             <img
               src={featureSlides[slideIndex].image}
               alt={t(featureSlides[slideIndex].title)}
-              className="w-full h-full object-cover object-top"
+              className="h-full w-full object-cover object-top"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-bg/10" />
+            <div className="to-bg/10 absolute inset-0 bg-gradient-to-b from-transparent" />
           </div>
         )}
 
         <div className="p-6">
           {/* Progress dots */}
-          <div className="flex justify-center gap-2 mb-6">
+          <div className="mb-6 flex justify-center gap-2">
             {Array.from({ length: TOTAL }).map((_, i) => (
               <div
                 key={i}
                 className={`h-2 rounded-full transition-all duration-300 ${
-                  i === step ? 'w-8 bg-accent' : i < step ? 'w-2 bg-accent/40' : 'w-2 bg-border'
+                  i === step ? 'bg-accent w-8' : i < step ? 'bg-accent/40 w-2' : 'bg-border w-2'
                 }`}
               />
             ))}
@@ -90,17 +90,17 @@ export function OnboardingDialog() {
 
           {/* ── Step: Welcome ── */}
           {isWelcome && (
-            <div className="text-center py-10 space-y-5">
-              <div className="text-6xl mb-4">
+            <div className="space-y-5 py-10 text-center">
+              <div className="mb-4 text-6xl">
                 <span className="inline-block" style={{ filter: 'grayscale(0.5) brightness(1.2)' }}>
                   &#128196;
                 </span>
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-text tracking-tight">
+                <h2 className="text-text text-2xl font-bold tracking-tight">
                   {t('onboarding.welcomeTitle')}
                 </h2>
-                <p className="text-base text-text-tertiary mt-4 max-w-xs mx-auto leading-relaxed font-medium">
+                <p className="text-text-tertiary mx-auto mt-4 max-w-xs text-base leading-relaxed font-medium">
                   {t('onboarding.welcomeSub')}
                 </p>
               </div>
@@ -109,11 +109,11 @@ export function OnboardingDialog() {
 
           {/* ── Step: Feature slides ── */}
           {!isWelcome && !isGetStarted && slideIndex >= 0 && slideIndex < featureSlides.length && (
-            <div className="text-center mb-4 space-y-2">
-              <h2 className="text-lg font-bold text-text tracking-tight">
+            <div className="mb-4 space-y-2 text-center">
+              <h2 className="text-text text-lg font-bold tracking-tight">
                 {t(featureSlides[slideIndex].title)}
               </h2>
-              <p className="text-sm text-text-tertiary leading-relaxed px-4">
+              <p className="text-text-tertiary px-4 text-sm leading-relaxed">
                 {t(featureSlides[slideIndex].sub)}
               </p>
             </div>
@@ -122,7 +122,7 @@ export function OnboardingDialog() {
           {/* ── Step: Get started ── */}
           {isGetStarted && (
             <div className="space-y-6">
-              <h2 className="text-lg font-bold text-text text-center tracking-tight">
+              <h2 className="text-text text-center text-lg font-bold tracking-tight">
                 {t('onboarding.importTitle')}
               </h2>
 
@@ -144,38 +144,38 @@ export function OnboardingDialog() {
                 onDragLeave={() => setDragging(false)}
                 onDrop={handleDrop}
                 onClick={() => fileRef.current?.click()}
-                className={`border-2 border-dashed rounded-2xl px-5 py-12 text-center cursor-pointer transition-all ${
+                className={`cursor-pointer rounded-2xl border-2 border-dashed px-5 py-12 text-center transition-all ${
                   dragging
                     ? 'border-accent bg-bg-accent shadow-lg'
-                    : 'border-border hover:border-accent hover:bg-bg-hover shadow-sm'
+                    : 'hover:border-accent hover:bg-bg-hover shadow-sm'
                 }`}
               >
                 {loading ? (
-                  <p className="text-sm font-medium text-text-tertiary">
+                  <p className="text-text-tertiary text-sm font-medium">
                     {t('onboarding.parsing')}
                   </p>
                 ) : (
                   <>
-                    <p className="text-sm font-semibold text-text-secondary">
+                    <p className="text-text-secondary text-sm font-semibold">
                       {t('onboarding.importDrop')}
                     </p>
-                    <p className="text-xs text-text-muted mt-2">{t('empty.formats')}</p>
+                    <p className="text-text-muted mt-2 text-xs">{t('empty.formats')}</p>
                   </>
                 )}
               </div>
               {error && (
-                <p className="text-xs text-danger text-center bg-danger/10 py-2 rounded-lg">
+                <p className="text-danger bg-danger/10 rounded-lg py-2 text-center text-xs">
                   {error}
                 </p>
               )}
 
               {/* Or divider */}
               <div className="flex items-center gap-4">
-                <div className="flex-1 h-px bg-border" />
-                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">
+                <div className="bg-border h-px flex-1" />
+                <span className="text-text-muted text-[10px] font-bold tracking-wider uppercase">
                   {t('onboarding.importOr')}
                 </span>
-                <div className="flex-1 h-px bg-border" />
+                <div className="bg-border h-px flex-1" />
               </div>
 
               {/* Action buttons */}
@@ -185,13 +185,13 @@ export function OnboardingDialog() {
                     setResume(sampleResume);
                     close();
                   }}
-                  className="flex-1 text-xs py-3 border border-border rounded-full hover:bg-bg-hover cursor-pointer text-text-secondary font-bold transition-all shadow-sm"
+                  className="hover:bg-bg-hover text-text-secondary flex-1 cursor-pointer rounded-full border py-3 text-xs font-bold shadow-sm transition-all"
                 >
                   {t('onboarding.importSample')}
                 </button>
                 <button
                   onClick={close}
-                  className="flex-1 text-xs py-3 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer font-bold transition-all shadow-md"
+                  className="bg-accent flex-1 cursor-pointer rounded-full py-3 text-xs font-bold text-white shadow-md transition-all hover:opacity-90"
                 >
                   {t('onboarding.importScratch')}
                 </button>
@@ -201,10 +201,10 @@ export function OnboardingDialog() {
 
           {/* ── Footer nav ── */}
           {!isGetStarted && (
-            <div className="flex items-center justify-between mt-6">
+            <div className="mt-6 flex items-center justify-between">
               <button
                 onClick={close}
-                className="text-xs font-bold text-text-muted hover:text-text-tertiary cursor-pointer transition-colors"
+                className="text-text-muted hover:text-text-tertiary cursor-pointer text-xs font-bold transition-colors"
               >
                 {t('onboarding.skip')}
               </button>
@@ -212,14 +212,14 @@ export function OnboardingDialog() {
                 {step > 0 && (
                   <button
                     onClick={() => setStep(step - 1)}
-                    className="text-xs px-4 py-2 border border-border rounded-full hover:bg-bg-hover cursor-pointer text-text-secondary font-bold transition-all shadow-sm"
+                    className="hover:bg-bg-hover text-text-secondary cursor-pointer rounded-full border px-4 py-2 text-xs font-bold shadow-sm transition-all"
                   >
                     {t('onboarding.back')}
                   </button>
                 )}
                 <button
                   onClick={() => setStep(step + 1)}
-                  className="text-xs px-5 py-2 bg-accent text-white rounded-full hover:opacity-90 cursor-pointer font-bold transition-all shadow-md"
+                  className="bg-accent cursor-pointer rounded-full px-5 py-2 text-xs font-bold text-white shadow-md transition-all hover:opacity-90"
                 >
                   {t('onboarding.next')}
                 </button>
@@ -232,7 +232,7 @@ export function OnboardingDialog() {
             <div className="mt-4">
               <button
                 onClick={() => setStep(step - 1)}
-                className="text-xs text-text-muted hover:text-text-tertiary cursor-pointer"
+                className="text-text-muted hover:text-text-tertiary cursor-pointer text-xs"
               >
                 &larr; {t('onboarding.back')}
               </button>

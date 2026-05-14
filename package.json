@@ -64,6 +64,7 @@
     "jsdom": "^29.0.2",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.2",
+    "prettier-plugin-tailwindcss": "^0.8.0",
     "puppeteer": "^24.40.0",
     "tailwindcss": "^4.2.2",
     "typescript": "~6.0.2",
