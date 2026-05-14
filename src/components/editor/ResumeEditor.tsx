@@ -100,59 +100,63 @@ function MobileTabBar({
   return (
     <div className="bg-bg shrink-0 sm:hidden">
       {/* Row 1: mode tabs */}
-      <div className="border-border scrollbar-none bg-bg-secondary/30 flex gap-2 overflow-x-auto border-b p-2">
-        <button
-          onClick={() => setTab('form')}
-          className={cn(
-            'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
-            tab === 'form' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
-          )}
-        >
-          {t('editor.form')}
-        </button>
-        <button
-          onClick={() => setTab('json')}
-          className={cn(
-            'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
-            tab === 'json' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
-          )}
-        >
-          {t('editor.json')}
-        </button>
-        <button
-          onClick={() => setTab('themes')}
-          className={cn(
-            'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
-            tab === 'themes' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
-          )}
-        >
-          {t('editor.themes')}
-        </button>
-        <button
-          onClick={() => setTab('ai')}
-          className={cn(
-            'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
-            tab === 'ai' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
-          )}
-        >
-          {t('editor.ai')} <SparkleIcon className="-mt-0.5 ml-0.5 inline-block" />
-        </button>
-        <button
-          onClick={() => setTab('auto')}
-          className={cn(
-            'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
-            tab === 'auto' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
-          )}
-        >
-          {t('editor.auto')}
-        </button>
-        {onShowPreview && (
+      <div className="border-border bg-bg-secondary/30 flex items-center border-b">
+        <div className="scrollbar-none flex flex-1 gap-2 overflow-x-auto mask-[linear-gradient(to_right,black_calc(100%-64px),transparent_100%)] p-2">
           <button
-            onClick={onShowPreview}
-            className="text-accent-text border-accent/20 hover:bg-bg-accent shrink-0 cursor-pointer rounded-full border px-4 py-2 text-xs font-bold whitespace-nowrap transition-all"
+            onClick={() => setTab('form')}
+            className={cn(
+              'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
+              tab === 'form' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
+            )}
           >
-            {t('app.preview')} &rarr;
+            {t('editor.form')}
           </button>
+          <button
+            onClick={() => setTab('json')}
+            className={cn(
+              'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
+              tab === 'json' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
+            )}
+          >
+            {t('editor.json')}
+          </button>
+          <button
+            onClick={() => setTab('themes')}
+            className={cn(
+              'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
+              tab === 'themes' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
+            )}
+          >
+            {t('editor.themes')}
+          </button>
+          <button
+            onClick={() => setTab('ai')}
+            className={cn(
+              'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
+              tab === 'ai' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
+            )}
+          >
+            {t('editor.ai')} <SparkleIcon className="-mt-0.5 ml-0.5 inline-block" />
+          </button>
+          <button
+            onClick={() => setTab('auto')}
+            className={cn(
+              'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
+              tab === 'auto' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
+            )}
+          >
+            {t('editor.auto')}
+          </button>
+        </div>
+        {onShowPreview && (
+          <div className="p-2 pr-3">
+            <button
+              onClick={onShowPreview}
+              className="text-accent-text border-accent/20 hover:bg-bg-accent shrink-0 cursor-pointer rounded-full border px-4 py-2 text-xs font-bold whitespace-nowrap transition-all"
+            >
+              {t('app.preview')} &rarr;
+            </button>
+          </div>
         )}
       </div>
       {/* Row 2: section pills (only in form mode) */}

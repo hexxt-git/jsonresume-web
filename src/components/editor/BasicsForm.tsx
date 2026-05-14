@@ -133,7 +133,7 @@ export function BasicsForm() {
         placeholder={t('ph.summary')}
       />
 
-      <h3 className="text-text flex items-center gap-2 pt-2 text-sm font-bold tracking-widest uppercase">
+      <h3 className="text-text flex items-center gap-2 text-lg font-medium tracking-tighter capitalize">
         {t('basics.location')}
       </h3>
       <div className="grid grid-cols-2 gap-3">

@@ -27,7 +27,7 @@ function ClearChatButton() {
       className="hover:text-danger hover:bg-danger/5 border-border/50 border px-3 text-[10px] font-bold"
       title={t('ai.clearChat')}
     >
-      {t('ai.clearChat').toUpperCase()}
+      {t('ai.clearChat')}
     </Button>
   );
 }
@@ -51,7 +51,7 @@ function ModelPickerButton() {
         title={t('ai.changeModel')}
       >
         <LampOn size={12} variant="Bold" color="currentColor" />
-        {currentLabel.toUpperCase()}
+        {currentLabel}
       </Button>
       {open && (
         <>

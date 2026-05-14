@@ -87,16 +87,20 @@ export function RepeatableSection<T>({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-text flex items-center gap-2 text-sm font-bold tracking-widest uppercase">
+      <div className="flex items-start justify-between">
+        <h3 className="text-text flex items-center gap-2 text-lg font-medium tracking-tighter capitalize">
           {title}
         </h3>
-        <Button onClick={add} size="xs">
+        <Button onClick={add} size="sm">
           {t('repeatable.add')}
         </Button>
       </div>
       {items.length === 0 && (
-        <Button variant="dashed" onClick={add} className="group w-full py-8 text-center">
+        <Button
+          variant="dashed"
+          onClick={add}
+          className="group w-full rounded-3xl py-12 text-center"
+        >
           <p className="text-text-muted group-hover:text-accent text-xs italic">
             {t('repeatable.empty')}
           </p>

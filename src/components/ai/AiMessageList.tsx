@@ -72,7 +72,7 @@ function ToolResultBadge({ msg, hideDiffs }: { msg: ToolResultMessage; hideDiffs
               : undefined
           }
         >
-          {msg.success ? (msg.undone ? '\u21A9' : '\u2713') : '\u2717'} {msg.result.toUpperCase()}
+          {msg.success ? (msg.undone ? '\u21A9' : '\u2713') : '\u2717'} {msg.result}
         </Badge>
         {msg.success && msg.path.length > 0 && (
           <Button
@@ -81,7 +81,7 @@ function ToolResultBadge({ msg, hideDiffs }: { msg: ToolResultMessage; hideDiffs
             onClick={handleToggle}
             className="tracking-wide underline hover:bg-transparent"
           >
-            {(msg.undone ? t('ai.redo') : t('ai.undo')).toUpperCase()}
+            {msg.undone ? t('ai.redo') : t('ai.undo')}
           </Button>
         )}
         {!hideDiffs && hasDiff && beforeStr !== afterStr && (
@@ -91,7 +91,7 @@ function ToolResultBadge({ msg, hideDiffs }: { msg: ToolResultMessage; hideDiffs
             onClick={() => setShowDiff(!showDiff)}
             className="tracking-wide hover:bg-transparent"
           >
-            {(showDiff ? 'hide diff' : 'diff').toUpperCase()}
+            {showDiff ? 'hide diff' : 'diff'}
           </Button>
         )}
       </div>
