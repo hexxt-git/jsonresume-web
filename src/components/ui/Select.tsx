@@ -49,7 +49,7 @@ export function Select({
 
       <RadixSelect.Portal>
         <RadixSelect.Content
-          className="bg-bg z-50 overflow-hidden rounded-2xl border shadow-xl"
+          className="bg-bg animate-radix-content z-50 overflow-hidden rounded-2xl border shadow-xl"
           position="popper"
           sideOffset={8}
           align="start"

@@ -74,6 +74,59 @@
   --color-accent: var(--accent);
   --color-accent-text: var(--accent-text);
   --color-danger: var(--danger);
+
+  --animate-in: animate-in 0.1s ease-out;
+  --animate-out: animate-out 0.1s ease-in;
+  --animate-slide-up: slide-up 0.15s ease-out;
+  --animate-slide-down: slide-down 0.15s ease-out;
+  --animate-scale-in: scale-in 0.1s ease-out;
+
+  @keyframes animate-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes animate-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes slide-up {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes slide-down {
+    from {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes scale-in {
+    from {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
 }
 
 @layer base {
@@ -83,6 +136,51 @@
   body {
     @apply bg-bg text-text;
   }
+}
+
+/* Radix Animations */
+[data-state='open'].animate-radix-content {
+  transform-origin: top;
+  animation: dropdown-down 0.2s ease-out forwards;
+}
+[data-state='closed'].animate-radix-content {
+  transform-origin: top;
+  animation: animate-out 0.1s ease-in;
+}
+
+[data-state='open'].animate-radix-fade {
+  animation: animate-in 0.1s ease-out;
+}
+[data-state='closed'].animate-radix-fade {
+  animation: animate-out 0.15s ease-in;
+}
+
+/* Layout Utilities */
+@keyframes dropdown-down {
+  from {
+    opacity: 0;
+    transform: scaleY(0.9) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+  }
+}
+.animate-dropdown {
+  transform-origin: top;
+  animation: dropdown-down 0.2s ease-out forwards;
+}
+
+.grid-collapsible {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease-out;
+}
+.grid-collapsible[data-open='true'] {
+  grid-template-rows: 1fr;
+}
+.grid-collapsible-content {
+  overflow: hidden;
 }
 
 /* Hide scrollbar on tab bars */

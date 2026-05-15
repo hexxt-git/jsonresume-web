@@ -78,8 +78,8 @@ export function ExportDialog({ open, onClose }: ExportDialogProps) {
 
   return (
     <>
-      <div className="fixed inset-0 z-40 bg-black/5" onClick={onClose} />
-      <div className="bg-bg absolute top-full right-0 z-50 mt-2 w-64 space-y-1 overflow-hidden rounded-2xl border p-2">
+      <div className="animate-in fade-in fixed inset-0 z-40 bg-black/5" onClick={onClose} />
+      <div className="bg-bg animate-dropdown absolute top-full right-0 z-50 mt-2 w-64 space-y-1 overflow-hidden rounded-2xl border p-2 shadow-xl">
         {options.map((opt) => (
           <button
             key={opt.ext}

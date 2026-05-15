@@ -41,6 +41,7 @@ import {
 } from './OtherSections';
 import { ThemePicker } from '@/components/themes/ThemePicker';
 import { ThemeCustomizer } from '@/components/themes/ThemeCustomizer';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 
 const sectionIds: EditorSection[] = [
   'basics',
@@ -102,53 +103,55 @@ function MobileTabBar({
     <div className="bg-bg shrink-0 sm:hidden">
       {/* Row 1: mode tabs */}
       <div className="border-border bg-bg-secondary/30 flex items-center border-b">
-        <div className="scrollbar-none flex flex-1 gap-2 overflow-x-auto mask-[linear-gradient(to_right,black_calc(100%-64px),transparent_100%)] p-2">
-          <button
-            onClick={() => setTab('form')}
-            className={cn(
-              'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
-              tab === 'form' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
-            )}
-          >
-            {t('editor.form')}
-          </button>
-          <button
-            onClick={() => setTab('json')}
-            className={cn(
-              'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
-              tab === 'json' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
-            )}
-          >
-            {t('editor.json')}
-          </button>
-          <button
-            onClick={() => setTab('themes')}
-            className={cn(
-              'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
-              tab === 'themes' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
-            )}
-          >
-            {t('editor.themes')}
-          </button>
-          <button
-            onClick={() => setTab('ai')}
-            className={cn(
-              'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
-              tab === 'ai' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
-            )}
-          >
-            {t('editor.ai')} <SparkleIcon className="-mt-0.5 ml-0.5 inline-block" />
-          </button>
-          <button
-            onClick={() => setTab('auto')}
-            className={cn(
-              'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
-              tab === 'auto' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
-            )}
-          >
-            {t('editor.auto')}
-          </button>
-        </div>
+        <ScrollArea className="max-w-full flex-1 mask-[linear-gradient(to_right,black_calc(100%-64px),transparent_100%)]">
+          <div className="flex w-max gap-2 p-2">
+            <button
+              onClick={() => setTab('form')}
+              className={cn(
+                'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
+                tab === 'form' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
+              )}
+            >
+              {t('editor.form')}
+            </button>
+            <button
+              onClick={() => setTab('json')}
+              className={cn(
+                'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
+                tab === 'json' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
+              )}
+            >
+              {t('editor.json')}
+            </button>
+            <button
+              onClick={() => setTab('themes')}
+              className={cn(
+                'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
+                tab === 'themes' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
+              )}
+            >
+              {t('editor.themes')}
+            </button>
+            <button
+              onClick={() => setTab('ai')}
+              className={cn(
+                'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
+                tab === 'ai' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
+              )}
+            >
+              {t('editor.ai')} <SparkleIcon className="-mt-0.5 ml-0.5 inline-block" />
+            </button>
+            <button
+              onClick={() => setTab('auto')}
+              className={cn(
+                'shrink-0 rounded-full px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all',
+                tab === 'auto' ? 'bg-accent text-white' : 'text-text-tertiary hover:bg-bg-hover',
+              )}
+            >
+              {t('editor.auto')}
+            </button>
+          </div>
+        </ScrollArea>
         {onShowPreview && (
           <div className="p-2 pr-3">
             <button
@@ -162,26 +165,28 @@ function MobileTabBar({
       </div>
       {/* Row 2: section pills (only in form mode) */}
       {tab === 'form' && (
-        <div className="border-border bg-bg scrollbar-none flex gap-2 overflow-x-auto border-b p-2">
-          {sectionIds.map((id) => {
-            const active = id === activeSection;
-            return (
-              <button
-                key={id}
-                ref={active ? activeRef : undefined}
-                onClick={() => setActiveSection(id)}
-                className={cn(
-                  'shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-all',
-                  active
-                    ? 'bg-accent border-accent text-white'
-                    : 'text-text-muted border-border hover:bg-bg-hover',
-                )}
-              >
-                {t(`section.${id}` as Parameters<typeof t>[0])}
-              </button>
-            );
-          })}
-        </div>
+        <ScrollArea className="border-border bg-bg max-w-full border-b">
+          <div className="flex w-max gap-2 p-2">
+            {sectionIds.map((id) => {
+              const active = id === activeSection;
+              return (
+                <button
+                  key={id}
+                  ref={active ? activeRef : undefined}
+                  onClick={() => setActiveSection(id)}
+                  className={cn(
+                    'shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-all',
+                    active
+                      ? 'bg-accent border-accent text-white'
+                      : 'text-text-muted border-border hover:bg-bg-hover',
+                  )}
+                >
+                  {t(`section.${id}` as Parameters<typeof t>[0])}
+                </button>
+              );
+            })}
+          </div>
+        </ScrollArea>
       )}
     </div>
   );
@@ -307,31 +312,33 @@ function FormContent({
       onPointerUp={onPointerUp}
     >
       {/* Desktop sidebar */}
-      <nav
-        className="bg-bg-secondary/50 hidden shrink-0 space-y-0.5 overflow-y-auto p-2 sm:block"
+      <ScrollArea
+        className="bg-bg-secondary/50 hidden shrink-0 sm:block"
         style={{ width: `${pct}%` }}
       >
-        {sectionIds.map((id) => (
-          <button
-            key={id}
-            onClick={() => setActiveSection(id)}
-            className={cn(
-              'w-full cursor-pointer rounded-full px-3 py-2 text-left text-xs font-medium transition-all',
-              activeSection === id
-                ? 'bg-accent text-white'
-                : 'text-text-secondary hover:bg-bg-hover hover:text-text',
-            )}
-          >
-            {t(`section.${id}` as Parameters<typeof t>[0])}
-          </button>
-        ))}
-      </nav>
+        <nav className="space-y-0.5 p-2">
+          {sectionIds.map((id) => (
+            <button
+              key={id}
+              onClick={() => setActiveSection(id)}
+              className={cn(
+                'w-full cursor-pointer rounded-full px-3 py-2 text-left text-xs font-medium transition-all',
+                activeSection === id
+                  ? 'bg-accent text-white'
+                  : 'text-text-secondary hover:bg-bg-hover hover:text-text',
+              )}
+            >
+              {t(`section.${id}` as Parameters<typeof t>[0])}
+            </button>
+          ))}
+        </nav>
+      </ScrollArea>
       {/* Drag handle */}
       <div
         onPointerDown={onPointerDown}
         className="bg-border/50 hover:bg-accent/30 hidden w-1 shrink-0 cursor-col-resize items-center justify-center transition-all sm:flex"
       />
-      <div className="bg-bg min-h-0 flex-1 overflow-y-auto">
+      <ScrollArea className="bg-bg min-h-0 flex-1">
         <div className="mx-auto max-w-3xl p-5">
           <ActiveForm />
         </div>
@@ -361,7 +368,7 @@ function FormContent({
             </Button>
           )}
         </div>
-      </div>
+      </ScrollArea>
     </div>
   );
 }
@@ -440,74 +447,78 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
         </div>
       ) : tab === 'themes' ? (
         <div className="bg-bg flex min-h-0 w-full flex-1 flex-col overflow-hidden">
-          <div className="min-h-0 w-full flex-1 overflow-y-auto p-4">
-            <div
-              className={cn(
-                'border-border mx-auto mb-8 w-full max-w-3xl overflow-hidden rounded-3xl border transition-all duration-300',
-                customizeOpen ? 'bg-bg' : 'bg-bg-secondary/30 hover:bg-bg-secondary/50',
-              )}
-            >
+          <ScrollArea className="min-h-0 w-full flex-1">
+            <div className="p-4">
               <div
-                onClick={() => setCustomizeOpen(!customizeOpen)}
-                className="flex w-full cursor-pointer items-center justify-between px-6 py-5 transition-all"
+                className={cn(
+                  'border-border mx-auto mb-8 w-full max-w-3xl overflow-hidden rounded-3xl border transition-all duration-150',
+                  customizeOpen ? 'bg-bg' : 'bg-bg-secondary/30 hover:bg-bg-secondary/50',
+                )}
               >
-                <div className="flex items-center gap-4">
-                  <div
-                    className={cn(
-                      'flex h-11 w-11 items-center justify-center rounded-2xl transition-all duration-500',
-                      customizeOpen
-                        ? 'bg-accent rotate-90 text-white'
-                        : 'bg-bg-tertiary text-text-muted',
-                    )}
-                  >
-                    <Setting size={24} variant={customizeOpen ? 'Bold' : 'Linear'} />
-                  </div>
-                  <div>
-                    <h3 className="text-text text-sm font-bold">Style Overrides</h3>
-                    <p className="text-text-muted mt-0.5 text-[11px] font-medium">
-                      Personalize colors, fonts, and spacing
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  {customizeOpen && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        resetCustomization();
-                      }}
-                      className="bg-danger/10 text-danger border-danger/30 hover:bg-danger/20 animate-in fade-in zoom-in-95 flex h-8 items-center gap-1.5 rounded-full border px-2.5 text-[10px] font-bold tracking-widest uppercase transition-all duration-300"
-                      title={t('customize.reset')}
-                    >
-                      <span>&#8634;</span>
-                      <span className="hidden sm:inline">Reset</span>
-                    </button>
-                  )}
-                  <div
-                    className={cn(
-                      'relative h-6 w-11 rounded-full transition-colors duration-300',
-                      customizeOpen ? 'bg-accent' : 'bg-text-faint',
-                    )}
-                  >
+                <div
+                  onClick={() => setCustomizeOpen(!customizeOpen)}
+                  className="flex w-full cursor-pointer items-center justify-between px-6 py-5 transition-all"
+                >
+                  <div className="flex items-center gap-4">
                     <div
                       className={cn(
-                        'absolute top-1 left-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-300',
-                        customizeOpen && 'translate-x-5',
+                        'flex h-11 w-11 items-center justify-center rounded-2xl transition-all duration-300',
+                        customizeOpen
+                          ? 'bg-accent rotate-90 text-white'
+                          : 'bg-bg-tertiary text-text-muted',
                       )}
-                    />
+                    >
+                      <Setting size={24} variant={customizeOpen ? 'Bold' : 'Linear'} />
+                    </div>
+                    <div>
+                      <h3 className="text-text text-sm font-bold">Style Overrides</h3>
+                      <p className="text-text-muted mt-0.5 text-[11px] font-medium">
+                        Personalize colors, fonts, and spacing
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {customizeOpen && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          resetCustomization();
+                        }}
+                        className="bg-danger/10 text-danger border-danger/30 hover:bg-danger/20 animate-in fade-in zoom-in-95 flex h-8 items-center gap-1.5 rounded-full border px-2.5 text-[10px] font-bold tracking-widest uppercase transition-all duration-150"
+                        title={t('customize.reset')}
+                      >
+                        <span>&#8634;</span>
+                        <span className="hidden sm:inline">Reset</span>
+                      </button>
+                    )}
+                    <div
+                      className={cn(
+                        'relative h-6 w-11 rounded-full transition-colors duration-150',
+                        customizeOpen ? 'bg-accent' : 'bg-text-faint',
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          'absolute top-1 left-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-150',
+                          customizeOpen && 'translate-x-5',
+                        )}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="grid-collapsible" data-open={customizeOpen}>
+                  <div className="grid-collapsible-content">
+                    <div className="border-border/40 border-t px-6 pt-8 pb-10">
+                      <ThemeCustomizer />
+                    </div>
                   </div>
                 </div>
               </div>
-              {customizeOpen && (
-                <div className="border-border/40 animate-in fade-in slide-in-from-top-2 border-t px-6 pt-8 pb-10 duration-300">
-                  <ThemeCustomizer />
-                </div>
-              )}
+              <div className="mx-auto w-full max-w-3xl">
+                <ThemePicker />
+              </div>
             </div>
-            <div className="mx-auto w-full max-w-3xl">
-              <ThemePicker />
-            </div>
-          </div>
+          </ScrollArea>
         </div>
       ) : (
         <FormContent

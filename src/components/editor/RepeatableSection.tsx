@@ -164,9 +164,9 @@ function SortableCard({
     <div
       ref={setNodeRef}
       style={style}
-      className="border-border/60 bg-bg group/card rounded-3xl border transition-all"
+      className="border-border/60 bg-bg group/card animate-in slide-up rounded-3xl border transition-all duration-150"
     >
-      <div className={`flex items-center justify-between p-4 pb-2 ${!isVisible ? 'p-4!' : ''}`}>
+      <div className={`flex items-center justify-between p-4 pb-2 ${!isVisible ? 'pb-4' : ''}`}>
         <div className="flex min-w-0 items-center gap-3">
           <Button
             {...attributes}
@@ -212,7 +212,11 @@ function SortableCard({
           />
         </div>
       </div>
-      <div className={`relative p-4 pt-2 ${!isVisible ? 'hidden' : 'block'}`}>{children}</div>
+      <div className="grid-collapsible" data-open={isVisible}>
+        <div className="grid-collapsible-content">
+          <div className="relative p-4 pt-2">{children}</div>
+        </div>
+      </div>
     </div>
   );
 }

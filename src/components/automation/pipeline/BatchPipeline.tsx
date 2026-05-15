@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Tabs } from '@/components/ui/Tabs';
 import { Checkbox } from '@/components/ui/Checkbox';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import type { BatchJob } from '../BatchTailoring/types';
 import { BatchProcessing } from '../BatchTailoring/BatchProcessing';
 import { BatchResultCard } from '../BatchTailoring/BatchResultCard';
@@ -360,8 +361,8 @@ export function BatchPipeline({ onBack }: Props) {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="mx-auto max-w-4xl space-y-6">
+      <ScrollArea className="flex-1">
+        <div className="mx-auto max-w-4xl space-y-6 p-6">
           {error && (
             <Badge variant="danger" className="w-full justify-start rounded-2xl px-6 py-4 text-xs">
               {error}
@@ -490,7 +491,7 @@ export function BatchPipeline({ onBack }: Props) {
             </div>
           )}
         </div>
-      </div>
+      </ScrollArea>
 
       {/* Footer */}
       <div className="bg-bg-secondary/10 shrink-0 border-t px-8 py-6">

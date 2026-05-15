@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useResumeStore, activeSlot } from '@/store/resumeStore';
 import { themes } from '@/themes';
 import { sampleResume } from '@/utils/sample';
+import { ScrollArea } from '../ui/ScrollArea';
 
 export function ThemePicker() {
   const selectedThemeId = useResumeStore((s) => activeSlot(s).themeId);
@@ -17,13 +18,13 @@ export function ThemePicker() {
   );
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto pb-10">
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+    <ScrollArea className="min-h-0 flex-1">
+      <div className="grid grid-cols-1 gap-6 pb-10 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
         {previews.map((t) => (
           <button
             key={t.id}
             onClick={() => setTheme(t.id)}
-            className={`cursor-pointer overflow-hidden rounded-3xl border text-left transition-all duration-300 ${selectedThemeId === t.id ? 'border-accent' : ''}`}
+            className={`animate-in scale-in cursor-pointer overflow-hidden rounded-3xl border text-left transition-all duration-150 ${selectedThemeId === t.id ? 'border-accent' : ''}`}
           >
             <div className="relative flex h-44 w-full items-start justify-center overflow-hidden bg-white p-2">
               <iframe
@@ -51,6 +52,6 @@ export function ThemePicker() {
           </button>
         ))}
       </div>
-    </div>
+    </ScrollArea>
   );
 }

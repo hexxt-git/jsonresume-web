@@ -3,6 +3,7 @@ import { useResumeStore, slotDisplayName } from '@/store/resumeStore';
 import { useUndoStore } from '@/store/undoStore';
 import { useT } from '@/i18n';
 import { Button } from '../ui/Button';
+import { ScrollArea } from '../ui/ScrollArea';
 import { cn } from '@/utils/cn';
 
 function formatDate(ts: number): string {
@@ -88,10 +89,13 @@ export function SlotsPicker({ fullWidth }: { fullWidth?: boolean }) {
 
       {open && (
         <>
-          <div className="fixed inset-0 z-40 bg-black/5" onClick={() => setOpen(false)} />
+          <div
+            className="animate-in fade-in fixed inset-0 z-40 bg-black/5"
+            onClick={() => setOpen(false)}
+          />
           <div
             className={cn(
-              'bg-bg border-border absolute top-full right-0 z-50 mt-2 space-y-1 overflow-hidden rounded-3xl border p-2',
+              'bg-bg border-border animate-dropdown absolute top-full right-0 z-50 mt-2 space-y-1 overflow-hidden rounded-3xl border p-2 shadow-xl',
               fullWidth ? 'w-full' : 'w-80',
             )}
           >
@@ -120,61 +124,63 @@ export function SlotsPicker({ fullWidth }: { fullWidth?: boolean }) {
                 {t('slots.empty')}
               </div>
             ) : (
-              <div className="max-h-72 space-y-1 overflow-y-auto rounded-2xl p-0.5">
-                {[...slots]
-                  .sort((a, b) => b.updatedAt - a.updatedAt)
-                  .map((slot) => (
-                    <div
-                      key={slot.id}
-                      className={`flex items-center gap-3 rounded-2xl px-4 py-3 transition-all ${
-                        slot.id === activeSlotId
-                          ? 'bg-bg-accent ring-accent/20 ring-1'
-                          : 'hover:bg-bg-hover'
-                      }`}
-                    >
-                      {renaming === slot.id ? (
-                        <input
-                          value={renameValue}
-                          onChange={(e) => setRenameValue(e.target.value)}
-                          onBlur={handleFinishRename}
-                          onKeyDown={(e) => e.key === 'Enter' && handleFinishRename()}
-                          autoFocus
-                          className="border-accent bg-bg-input text-text focus:ring-accent/30 flex-1 rounded-full border px-3 py-1 text-xs outline-none focus:ring-2"
-                        />
-                      ) : (
-                        <button
-                          onClick={() => handleLoad(slot.id)}
-                          className="group flex-1 cursor-pointer truncate text-left"
-                        >
-                          <div
-                            className={`truncate text-xs font-bold ${slot.id === activeSlotId ? 'text-accent' : 'text-text'}`}
+              <ScrollArea className="max-h-72 rounded-2xl">
+                <div className="space-y-1 p-0.5">
+                  {[...slots]
+                    .sort((a, b) => b.updatedAt - a.updatedAt)
+                    .map((slot) => (
+                      <div
+                        key={slot.id}
+                        className={`flex items-center gap-3 rounded-2xl px-4 py-3 transition-all ${
+                          slot.id === activeSlotId
+                            ? 'bg-bg-accent ring-accent/20 ring-1'
+                            : 'hover:bg-bg-hover'
+                        }`}
+                      >
+                        {renaming === slot.id ? (
+                          <input
+                            value={renameValue}
+                            onChange={(e) => setRenameValue(e.target.value)}
+                            onBlur={handleFinishRename}
+                            onKeyDown={(e) => e.key === 'Enter' && handleFinishRename()}
+                            autoFocus
+                            className="border-accent bg-bg-input text-text focus:ring-accent/30 flex-1 rounded-full border px-3 py-1 text-xs outline-none focus:ring-2"
+                          />
+                        ) : (
+                          <button
+                            onClick={() => handleLoad(slot.id)}
+                            className="group flex-1 cursor-pointer truncate text-left"
                           >
-                            {slotDisplayName(slot)}
-                          </div>
-                          <div className="text-text-muted mt-0.5 text-[10px] font-medium">
-                            {formatDate(slot.updatedAt)}
-                          </div>
-                        </button>
-                      )}
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => handleStartRename(slot.id, slotDisplayName(slot))}
-                          className="text-text-muted hover:text-accent hover:bg-accent/5 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full transition-all"
-                          title={t('slots.rename')}
-                        >
-                          &#9998;
-                        </button>
-                        <button
-                          onClick={() => handleDelete(slot.id)}
-                          className="text-text-muted hover:text-danger hover:bg-danger/5 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full transition-all"
-                          title={t('slots.delete')}
-                        >
-                          &times;
-                        </button>
+                            <div
+                              className={`truncate text-xs font-bold ${slot.id === activeSlotId ? 'text-accent' : 'text-text'}`}
+                            >
+                              {slotDisplayName(slot)}
+                            </div>
+                            <div className="text-text-muted mt-0.5 text-[10px] font-medium">
+                              {formatDate(slot.updatedAt)}
+                            </div>
+                          </button>
+                        )}
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => handleStartRename(slot.id, slotDisplayName(slot))}
+                            className="text-text-muted hover:text-accent hover:bg-accent/5 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full transition-all"
+                            title={t('slots.rename')}
+                          >
+                            &#9998;
+                          </button>
+                          <button
+                            onClick={() => handleDelete(slot.id)}
+                            className="text-text-muted hover:text-danger hover:bg-danger/5 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full transition-all"
+                            title={t('slots.delete')}
+                          >
+                            &times;
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-              </div>
+                    ))}
+                </div>
+              </ScrollArea>
             )}
           </div>
         </>

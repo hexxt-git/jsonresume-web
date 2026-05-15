@@ -7,6 +7,7 @@ import { extractMeta, splitJds, timeAgo } from './helpers';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import { cn } from '@/utils/cn';
 
 /* ── File reader ─────────────────────────────────────────── */
@@ -423,10 +424,7 @@ export function JdInput({
           </div>
 
           {/* Items list */}
-          <div
-            className="overflow-y-auto"
-            style={{ maxHeight: `${Math.max(rows * 1.5 - 2, 10)}rem` }}
-          >
+          <ScrollArea style={{ maxHeight: `${Math.max(rows * 1.5 - 2, 10)}rem` }}>
             {filteredItems.length === 0 ? (
               <div className="px-3 py-8 text-center">
                 <div className="text-text-muted text-[10px]">
@@ -558,7 +556,7 @@ export function JdInput({
                 })}
               </div>
             )}
-          </div>
+          </ScrollArea>
         </div>
       )}
     </div>

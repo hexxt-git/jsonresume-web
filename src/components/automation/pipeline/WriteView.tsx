@@ -9,6 +9,7 @@ import {
   type Tone,
   type CoverLetterLength,
 } from '@/store/automationStore';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import type { CombinedAnalysis } from './types';
 
 /* ── Constants ──────────────────────────────────────────── */
@@ -262,21 +263,23 @@ export function WriteView({ jd, analysis }: Props) {
       {/* Email Tab */}
       {tab === 'email' && (
         <div className="space-y-6">
-          <div className="bg-bg-secondary/30 border-border/50 scrollbar-none flex gap-2 overflow-x-auto rounded-full border p-2">
-            {EMAIL_TYPES.map((t) => (
-              <button
-                key={t}
-                onClick={() => setEmailType(t)}
-                className={`cursor-pointer rounded-full px-5 py-2 text-[10px] font-bold tracking-tight whitespace-nowrap uppercase transition-all ${
-                  emailType === t
-                    ? 'bg-accent text-white'
-                    : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
-                }`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
+          <ScrollArea className="max-w-full">
+            <div className="bg-bg-secondary/30 border-border/50 flex w-max gap-2 rounded-full border p-2">
+              {EMAIL_TYPES.map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setEmailType(t)}
+                  className={`cursor-pointer rounded-full px-5 py-2 text-[10px] font-bold tracking-tight whitespace-nowrap uppercase transition-all ${
+                    emailType === t
+                      ? 'bg-accent text-white'
+                      : 'text-text-muted hover:text-text-secondary hover:bg-bg-hover'
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </ScrollArea>
           <textarea
             value={emailContext}
             onChange={(e) => setEmailContext(e.target.value)}

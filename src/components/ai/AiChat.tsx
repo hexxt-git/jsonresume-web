@@ -11,6 +11,7 @@ import { AiMessageList } from './AiMessageList';
 import { PROVIDERS } from '@/lib/ai';
 import { Eye, EyeSlash, LampOn, Send2, StopCircle, Trash } from 'iconsax-react';
 import { Button } from '@/components/ui/Button';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import { cn } from '@/utils/cn';
 
 /* ── Header buttons ──────────────────────────────────── */
@@ -64,25 +65,27 @@ function ModelPickerButton() {
                 </span>
               </div>
             )}
-            <div className="max-h-[320px] space-y-1 overflow-y-auto">
-              {providerObj.models.map((m) => (
-                <button
-                  key={m.id}
-                  onClick={() => {
-                    useAiStore.getState().setModel(m.id);
-                    setOpen(false);
-                  }}
-                  className={cn(
-                    'w-full cursor-pointer rounded-xl px-4 py-2.5 text-left text-xs transition-all',
-                    m.id === model
-                      ? 'bg-bg-accent text-accent-text font-bold'
-                      : 'text-text-secondary hover:bg-bg-hover hover:text-text',
-                  )}
-                >
-                  {m.label}
-                </button>
-              ))}
-            </div>
+            <ScrollArea className="max-h-[320px]">
+              <div className="space-y-1">
+                {providerObj.models.map((m) => (
+                  <button
+                    key={m.id}
+                    onClick={() => {
+                      useAiStore.getState().setModel(m.id);
+                      setOpen(false);
+                    }}
+                    className={cn(
+                      'w-full cursor-pointer rounded-xl px-4 py-2.5 text-left text-xs transition-all',
+                      m.id === model
+                        ? 'bg-bg-accent text-accent-text font-bold'
+                        : 'text-text-secondary hover:bg-bg-hover hover:text-text',
+                    )}
+                  >
+                    {m.label}
+                  </button>
+                ))}
+              </div>
+            </ScrollArea>
           </div>
         </>
       )}

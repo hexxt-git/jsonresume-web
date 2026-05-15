@@ -6,6 +6,7 @@ import { useT } from '@/i18n';
 import { Printer } from 'iconsax-react';
 import { filterVisible } from '@/utils/resume';
 import { Button } from '@/components/ui/Button';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import { cn } from '@/utils/cn';
 import { PlusIcon, MinusIcon } from '@/assets/Icons';
 
@@ -220,41 +221,43 @@ export function ResumePreview({ onBack }: { onBack?: () => void }) {
           </Button>
         </div>
       </div>
-      <div ref={containerRef} className="bg-bg-tertiary/50 min-h-0 flex-1 overflow-auto p-8">
-        <div
-          className="relative mx-auto transition-all duration-300"
-          style={{
-            width: A4_WIDTH * zoom,
-            height: contentHeight * zoom,
-          }}
-        >
-          <iframe
-            ref={iframeRef}
-            srcDoc={html}
-            className="origin-top-left rounded-sm border-0 bg-white"
+      <ScrollArea ref={containerRef} className="bg-bg-tertiary/50 min-h-0 flex-1">
+        <div className="p-8">
+          <div
+            className="relative mx-auto transition-all duration-300"
             style={{
-              width: A4_WIDTH,
-              height: contentHeight,
-              transform: `scale(${zoom})`,
-              transformOrigin: 'top left',
+              width: A4_WIDTH * zoom,
+              height: contentHeight * zoom,
             }}
-            title="Resume Preview"
-            sandbox="allow-same-origin allow-modals"
-          />
-          {Array.from({ length: pageCount - 1 }, (_, i) => (
-            <div
-              key={i}
-              className="pointer-events-none absolute right-0 left-0"
-              style={{ top: (i + 1) * A4_HEIGHT * zoom }}
-            >
-              <div className="border-text-muted border-t border-dashed opacity-60" />
-              <span className="text-text-muted absolute -top-5 right-2 text-[12px] opacity-60 select-none">
-                {t('preview.pageBreak')}
-              </span>
-            </div>
-          ))}
+          >
+            <iframe
+              ref={iframeRef}
+              srcDoc={html}
+              className="origin-top-left rounded-sm border-0 bg-white"
+              style={{
+                width: A4_WIDTH,
+                height: contentHeight,
+                transform: `scale(${zoom})`,
+                transformOrigin: 'top left',
+              }}
+              title="Resume Preview"
+              sandbox="allow-same-origin allow-modals"
+            />
+            {Array.from({ length: pageCount - 1 }, (_, i) => (
+              <div
+                key={i}
+                className="pointer-events-none absolute right-0 left-0"
+                style={{ top: (i + 1) * A4_HEIGHT * zoom }}
+              >
+                <div className="border-text-muted border-t border-dashed opacity-60" />
+                <span className="text-text-muted absolute -top-5 right-2 text-[12px] opacity-60 select-none">
+                  {t('preview.pageBreak')}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </ScrollArea>
     </div>
   );
 }

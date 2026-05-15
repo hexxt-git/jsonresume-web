@@ -40,7 +40,7 @@ export function BasicsForm() {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-text flex items-center gap-2 text-sm font-bold tracking-widest uppercase">
+      <h3 className="text-text flex items-center gap-2 text-lg font-medium tracking-tighter capitalize">
         {t('basics.title')}
       </h3>
       <div className="grid grid-cols-2 gap-3">

@@ -28,14 +28,14 @@ export function Dialog({ open, onClose, children, className, overlayClassName }:
   return (
     <div
       className={cn(
-        'fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-all',
+        'animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-all duration-150',
         overlayClassName,
       )}
       onClick={onClose}
     >
       <div
         className={cn(
-          'bg-bg mx-4 w-full max-w-lg overflow-hidden rounded-3xl border shadow-2xl transition-all',
+          'bg-bg animate-in slide-down mx-4 w-full max-w-lg overflow-hidden rounded-3xl border shadow-2xl transition-all duration-150',
           className,
         )}
         onClick={(e) => e.stopPropagation()}
