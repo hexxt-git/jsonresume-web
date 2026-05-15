@@ -15,6 +15,7 @@ import { AnalyzeView } from './pipeline/AnalyzeView';
 import { TailorView } from './pipeline/TailorView';
 import { WriteView } from './pipeline/WriteView';
 import { Button } from '@/components/ui/Button';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import { cn } from '@/utils/cn';
 
 const BatchPipeline = lazy(() =>
@@ -235,8 +236,8 @@ export default function AutomationHub() {
       </div>
 
       {/* Content */}
-      <div className="min-h-0 flex-1 overflow-y-auto p-4">
-        <div className="space-y-4">
+      <ScrollArea className="min-h-0 flex-1">
+        <div className="space-y-4 p-4">
           {error && (
             <div className="text-danger bg-danger/10 rounded-2xl px-3 py-2 text-xs">{error}</div>
           )}
@@ -317,7 +318,7 @@ export default function AutomationHub() {
           {/* Step 4: Write */}
           {step === 'write' && analysis && <WriteView jd={jd} analysis={analysis} />}
         </div>
-      </div>
+      </ScrollArea>
 
       {/* Footer */}
       <div className="border-border bg-bg-secondary/10 shrink-0 border-t px-6 py-4">

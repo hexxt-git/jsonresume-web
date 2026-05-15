@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import * as Popover from '@radix-ui/react-popover';
 import { useAiStore } from '@/store/aiStore';
 import { getProvider } from '@/lib/ai';
 import {
@@ -14,6 +15,7 @@ import { useGoToAi } from '../editor/EditorContext';
 import { useResumeStore, activeSlot } from '@/store/resumeStore';
 import { InlineDiffView, ListDiffView, computeListDiff } from './DiffView';
 import { Button } from '@/components/ui/Button';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import { cn } from '@/utils/cn';
 
 type Tool = {
@@ -288,20 +290,24 @@ export function AiWritingTools(props: Props) {
   } else if (!isReview) {
     triggerButton = (
       <div className="absolute top-1 right-1 z-10 p-1">
-        <Button
-          variant="ghost"
-          size="icon"
-          type="button"
-          onClick={() => setOpen(!open)}
-          className="bg-bg-secondary text-text-muted hover:text-accent hover:bg-bg-hover h-7 w-7"
-          title="AI writing tools"
-        >
-          <MagicStar size={12} variant="Bold" color="currentColor" />
-        </Button>
-        {open && (
-          <>
-            <div className="fixed inset-0 z-40 bg-black/5" onClick={() => setOpen(false)} />
-            <div className="bg-bg absolute top-9 right-0 z-50 w-56 space-y-3 rounded-2xl border p-3">
+        <Popover.Root open={open} onOpenChange={setOpen}>
+          <Popover.Trigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              type="button"
+              className="bg-bg-secondary text-text-muted hover:text-accent hover:bg-bg-hover h-7 w-7"
+              title="AI writing tools"
+            >
+              <MagicStar size={12} variant="Bold" color="currentColor" />
+            </Button>
+          </Popover.Trigger>
+          <Popover.Portal>
+            <Popover.Content
+              className="bg-bg animate-radix-content z-50 w-56 space-y-3 rounded-2xl border p-3 shadow-xl"
+              sideOffset={8}
+              align="end"
+            >
               <h3 className="text-text-muted px-2 text-center text-[10px] font-bold tracking-widest uppercase">
                 AI Writing Tools
               </h3>
@@ -336,9 +342,9 @@ export function AiWritingTools(props: Props) {
                   Open AI Chat
                 </Button>
               </div>
-            </div>
-          </>
-        )}
+            </Popover.Content>
+          </Popover.Portal>
+        </Popover.Root>
       </div>
     );
   }
@@ -361,13 +367,15 @@ export function AiWritingTools(props: Props) {
 
         {/* Review diff overlay */}
         {isReview && (
-          <div className="bg-bg border-accent/30 absolute inset-0 z-10 overflow-auto rounded-2xl border p-4 shadow-inner">
-            {state.phase === 'review' ? (
-              <InlineDiffView oldText={state.oldValue} newText={state.newValue} />
-            ) : state.phase === 'review-list' ? (
-              <ListDiffView items={computeListDiff(state.oldItems, state.newItems)} />
-            ) : null}
-          </div>
+          <ScrollArea className="bg-bg border-accent/30 absolute inset-0 z-10 rounded-2xl border shadow-inner">
+            <div className="p-4">
+              {state.phase === 'review' ? (
+                <InlineDiffView oldText={state.oldValue} newText={state.newValue} />
+              ) : state.phase === 'review-list' ? (
+                <ListDiffView items={computeListDiff(state.oldItems, state.newItems)} />
+              ) : null}
+            </div>
+          </ScrollArea>
         )}
       </div>
 

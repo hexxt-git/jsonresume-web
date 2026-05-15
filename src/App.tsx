@@ -95,8 +95,11 @@ function MobileMenu({
       </Button>
       {open && (
         <>
-          <div className="fixed inset-0 z-40 bg-black/5" onClick={() => setOpen(false)} />
-          <div className="bg-bg absolute top-full right-0 z-50 mt-2 w-[calc(100vw-2rem)] max-w-xs space-y-3 rounded-2xl border p-3">
+          <div
+            className="animate-in fade-in fixed inset-0 z-40 bg-black/5"
+            onClick={() => setOpen(false)}
+          />
+          <div className="bg-bg animate-dropdown absolute top-full right-0 z-50 mt-2 w-[calc(100vw-2rem)] max-w-xs space-y-3 rounded-2xl border p-3 shadow-xl">
             <div className="flex gap-2">
               <Button
                 variant="outline"
@@ -360,8 +363,8 @@ function EmptyState({
   };
 
   return (
-    <div className="bg-bg flex flex-1 items-center justify-center p-6">
-      <div className="w-full max-w-lg space-y-6 text-center">
+    <div className="bg-bg animate-in fade-in flex flex-1 items-center justify-center p-6 duration-200">
+      <div className="animate-in slide-up w-full max-w-lg space-y-6 text-center delay-100 duration-200">
         <div
           onDragOver={(e) => {
             e.preventDefault();

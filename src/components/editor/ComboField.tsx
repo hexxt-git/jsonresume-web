@@ -4,6 +4,7 @@ import { ArrowDown2, TickCircle } from 'iconsax-react';
 import { useT } from '@/i18n';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import { cn } from '@/utils/cn';
 
 interface Option {
@@ -62,7 +63,7 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
         <Popover.Trigger asChild>
           <Button
             variant="outline"
-            className="hover:bg-bg-hover flex w-full items-center gap-2.5 px-4 py-2 text-left text-sm font-normal"
+            className="bg-bg-input hover:bg-bg-hover flex w-full items-center gap-2.5 px-4 py-2 text-left text-sm font-normal"
           >
             {selectedOption && <OptionIcon opt={selectedOption} />}
             <span className={cn('flex-1 truncate', !value && 'text-text-muted')}>
@@ -78,7 +79,7 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
         </Popover.Trigger>
         <Popover.Portal>
           <Popover.Content
-            className="bg-bg z-50 w-[var(--radix-popover-trigger-width)] overflow-hidden rounded-2xl border"
+            className="bg-bg animate-radix-content z-50 w-(--radix-popover-trigger-width) overflow-hidden rounded-2xl border shadow-xl"
             sideOffset={8}
             align="start"
           >
@@ -97,54 +98,56 @@ export function ComboField({ label, value, onChange, options, placeholder }: Com
                 className="h-9 px-3 py-1.5 text-sm"
               />
             </div>
-            <div className="max-h-[240px] overflow-y-auto p-2">
-              {filtered.length === 0 ? (
-                <div className="text-text-muted px-3 py-4 text-center text-xs">
-                  {filter.trim() ? (
-                    <button
-                      type="button"
+            <ScrollArea className="max-h-[240px]">
+              <div className="p-2">
+                {filtered.length === 0 ? (
+                  <div className="text-text-muted px-3 py-4 text-center text-xs">
+                    {filter.trim() ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onChange(filter.trim());
+                          setOpen(false);
+                        }}
+                        className="text-accent cursor-pointer font-medium hover:underline"
+                      >
+                        {t('combo.use')} &ldquo;{filter.trim()}&rdquo;
+                      </button>
+                    ) : (
+                      t('combo.noOptions')
+                    )}
+                  </div>
+                ) : (
+                  filtered.map((o) => (
+                    <Button
+                      key={o.value}
+                      variant="ghost"
                       onClick={() => {
-                        onChange(filter.trim());
+                        onChange(o.value);
                         setOpen(false);
                       }}
-                      className="text-accent cursor-pointer font-medium hover:underline"
+                      className={cn(
+                        'flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-normal',
+                        value === o.value
+                          ? 'bg-bg-accent text-accent-text hover:bg-bg-accent font-medium'
+                          : 'text-text-secondary',
+                      )}
                     >
-                      {t('combo.use')} &ldquo;{filter.trim()}&rdquo;
-                    </button>
-                  ) : (
-                    t('combo.noOptions')
-                  )}
-                </div>
-              ) : (
-                filtered.map((o) => (
-                  <Button
-                    key={o.value}
-                    variant="ghost"
-                    onClick={() => {
-                      onChange(o.value);
-                      setOpen(false);
-                    }}
-                    className={cn(
-                      'flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-normal',
-                      value === o.value
-                        ? 'bg-bg-accent text-accent-text hover:bg-bg-accent font-medium'
-                        : 'text-text-secondary',
-                    )}
-                  >
-                    <OptionIcon opt={o} />
-                    <span className="flex-1 truncate">{o.label}</span>
-                    {value === o.value && (
-                      <TickCircle
-                        size={14}
-                        variant="Bold"
-                        color="currentColor"
-                        className="text-accent shrink-0"
-                      />
-                    )}
-                  </Button>
-                ))
-              )}
-            </div>
+                      <OptionIcon opt={o} />
+                      <span className="flex-1 truncate">{o.label}</span>
+                      {value === o.value && (
+                        <TickCircle
+                          size={14}
+                          variant="Bold"
+                          color="currentColor"
+                          className="text-accent shrink-0"
+                        />
+                      )}
+                    </Button>
+                  ))
+                )}
+              </div>
+            </ScrollArea>
           </Popover.Content>
         </Popover.Portal>
       </Popover.Root>

@@ -9,6 +9,7 @@ import type { AnyMessage, ToolResultMessage } from '@/lib/ai';
 import { CopyIcon } from '@/assets/Icons';
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/Button';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import { Badge } from '@/components/ui/Badge';
 
 /* ── Badge for tool results ─────────────────────────── */
@@ -143,34 +144,36 @@ export function AiMessageList({
 
   if (messages.length === 0 && !error) {
     return (
-      <div className="bg-bg flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto px-8 py-10">
-        <div className="mb-10 max-w-sm space-y-4 text-center">
-          <p className="text-text text-lg font-bold tracking-tight">
-            {name ? `Let's work on ${name}'s resume` : `Let's work on your resume`}
-          </p>
-          <p className="text-text-tertiary px-4 text-sm leading-relaxed font-medium">
-            Ask me to rewrite, translate, review, or tailor your resume for a specific role.
-          </p>
+      <ScrollArea className="bg-bg min-h-0 flex-1">
+        <div className="flex flex-col items-center justify-center px-8 py-10">
+          <div className="mb-10 max-w-sm space-y-4 text-center">
+            <p className="text-text text-lg font-bold tracking-tight">
+              {name ? `Let's work on ${name}'s resume` : `Let's work on your resume`}
+            </p>
+            <p className="text-text-tertiary px-4 text-sm leading-relaxed font-medium">
+              Ask me to rewrite, translate, review, or tailor your resume for a specific role.
+            </p>
+          </div>
+          <div className="flex max-w-lg flex-wrap justify-center gap-3">
+            {PRESETS.map((p) => (
+              <Button
+                key={p.label}
+                variant="outline"
+                onClick={() => onSend?.(p.prompt)}
+                className="px-5 py-2.5"
+              >
+                {p.label}
+              </Button>
+            ))}
+          </div>
         </div>
-        <div className="flex max-w-lg flex-wrap justify-center gap-3">
-          {PRESETS.map((p) => (
-            <Button
-              key={p.label}
-              variant="outline"
-              onClick={() => onSend?.(p.prompt)}
-              className="px-5 py-2.5"
-            >
-              {p.label}
-            </Button>
-          ))}
-        </div>
-      </div>
+      </ScrollArea>
     );
   }
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
-      <div className="space-y-6">
+    <ScrollArea className="min-h-0 flex-1">
+      <div className="space-y-6 px-6 py-4">
         {messages.map((m) => (
           <MessageRow key={m.id} message={m} hideDiffs={hideDiffs} />
         ))}
@@ -188,7 +191,7 @@ export function AiMessageList({
         )}
         <div ref={endRef} />
       </div>
-    </div>
+    </ScrollArea>
   );
 }
 

@@ -5,6 +5,7 @@ import { useT } from '@/i18n';
 import { Eye, EyeSlash, Setting, ExportSquare } from 'iconsax-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 
 /* ── Provider settings ───────────────────────────────── */
 
@@ -18,8 +19,8 @@ export function AiProviderSettings() {
   const clearApiKey = useAiStore((s) => s.clearApiKey);
 
   return (
-    <div className="h-full overflow-y-auto p-4">
-      <div className="space-y-4">
+    <ScrollArea className="h-full">
+      <div className="space-y-4 p-4">
         <div>
           <h3 className="text-text text-sm font-semibold">{t('ai.providersTitle')}</h3>
           <p className="text-text-muted mt-0.5 text-[11px]">{t('ai.providersDesc')}</p>
@@ -56,7 +57,7 @@ export function AiProviderSettings() {
           ))}
         </div>
       </div>
-    </div>
+    </ScrollArea>
   );
 }
 

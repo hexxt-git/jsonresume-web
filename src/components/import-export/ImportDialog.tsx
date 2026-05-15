@@ -68,7 +68,7 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
       />
 
       {tab === 'file' && (
-        <div className="space-y-4">
+        <div className="animate-in fade-in slide-up space-y-4 duration-150">
           <input
             ref={fileRef}
             type="file"
@@ -92,7 +92,7 @@ export function ImportDialog({ open, onClose }: ImportDialogProps) {
       )}
 
       {tab === 'json' && (
-        <div className="space-y-4">
+        <div className="animate-in fade-in slide-up space-y-4 duration-150">
           <Textarea
             value={jsonText}
             onChange={(e) => setJsonText(e.target.value)}

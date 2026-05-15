@@ -95,6 +95,7 @@ import { useT } from '@/i18n';
 import { GlobeIcon } from '@/assets/Icons';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 import { cn } from '@/utils/cn';
 
 interface BrandIcon {
@@ -284,8 +285,8 @@ export function NetworkPickerButton({
               className="h-8 px-2 py-1 text-xs"
             />
           </div>
-          <div className="max-h-[240px] overflow-y-auto p-1">
-            <div className="grid grid-cols-2 gap-0.5">
+          <ScrollArea className="max-h-[240px]">
+            <div className="grid grid-cols-2 gap-0.5 p-1">
               {filtered.map((name) => (
                 <Button
                   key={name}
@@ -307,7 +308,7 @@ export function NetworkPickerButton({
                 </Button>
               ))}
             </div>
-          </div>
+          </ScrollArea>
           {filter.trim() && filtered.length === 0 && (
             <div className="px-2 pb-2">
               <Button

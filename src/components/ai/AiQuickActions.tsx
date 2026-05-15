@@ -1,5 +1,6 @@
 import { useT } from '@/i18n';
 import { Button } from '@/components/ui/Button';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 
 interface Props {
   onAction: (prompt: string) => void;
@@ -30,18 +31,20 @@ const actions = [
 export function AiQuickActions({ onAction, disabled }: Props) {
   const t = useT();
   return (
-    <div className="flex shrink-0 gap-2 overflow-x-auto border-t px-4 py-2">
-      {actions.map((a) => (
-        <Button
-          key={a.key}
-          variant="outline"
-          onClick={() => onAction(a.prompt)}
-          disabled={disabled}
-          className="shrink-0 px-3 py-1 text-xs"
-        >
-          {t(a.key)}
-        </Button>
-      ))}
-    </div>
+    <ScrollArea className="max-w-full border-t">
+      <div className="flex w-max shrink-0 gap-2 px-4 py-2">
+        {actions.map((a) => (
+          <Button
+            key={a.key}
+            variant="outline"
+            onClick={() => onAction(a.prompt)}
+            disabled={disabled}
+            className="shrink-0 px-3 py-1 text-xs"
+          >
+            {t(a.key)}
+          </Button>
+        ))}
+      </div>
+    </ScrollArea>
   );
 }

@@ -3,6 +3,7 @@ import * as Popover from '@radix-ui/react-popover';
 import { type CountryData, useCountries, flagUrl } from '@/hooks/useCountries';
 import { useT } from '@/i18n';
 import { Input } from '@/components/ui/Input';
+import { ScrollArea } from '@/components/ui/ScrollArea';
 
 interface Props {
   children: ReactNode;
@@ -58,41 +59,45 @@ export function CountryPickerPopover({ children, onSelect, showDialCode }: Props
               placeholder={t('ui.searchCountries')}
             />
           </div>
-          <div className="max-h-[280px] overflow-y-auto p-2">
-            {loading ? (
-              <div className="text-text-muted px-3 py-6 text-center text-xs">{t('ui.loading')}</div>
-            ) : filtered.length === 0 ? (
-              <div className="text-text-muted px-3 py-6 text-center text-xs">
-                {t('ui.noResults')}
-              </div>
-            ) : (
-              filtered.map((c) => (
-                <button
-                  key={c.code}
-                  type="button"
-                  onClick={() => {
-                    onSelect(c);
-                    setOpen(false);
-                    setSearch('');
-                  }}
-                  className="hover:bg-bg-hover text-text-secondary flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-left text-xs transition-colors"
-                >
-                  <img
-                    src={flagUrl(c.code)}
-                    alt=""
-                    width={22}
-                    height={16}
-                    className="shrink-0 rounded-[3px]"
-                    loading="lazy"
-                  />
-                  <span className="flex-1 truncate font-medium">{c.name}</span>
-                  <span className="text-text-muted bg-bg-secondary shrink-0 rounded-full px-1.5 py-0.5 text-[10px]">
-                    {showDialCode ? c.dialCode : c.code}
-                  </span>
-                </button>
-              ))
-            )}
-          </div>
+          <ScrollArea className="max-h-[280px]">
+            <div className="p-2">
+              {loading ? (
+                <div className="text-text-muted px-3 py-6 text-center text-xs">
+                  {t('ui.loading')}
+                </div>
+              ) : filtered.length === 0 ? (
+                <div className="text-text-muted px-3 py-6 text-center text-xs">
+                  {t('ui.noResults')}
+                </div>
+              ) : (
+                filtered.map((c) => (
+                  <button
+                    key={c.code}
+                    type="button"
+                    onClick={() => {
+                      onSelect(c);
+                      setOpen(false);
+                      setSearch('');
+                    }}
+                    className="hover:bg-bg-hover text-text-secondary flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-left text-xs transition-colors"
+                  >
+                    <img
+                      src={flagUrl(c.code)}
+                      alt=""
+                      width={22}
+                      height={16}
+                      className="shrink-0 rounded-[3px]"
+                      loading="lazy"
+                    />
+                    <span className="flex-1 truncate font-medium">{c.name}</span>
+                    <span className="text-text-muted bg-bg-secondary shrink-0 rounded-full px-1.5 py-0.5 text-[10px]">
+                      {showDialCode ? c.dialCode : c.code}
+                    </span>
+                  </button>
+                ))
+              )}
+            </div>
+          </ScrollArea>
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>
