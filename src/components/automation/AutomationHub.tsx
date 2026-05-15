@@ -95,7 +95,7 @@ Keep analysis sentences under 15 words. Keep suggestions under 20 words.`;
 /* ── Fallback ───────────────────────────────────────────── */
 
 const Fallback = (
-  <div className="text-text-tertiary flex h-full items-center justify-center text-xs">
+  <div className="text-text-tertiary flex h-full w-full items-center justify-center text-xs">
     Loading...
   </div>
 );
@@ -119,7 +119,7 @@ export default function AutomationHub() {
 
   if (!activeTool) {
     return (
-      <div className="bg-bg flex h-full flex-col space-y-2 p-3">
+      <div className="bg-bg flex h-full min-h-0 w-full flex-col space-y-2 p-3">
         <h2 className="text-text px-1 text-sm font-semibold">Automation</h2>
         <div className="grid grid-rows-2 gap-2">
           {TOOLS.map((tool) => {
@@ -137,9 +137,9 @@ export default function AutomationHub() {
                   color="currentColor"
                   className="text-text-muted mt-0.5 shrink-0"
                 />
-                <div className="flex flex-col items-start text-left whitespace-normal">
+                <div className="flex flex-1 flex-col items-start text-left whitespace-normal">
                   <div className="text-text text-sm font-medium">{tool.title}</div>
-                  <div className="text-text-muted mt-0.5 max-w-100 text-sm">{tool.desc}</div>
+                  <div className="text-text-muted mt-0.5 max-w-sm text-sm">{tool.desc}</div>
                 </div>
               </Button>
             );
@@ -219,7 +219,7 @@ export default function AutomationHub() {
   /* ── Single pipeline render ───────────────────────────── */
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full min-h-0 w-full flex-col overflow-hidden">
       {/* Header */}
       <div className="border-border shrink-0 border-b px-4 pt-3 pb-2">
         <div className="flex items-center justify-between">
@@ -235,7 +235,7 @@ export default function AutomationHub() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="min-h-0 flex-1 overflow-y-auto p-4">
         <div className="space-y-4">
           {error && (
             <div className="text-danger bg-danger/10 rounded-2xl px-3 py-2 text-xs">{error}</div>

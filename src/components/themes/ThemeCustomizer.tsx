@@ -25,87 +25,81 @@ export function ThemeCustomizer() {
   const t = useT();
   const custom = useResumeStore((s) => activeSlot(s).customization);
   const setCustom = useResumeStore((s) => s.setCustomization);
-  const resetCustom = useResumeStore((s) => s.resetCustomization);
 
   return (
-    <div className="space-y-8 py-2">
-      <div className="flex justify-end">
-        <button
-          onClick={resetCustom}
-          className="text-danger hover:bg-danger/5 border-danger/20 cursor-pointer rounded-full border px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-all"
-        >
-          {t('customize.reset')}
-        </button>
-      </div>
+    <div className="space-y-10">
+      <div className="grid grid-cols-1 gap-x-10 gap-y-8 md:grid-cols-2">
+        <div className="space-y-8">
+          <ColorPicker
+            label={t('customize.accentColor')}
+            value={custom.accentColor}
+            onChange={(v) => setCustom('accentColor', v)}
+          />
 
-      <div className="space-y-6">
-        <ColorPicker
-          label={t('customize.accentColor')}
-          value={custom.accentColor}
-          onChange={(v) => setCustom('accentColor', v)}
-        />
+          <div className="space-y-2">
+            <label className="text-text-secondary ml-1 block text-[11px] font-bold tracking-wider uppercase">
+              {t('customize.fontFamily')}
+            </label>
+            <Select
+              className="w-full"
+              value={custom.fontFamily || THEME_DEFAULT}
+              onValueChange={(v) => setCustom('fontFamily', v === THEME_DEFAULT ? '' : v)}
+              options={FONT_OPTIONS}
+            />
+          </div>
 
-        <div className="space-y-1.5">
-          <label className="text-text-secondary ml-1 block text-xs font-medium">
-            {t('customize.fontFamily')}
-          </label>
-          <Select
-            className="w-full"
-            value={custom.fontFamily || THEME_DEFAULT}
-            onValueChange={(v) => setCustom('fontFamily', v === THEME_DEFAULT ? '' : v)}
-            options={FONT_OPTIONS}
+          <Toggle
+            label={t('customize.rtl')}
+            value={!!custom.rtl}
+            onChange={(v) => setCustom('rtl', v ? 1 : 0)}
           />
         </div>
 
-        <Slider
-          label={t('customize.fontSize')}
-          value={custom.fontSizeMultiplier}
-          onChange={(v) => setCustom('fontSizeMultiplier', v)}
-          min={0.5}
-          max={1.5}
-          step={0.01}
-          defaultValue={1}
-          formatValue={(v) => `${Math.round(v * 100)}%`}
-        />
+        <div className="border-border/40 space-y-8 pt-4 md:border-l md:pt-0 md:pl-10">
+          <Slider
+            label={t('customize.fontSize')}
+            value={custom.fontSizeMultiplier}
+            onChange={(v) => setCustom('fontSizeMultiplier', v)}
+            min={0.5}
+            max={1.5}
+            step={0.01}
+            defaultValue={1}
+            formatValue={(v) => `${Math.round(v * 100)}%`}
+          />
 
-        <Slider
-          label={t('customize.lineHeight')}
-          value={custom.lineHeightMultiplier}
-          onChange={(v) => setCustom('lineHeightMultiplier', v)}
-          min={0.5}
-          max={1.5}
-          step={0.01}
-          defaultValue={1}
-          formatValue={(v) => `${Math.round(v * 100)}%`}
-        />
+          <Slider
+            label={t('customize.lineHeight')}
+            value={custom.lineHeightMultiplier}
+            onChange={(v) => setCustom('lineHeightMultiplier', v)}
+            min={0.5}
+            max={1.5}
+            step={0.01}
+            defaultValue={1}
+            formatValue={(v) => `${Math.round(v * 100)}%`}
+          />
 
-        <Slider
-          label={t('customize.pagePadding')}
-          value={custom.paddingMultiplier}
-          onChange={(v) => setCustom('paddingMultiplier', v)}
-          min={0.25}
-          max={1.75}
-          step={0.01}
-          defaultValue={1}
-          formatValue={(v) => `${Math.round(v * 100)}%`}
-        />
+          <Slider
+            label={t('customize.pagePadding')}
+            value={custom.paddingMultiplier}
+            onChange={(v) => setCustom('paddingMultiplier', v)}
+            min={0.25}
+            max={1.75}
+            step={0.01}
+            defaultValue={1}
+            formatValue={(v) => `${Math.round(v * 100)}%`}
+          />
 
-        <Slider
-          label={t('customize.sectionSpacing')}
-          value={custom.sectionSpacingMultiplier}
-          onChange={(v) => setCustom('sectionSpacingMultiplier', v)}
-          min={0.25}
-          max={2}
-          step={0.01}
-          defaultValue={1}
-          formatValue={(v) => `${Math.round(v * 100)}%`}
-        />
-
-        <Toggle
-          label={t('customize.rtl')}
-          value={!!custom.rtl}
-          onChange={(v) => setCustom('rtl', v ? 1 : 0)}
-        />
+          <Slider
+            label={t('customize.sectionSpacing')}
+            value={custom.sectionSpacingMultiplier}
+            onChange={(v) => setCustom('sectionSpacingMultiplier', v)}
+            min={0.25}
+            max={2}
+            step={0.01}
+            defaultValue={1}
+            formatValue={(v) => `${Math.round(v * 100)}%`}
+          />
+        </div>
       </div>
     </div>
   );

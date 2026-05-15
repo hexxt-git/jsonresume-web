@@ -148,7 +148,7 @@ export function ResumePreview({ onBack }: { onBack?: () => void }) {
   });
 
   return (
-    <div className="bg-bg flex h-full flex-col">
+    <div className="bg-bg flex h-full min-h-0 w-full flex-col overflow-hidden">
       <div className="bg-bg-secondary/30 flex shrink-0 items-center justify-between border-b px-4 py-2">
         <div className="flex items-center gap-2">
           {onBack && (
@@ -220,7 +220,7 @@ export function ResumePreview({ onBack }: { onBack?: () => void }) {
           </Button>
         </div>
       </div>
-      <div ref={containerRef} className="bg-bg-tertiary/50 flex-1 overflow-auto p-8">
+      <div ref={containerRef} className="bg-bg-tertiary/50 min-h-0 flex-1 overflow-auto p-8">
         <div
           className="relative mx-auto transition-all duration-300"
           style={{
