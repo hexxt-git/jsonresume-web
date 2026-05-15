@@ -54,7 +54,7 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
           <Popover.Trigger asChild>
             <button
               className="focus-visible:ring-accent/10 h-10 w-10 shrink-0 cursor-pointer rounded-full border-2 transition-all outline-none hover:shadow-md focus-visible:ring-4"
-              style={{ backgroundColor: value || 'var(--accent)' }}
+              style={{ backgroundColor: value || '#ccc' }}
               aria-label={`${label}: ${value || 'default'}`}
             />
           </Popover.Trigger>

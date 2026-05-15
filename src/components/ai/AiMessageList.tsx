@@ -143,8 +143,8 @@ export function AiMessageList({
 
   if (messages.length === 0 && !error) {
     return (
-      <div className="bg-bg flex flex-1 flex-col items-center justify-center gap-10 px-8">
-        <div className="max-w-sm space-y-4 text-center">
+      <div className="bg-bg flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto px-8 py-10">
+        <div className="mb-10 max-w-sm space-y-4 text-center">
           <p className="text-text text-lg font-bold tracking-tight">
             {name ? `Let's work on ${name}'s resume` : `Let's work on your resume`}
           </p>
@@ -169,23 +169,25 @@ export function AiMessageList({
   }
 
   return (
-    <div className="flex-1 space-y-6 overflow-y-auto px-6 py-4">
-      {messages.map((m) => (
-        <MessageRow key={m.id} message={m} hideDiffs={hideDiffs} />
-      ))}
-      {error && (
-        <div className="flex justify-start">
-          <Badge
-            variant="danger"
-            onClick={() => setError(null)}
-            className="max-w-[90%] cursor-pointer rounded-2xl px-4 py-3 text-xs font-medium lowercase normal-case"
-            title={t('ai.clickDismiss')}
-          >
-            {error}
-          </Badge>
-        </div>
-      )}
-      <div ref={endRef} />
+    <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
+      <div className="space-y-6">
+        {messages.map((m) => (
+          <MessageRow key={m.id} message={m} hideDiffs={hideDiffs} />
+        ))}
+        {error && (
+          <div className="flex justify-start">
+            <Badge
+              variant="danger"
+              onClick={() => setError(null)}
+              className="max-w-[90%] cursor-pointer rounded-2xl px-4 py-3 text-xs font-medium lowercase normal-case"
+              title={t('ai.clickDismiss')}
+            >
+              {error}
+            </Badge>
+          </div>
+        )}
+        <div ref={endRef} />
+      </div>
     </div>
   );
 }

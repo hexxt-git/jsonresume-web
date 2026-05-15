@@ -267,7 +267,7 @@ export default function AiChat() {
   }
 
   return (
-    <div className="bg-bg flex h-full flex-col">
+    <div className="bg-bg flex h-full min-h-0 w-full flex-col overflow-hidden">
       {/* Header */}
       <div className="bg-bg-secondary/20 flex shrink-0 items-center gap-2 px-4 py-3">
         <ClearChatButton />
@@ -297,7 +297,9 @@ export default function AiChat() {
         <AiSettingsButton onClick={() => setShowSettings(true)} />
       </div>
 
-      <AiMessageList onSend={handleSend} hideDiffs={hideDiffs} />
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <AiMessageList onSend={handleSend} hideDiffs={hideDiffs} />
+      </div>
 
       {/* Input */}
       <div className="shrink-0 px-4 pt-2 pb-4 lg:px-16 lg:pb-10">

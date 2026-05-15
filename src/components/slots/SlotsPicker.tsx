@@ -3,6 +3,7 @@ import { useResumeStore, slotDisplayName } from '@/store/resumeStore';
 import { useUndoStore } from '@/store/undoStore';
 import { useT } from '@/i18n';
 import { Button } from '../ui/Button';
+import { cn } from '@/utils/cn';
 
 function formatDate(ts: number): string {
   const d = new Date(ts);
@@ -14,7 +15,7 @@ function formatDate(ts: number): string {
   return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
-export function SlotsPicker() {
+export function SlotsPicker({ fullWidth }: { fullWidth?: boolean }) {
   const t = useT();
   const slots = useResumeStore((s) => s.slots);
   const activeSlotId = useResumeStore((s) => s.activeSlotId);
@@ -68,12 +69,16 @@ export function SlotsPicker() {
   const currentSlot = activeSlotId ? slots.find((s) => s.id === activeSlotId) : null;
 
   return (
-    <div className="relative">
+    <div className={cn('relative', fullWidth && 'w-full')}>
       <Button
         variant="outline"
-        size="sm"
+        size={fullWidth ? 'md' : 'sm'}
+        fullWidth={fullWidth}
         onClick={() => setOpen(!open)}
-        className="text-text-secondary flex max-w-[120px] items-center gap-2 px-3 text-[10px] font-bold tracking-wider uppercase transition-all sm:max-w-[200px]"
+        className={cn(
+          'text-text-secondary flex items-center gap-2 px-3 text-[10px] font-bold tracking-wider uppercase transition-all',
+          fullWidth ? 'h-10 text-xs' : 'max-w-[120px] sm:max-w-[200px]',
+        )}
       >
         <span className="truncate">
           {currentSlot ? slotDisplayName(currentSlot) : t('slots.resumes')}
@@ -84,7 +89,12 @@ export function SlotsPicker() {
       {open && (
         <>
           <div className="fixed inset-0 z-40 bg-black/5" onClick={() => setOpen(false)} />
-          <div className="bg-bg border-border absolute top-full right-0 z-50 mt-2 w-80 space-y-1 overflow-hidden rounded-3xl border p-2">
+          <div
+            className={cn(
+              'bg-bg border-border absolute top-full right-0 z-50 mt-2 space-y-1 overflow-hidden rounded-3xl border p-2',
+              fullWidth ? 'w-full' : 'w-80',
+            )}
+          >
             <div className="border-border mb-1 flex gap-2 border-b p-2">
               <Button
                 onClick={handleNew}

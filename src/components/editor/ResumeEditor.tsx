@@ -8,6 +8,7 @@ import { Undo2, Redo2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
 import { SparkleIcon } from '@/assets/Icons';
+import { Setting } from 'iconsax-react';
 
 const AiChat = lazy(() => import('@/components/ai/AiChat'));
 const JsonEditor = lazy(() => import('./JsonEditor'));
@@ -18,7 +19,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 function LazyFallback() {
   const t = useT();
   return (
-    <div className="text-text-tertiary flex h-full items-center justify-center text-xs">
+    <div className="text-text-tertiary flex h-full w-full items-center justify-center text-xs">
       {t('ui.loading')}
     </div>
   );
@@ -301,7 +302,7 @@ function FormContent({
   return (
     <div
       ref={containerRef}
-      className="bg-bg flex flex-1 overflow-hidden"
+      className="bg-bg flex min-h-0 flex-1 overflow-hidden"
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
     >
@@ -330,7 +331,7 @@ function FormContent({
         onPointerDown={onPointerDown}
         className="bg-border/50 hover:bg-accent/30 hidden w-1 shrink-0 cursor-col-resize items-center justify-center transition-all sm:flex"
       />
-      <div className="bg-bg flex-1 overflow-y-auto">
+      <div className="bg-bg min-h-0 flex-1 overflow-y-auto">
         <div className="mx-auto max-w-3xl p-5">
           <ActiveForm />
         </div>
@@ -371,6 +372,7 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
   const t = useT();
   const activeSection = useResumeStore((s) => s.activeSection);
   const setActiveSection = useResumeStore((s) => s.setActiveSection);
+  const resetCustomization = useResumeStore((s) => s.resetCustomization);
   const tab = useSettingsStore((s) => s.editorTab);
   const setTab = useSettingsStore((s) => s.setEditorTab);
   const [customizeOpen, setCustomizeOpen] = useState(false);
@@ -378,7 +380,7 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
   const ActiveForm = formMap[activeSection];
   const { undo, redo, canUndo, canRedo } = useUndoRedo();
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full min-h-0 w-full flex-col overflow-hidden">
       <MobileTabBar
         tab={tab}
         setTab={setTab}
@@ -398,7 +400,7 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
       />
 
       {aiSettings && (tab === 'ai' || tab === 'auto') ? (
-        <div className="flex flex-1 flex-col overflow-hidden">
+        <div className="flex min-h-0 w-full flex-1 flex-col overflow-hidden">
           <div className="border-border flex shrink-0 items-center justify-between border-b px-4 py-2">
             <span className="text-text text-xs font-medium">{t('ai.settings')}</span>
             <button
@@ -412,7 +414,7 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
         </div>
       ) : tab === 'auto' ? (
         <AiGate onSetup={() => setAiSettings(true)}>
-          <div className="flex-1 overflow-hidden">
+          <div className="flex min-h-0 w-full flex-1 overflow-hidden">
             <ErrorBoundary label="automation">
               <Suspense fallback={<LazyFallback />}>
                 <AutomationHub />
@@ -421,7 +423,7 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
           </div>
         </AiGate>
       ) : tab === 'ai' ? (
-        <div className="flex-1 overflow-hidden">
+        <div className="flex min-h-0 w-full flex-1 overflow-hidden">
           <ErrorBoundary label="ai-chat">
             <Suspense fallback={<LazyFallback />}>
               <AiChat />
@@ -429,7 +431,7 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
           </ErrorBoundary>
         </div>
       ) : tab === 'json' ? (
-        <div className="flex-1 overflow-hidden">
+        <div className="flex min-h-0 w-full flex-1 overflow-hidden">
           <ErrorBoundary label="json-editor">
             <Suspense fallback={<LazyFallback />}>
               <JsonEditor />
@@ -437,28 +439,74 @@ export function ResumeEditor({ onShowPreview }: { onShowPreview?: () => void }) 
           </ErrorBoundary>
         </div>
       ) : tab === 'themes' ? (
-        <div className="bg-bg flex-1 overflow-y-auto">
-          <div className="p-4">
-            <div className="border-border bg-bg-secondary/20 mb-6 overflow-hidden rounded-2xl border">
-              <button
+        <div className="bg-bg flex min-h-0 w-full flex-1 flex-col overflow-hidden">
+          <div className="min-h-0 w-full flex-1 overflow-y-auto p-4">
+            <div
+              className={cn(
+                'border-border mx-auto mb-8 w-full max-w-3xl overflow-hidden rounded-3xl border transition-all duration-300',
+                customizeOpen ? 'bg-bg' : 'bg-bg-secondary/30 hover:bg-bg-secondary/50',
+              )}
+            >
+              <div
                 onClick={() => setCustomizeOpen(!customizeOpen)}
-                className="text-text-secondary hover:bg-bg-hover flex w-full cursor-pointer items-center justify-between px-6 py-4 text-xs font-bold transition-all"
+                className="flex w-full cursor-pointer items-center justify-between px-6 py-5 transition-all"
               >
-                <span className="flex items-center gap-2">{t('customize.title')}</span>
-                <span
-                  className="text-text-muted transition-transform duration-200"
-                  style={{ transform: customizeOpen ? 'rotate(180deg)' : 'none' }}
-                >
-                  &#9662;
-                </span>
-              </button>
+                <div className="flex items-center gap-4">
+                  <div
+                    className={cn(
+                      'flex h-11 w-11 items-center justify-center rounded-2xl transition-all duration-500',
+                      customizeOpen
+                        ? 'bg-accent rotate-90 text-white'
+                        : 'bg-bg-tertiary text-text-muted',
+                    )}
+                  >
+                    <Setting size={24} variant={customizeOpen ? 'Bold' : 'Linear'} />
+                  </div>
+                  <div>
+                    <h3 className="text-text text-sm font-bold">Style Overrides</h3>
+                    <p className="text-text-muted mt-0.5 text-[11px] font-medium">
+                      Personalize colors, fonts, and spacing
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  {customizeOpen && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        resetCustomization();
+                      }}
+                      className="bg-danger/10 text-danger border-danger/30 hover:bg-danger/20 animate-in fade-in zoom-in-95 flex h-8 items-center gap-1.5 rounded-full border px-2.5 text-[10px] font-bold tracking-widest uppercase transition-all duration-300"
+                      title={t('customize.reset')}
+                    >
+                      <span>&#8634;</span>
+                      <span className="hidden sm:inline">Reset</span>
+                    </button>
+                  )}
+                  <div
+                    className={cn(
+                      'relative h-6 w-11 rounded-full transition-colors duration-300',
+                      customizeOpen ? 'bg-accent' : 'bg-text-faint',
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        'absolute top-1 left-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-300',
+                        customizeOpen && 'translate-x-5',
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
               {customizeOpen && (
-                <div className="px-6 pb-6">
+                <div className="border-border/40 animate-in fade-in slide-in-from-top-2 border-t px-6 pt-8 pb-10 duration-300">
                   <ThemeCustomizer />
                 </div>
               )}
             </div>
-            <ThemePicker />
+            <div className="mx-auto w-full max-w-3xl">
+              <ThemePicker />
+            </div>
           </div>
         </div>
       ) : (

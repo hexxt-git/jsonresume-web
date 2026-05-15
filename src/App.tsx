@@ -96,7 +96,7 @@ function MobileMenu({
       {open && (
         <>
           <div className="fixed inset-0 z-40 bg-black/5" onClick={() => setOpen(false)} />
-          <div className="bg-bg absolute top-full right-0 z-50 mt-2 w-56 space-y-3 rounded-2xl border p-3">
+          <div className="bg-bg absolute top-full right-0 z-50 mt-2 w-[calc(100vw-2rem)] max-w-xs space-y-3 rounded-2xl border p-3">
             <div className="flex gap-2">
               <Button
                 variant="outline"
@@ -122,8 +122,16 @@ function MobileMenu({
               </Button>
             </div>
             <div className="border-border border-t pt-3">
+              <div className="flex flex-col gap-2">
+                <div className="text-text-muted px-1 text-[10px] font-bold tracking-wider uppercase">
+                  {t('slots.resumes')}
+                </div>
+                <SlotsPicker fullWidth />
+              </div>
+            </div>
+            <div className="border-border border-t pt-3">
               <Button
-                variant="ghost"
+                variant="outline"
                 fullWidth
                 onClick={() => {
                   onImport();
@@ -135,23 +143,30 @@ function MobileMenu({
               </Button>
             </div>
             <div className="border-border space-y-3 border-t pt-3">
-              <Tabs options={colorModes} value={colorMode} onChange={setColorMode} size="sm" />
+              <Tabs
+                options={colorModes}
+                value={colorMode}
+                onChange={setColorMode}
+                size="sm"
+                className="w-full"
+              />
               <Tabs
                 options={locales.map((l) => ({ value: l.id, label: l.label }))}
                 value={locale}
                 onChange={(v) => setLocale(v as Locale)}
                 size="sm"
+                className="w-full"
               />
             </div>
             <div className="border-border border-t pt-3">
               <Button
-                variant="ghost"
+                variant="outline"
                 fullWidth
                 onClick={() => {
                   reset();
                   setOpen(false);
                 }}
-                className="text-danger hover:bg-danger/10 justify-start px-3 text-xs"
+                className="border-danger/30 text-danger hover:bg-danger/10 justify-start px-3 text-xs"
               >
                 {t('app.reset')}
               </Button>
@@ -172,7 +187,6 @@ function SplitPane({
   setMobileView: (v: 'editor' | 'preview') => void;
   children: React.ReactNode;
 }) {
-  const t = useT();
   const splitPct = useSettingsStore((s) => s.splitPct);
   const setSplitPct = useSettingsStore((s) => s.setSplitPct);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -203,7 +217,7 @@ function SplitPane({
   return (
     <div
       ref={containerRef}
-      className="flex min-h-0 flex-1"
+      className="flex min-h-0 flex-1 overflow-hidden"
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
     >
@@ -212,7 +226,7 @@ function SplitPane({
 
       <div
         className={cn(
-          'split-editor h-full shrink-0 overflow-hidden',
+          'split-editor h-full min-h-0 shrink-0 overflow-hidden',
           mobileView === 'preview' ? 'hidden sm:block' : '',
         )}
         style={{ width: '100%' }}
@@ -228,7 +242,7 @@ function SplitPane({
       </div>
       <div
         className={cn(
-          'h-full min-w-0 flex-1 flex-col overflow-hidden',
+          'min-w-0 flex-1 flex-col overflow-hidden',
           mobileView === 'editor' ? 'hidden sm:flex' : 'flex',
         )}
       >
@@ -267,7 +281,7 @@ function App() {
     !resume.projects?.length;
 
   return (
-    <div className="bg-bg flex h-screen flex-col">
+    <div className="bg-bg fixed inset-0 flex flex-col overflow-hidden">
       <header className="border-border bg-bg flex shrink-0 items-center justify-between gap-4 border-b px-4 py-3">
         <h1 className="text-text shrink-0 text-sm font-bold tracking-tight">{t('app.title')}</h1>
         <div className="flex shrink-0 items-center gap-2">
@@ -275,7 +289,9 @@ function App() {
             <ColorModeToggle />
             <LocalePicker />
           </div>
-          <SlotsPicker />
+          <div className="hidden sm:block">
+            <SlotsPicker />
+          </div>
           <Button
             variant="outline"
             size="sm"

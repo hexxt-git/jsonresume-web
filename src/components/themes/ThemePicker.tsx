@@ -17,8 +17,8 @@ export function ThemePicker() {
   );
 
   return (
-    <div className="h-full overflow-y-auto pb-10">
-      <div className="grid grid-cols-2 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+    <div className="min-h-0 flex-1 overflow-y-auto pb-10">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
         {previews.map((t) => (
           <button
             key={t.id}
@@ -34,7 +34,7 @@ export function ThemePicker() {
                 tabIndex={-1}
               />
               {selectedThemeId === t.id && (
-                <div className="bg-accent absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full text-[10px] text-white shadow-lg">
+                <div className="bg-accent absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full text-[10px] text-white shadow">
                   &#10003;
                 </div>
               )}

@@ -115,7 +115,7 @@ export default function JsonEditor() {
   };
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full min-h-0 w-full flex-col overflow-hidden">
       <div className="bg-bg-secondary flex shrink-0 items-center justify-between border-b px-3 py-1.5">
         <span className="text-text-muted text-xs">
           {error ? <span className="text-danger">{error}</span> : t('jsonEditor.schema')}
@@ -127,7 +127,7 @@ export default function JsonEditor() {
           {t('jsonEditor.format')}
         </button>
       </div>
-      <div className="flex-1">
+      <div className="min-h-0 flex-1">
         <Editor
           defaultLanguage="json"
           defaultValue={JSON.stringify(resume, null, 2)}
