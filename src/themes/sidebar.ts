@@ -1,6 +1,6 @@
 import type { ResumeSchema } from '../types/resume';
 import type { ThemeDefinition } from './types';
-import { esc, md, dateRange, section, link, safeSrc } from './helpers';
+import { esc, md, dateRange, section, link, safeSrc, stripUrl } from './helpers';
 
 function render(resume: ResumeSchema, customCss?: string): string {
   const b = resume.basics;
@@ -14,7 +14,7 @@ function render(resume: ResumeSchema, customCss?: string): string {
       ? `<div class="sb-section"><h3>Website</h3><p>${link(b.url, b.url.replace(/^https?:\/\//, ''))}</p></div>`
       : '',
     b?.profiles?.length
-      ? `<div class="sb-section"><h3>Profiles</h3>${b.profiles.map((p) => `<p>${link(p.url, p.network || p.username || '')}</p>`).join('')}</div>`
+      ? `<div class="sb-section"><h3>Profiles</h3>${b.profiles.map((p) => `<p>${link(p.url, p.url ? stripUrl(p.url) : p.network || p.username || '')}</p>`).join('')}</div>`
       : '',
     resume.skills?.length
       ? `<div class="sb-section"><h3>Skills</h3>${(resume.skills || []).map((s) => `<div class="sb-skill"><strong>${esc(s.name)}${s.level ? ` <span style="font-weight:normal;color:#94a3b8;font-size:calc(0.833em * var(--fs-mult, 1))">- ${esc(s.level)}</span>` : ''}</strong><div class="sb-tags">${(s.keywords || []).map((k) => `<span class="sb-tag">${esc(k)}</span>`).join('')}</div></div>`).join('')}</div>`

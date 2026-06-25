@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo, useRef } from 'react';
 import { useT } from '@/i18n';
 import { AiEntryProvider } from '@/components/ai/AiContext';
 import { Eye, EyeSlash, Trash } from 'iconsax-react';
@@ -42,7 +42,14 @@ export function RepeatableSection<T>({
 }: RepeatableSectionProps<T>) {
   const t = useT();
 
+  const idMapRef = useRef(new Map<T, string>());
+
   const update = (index: number, item: T) => {
+    const oldItem = items[index];
+    const id = idMapRef.current.get(oldItem);
+    if (id) {
+      idMapRef.current.set(item, id);
+    }
     const next = [...items];
     next[index] = item;
     onChange(next);
@@ -58,14 +65,18 @@ export function RepeatableSection<T>({
   };
 
   const ids = useMemo(() => {
-    const seen = new Map<string, number>();
-    return items.map((item) => {
-      // Create a stable key based on content and index
-      const base = JSON.stringify(item).slice(0, 64);
-      const count = seen.get(base) || 0;
-      seen.set(base, count + 1);
-      return `${base}::${count}`;
+    const genId = () => Math.random().toString(36).substring(2, 9);
+    const nextMap = new Map<T, string>();
+    const nextIds = items.map((item) => {
+      let id = idMapRef.current.get(item);
+      if (!id) {
+        id = genId();
+      }
+      nextMap.set(item, id);
+      return id;
     });
+    idMapRef.current = nextMap;
+    return nextIds;
   }, [items]);
 
   const sensors = useSensors(

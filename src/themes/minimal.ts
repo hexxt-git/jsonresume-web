@@ -1,6 +1,6 @@
 import type { ResumeSchema } from '../types/resume';
 import type { ThemeDefinition } from './types';
-import { esc, md, dateRange, section, link, safeSrc } from './helpers';
+import { esc, md, dateRange, section, link, safeSrc, stripUrl } from './helpers';
 
 function render(resume: ResumeSchema, customCss?: string): string {
   const b = resume.basics;
@@ -29,7 +29,7 @@ ${customCss || ''}</style></head><body>
 ${b?.image ? `<img src="${safeSrc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px">` : ''}
 ${b?.name ? `<h1>${esc(b.name)}</h1>` : ''}
 ${b?.label ? `<div class="meta">${esc(b.label)}</div>` : ''}
-<address class="contact" aria-label="Contact information">${[b?.email, b?.phone, b?.location?.city ? `${b.location.city}${b.location.region ? ', ' + b.location.region : ''}` : '', b?.url ? link(b.url, b.url.replace(/^https?:\/\//, '')) : '', ...(b?.profiles || []).map((p) => (p.url ? `<a href="${esc(p.url)}">${esc(p.network || p.username || '')}</a>` : ''))].filter(Boolean).join(' / ')}</address>
+<address class="contact" aria-label="Contact information">${[b?.email, b?.phone, b?.location?.city ? `${b.location.city}${b.location.region ? ', ' + b.location.region : ''}` : '', b?.url ? link(b.url, b.url.replace(/^https?:\/\//, '')) : '', ...(b?.profiles || []).map((p) => (p.url ? `<a href="${esc(p.url)}">${esc(stripUrl(p.url))}</a>` : ''))].filter(Boolean).join(' / ')}</address>
 ${b?.summary ? `<p class="summary">${md(b.summary)}</p>` : ''}
 </header>
 <main role="main">

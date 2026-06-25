@@ -1,6 +1,6 @@
 import type { ResumeSchema } from '../types/resume';
 import type { ThemeDefinition } from './types';
-import { esc, md, dateRange, section, link, safeSrc } from './helpers';
+import { esc, md, dateRange, section, link, safeSrc, stripUrl } from './helpers';
 
 function render(resume: ResumeSchema, customCss?: string): string {
   const b = resume.basics;
@@ -43,7 +43,7 @@ ${[
   b?.location?.city ? `${b.location.city}${b.location.region ? ', ' + b.location.region : ''}` : '',
   b?.url?.replace(/^https?:\/\//, ''),
   ...(b?.profiles || []).map((p) =>
-    p.url ? `<a href="${esc(p.url)}">${esc(p.network || p.username || '')}</a>` : '',
+    p.url ? `<a href="${esc(p.url)}">${esc(stripUrl(p.url))}</a>` : '',
   ),
 ]
   .filter(Boolean)

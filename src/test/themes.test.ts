@@ -122,7 +122,7 @@ describe('full schema field coverage', () => {
         expect(html).toContain('California');
       });
       it('renders basics.profiles', () => {
-        expect(html).toContain('GitHub');
+        expect(html).toContain('github.com/janefull');
       });
 
       // --- work ---

@@ -7,7 +7,7 @@ export const sampleResume: ResumeSchema = {
     email: 'zeghdns@gmail.com',
     phone: '+213798922617',
     summary:
-      'Web Developer specializing in React, Next.js, and TypeScript. I design, build, ship, and handle end-to-end delivery (backend, Stripe billing, web analytics, and deployment) — open to frontend roles or full-stack development work.',
+      'Web Developer specializing in React, Next.js, and TypeScript. I design, build, ship, and handle end-to-end delivery (backend, Stripe billing, web analytics, and deployment) - open to frontend roles or full-stack development work.',
     location: {
       city: 'Algiers',
       countryCode: 'DZ',
@@ -24,6 +24,10 @@ export const sampleResume: ResumeSchema = {
         username: 'hexxt-git',
         url: 'https://github.com/hexxt-git',
       },
+      {
+        network: 'hexxt.dev',
+        url: 'https://hexxt.dev',
+      },
     ],
   },
   work: [
@@ -31,20 +35,20 @@ export const sampleResume: ResumeSchema = {
       name: 'bortocall.dz',
       position: 'Frontend Engineer',
       startDate: '2025-12-01',
-      location: 'Alger, Algiers',
+      location: 'Dar-el-beida, Algiers',
       highlights: [
         "Led the development of the startup's 3 Dashboards and 2 Websites, using a monorepo architecture.",
-        'Reviewed colleague code to ensure complice with high standards of security, performance, and pixel-perfect design.',
+        'Reviewed colleague code to ensure compliance with high security, performance, and pixel-perfect design.',
       ],
     },
     {
       name: 'mi-conseil.fr',
-      position: 'Web developer',
+      position: 'Web developer (contract)',
       startDate: '2025-08-01',
       endDate: '2025-12-01',
       location: 'Paris, France',
       highlights: [
-        'Worked on multiple projects and led the development of www.thetagpoint.com back office and client-facing web applications.',
+        'Worked on projects including development of www.thetagpoint.com back-office and client web apps.',
         'Converted Figma designs to web applications using React with REST API integration.',
       ],
     },
@@ -53,67 +57,64 @@ export const sampleResume: ResumeSchema = {
       position: 'Frontend Developer',
       startDate: '2025-01-01',
       endDate: '2025-08-01',
-      location: 'Alger, Algiers',
+      location: 'Remote, Algiers',
       highlights: [
         'Gained experience collaborating within a large team of senior engineers while contributing to major features, including the interface for Wizabot.',
-        'Led the rewrite of the QFarming web application, focusing on Mapbox integration and real-time data visualization.',
+        'rewrote the QFarming web application, focusing on Mapbox integration and real-time data visualization.',
       ],
     },
   ],
   education: [
     {
-      institution: 'University of Science and Technology Houari Boumediene',
-      studyType: "Engineer's degree",
-    },
-    {
       institution: 'freecodecamp.org',
       studyType: 'Accelerated Courses in web development',
       endDate: '2022-01-01',
+    },
+    {
+      institution: 'University of Science and Technology Houari Boumediene',
+      studyType: "Engineer's degree",
     },
   ],
   skills: [
     {
       name: 'Frontend',
       keywords: [
-        'React.js',
-        'Next.js',
+        'React',
+        'NextJs',
         'TailwindCSS',
-        'Svelte',
-        'SvelteKit',
-        'HTML',
-        'CSS',
-        'JavaScript',
+        'Storybook',
+        'Vitest',
+        'HTML5',
+        'CSS3',
+        'JavaScript ES6',
         'TypeScript',
+        'Tanstack Libraries',
         'Web Design',
+        'Figma',
       ],
     },
     {
       name: 'Backend',
-      keywords: [
-        'Node.js',
-        'Express',
-        'Prisma',
-        'SQL (PostgreSQL, MySQL)',
-        'REST APIs',
-        'tRPC APIs',
-        'Python',
-        'Linux',
-        'Rapid Prototyping',
-        'Problem-Solving',
-      ],
-    },
-    {
-      name: 'Mobile',
-      keywords: ['Swift', 'SwiftUI', 'xCode'],
+      keywords: ['Node.js', 'NestJs', 'Express', 'Prisma', 'tRPC', 'Linux'],
     },
   ],
-  languages: [{ language: 'English' }, { language: 'French' }, { language: 'Arabic' }],
+  languages: [
+    {
+      language: 'English',
+    },
+    {
+      language: 'French',
+    },
+    {
+      language: 'Arabic',
+    },
+  ],
   projects: [
     {
-      name: 'advice4cloud TCO Calculator',
+      name: 'advice4cloud TCO Calculator (https://calculator.advice4cloud.com)',
       url: 'https://calculator.advice4cloud.com',
       highlights: [
-        'Built and deployed a fully functional SaaS calculator tailored to client business needs, currently generating \u20ac100/month per client.',
+        'Built and deployed a fully functional SaaS calculator tailored to client business needs, currently generating €100/month per client.',
         'Integrated AI-powered features and recurring subscription payments via Stripe, while maintaining and operating the product in production.',
       ],
     },
@@ -126,16 +127,16 @@ export const sampleResume: ResumeSchema = {
       ],
     },
     {
-      name: 'clean-asset-repository.com',
-      url: 'https://clean-asset-repository.com',
+      name: 'anime-sdk (https://anime-sdk.hexxt.dev)',
+      url: 'https://anime-sdk.hexxt.dev',
       highlights: [
-        'Built a curated library of 1700+ creative assets with an engaged community, optimized for fast delivery.',
-        'Released all assets under CC0, enabling free personal and commercial use with fast, reliable access.',
+        'A TypeScript SDK for searching anime and manga across 12 sources and resolving direct stream URLs.',
+        'Built for making websites, mobile apps, servers, cli tools and any other user experience.',
       ],
     },
     {
-      name: 'BBEE | High Level Interpreted Programming Language',
-      url: 'https://github.com/hexxt-git/bbee',
+      name: 'High Level Interpreted Programming Language (https://github.com/hexxt-git/bbee-lang)',
+      url: 'https://github.com/hexxt-git/bbee-lang',
       highlights: [
         'An exercise in parsing syntax using a Pratt parsing algorithm turned into a high-level programming language.',
       ],

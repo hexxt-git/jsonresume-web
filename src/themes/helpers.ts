@@ -79,3 +79,9 @@ export function safeSrc(url: string | undefined): string {
   const safe = safeUrl(url);
   return safe ? esc(safe) : '';
 }
+
+/** Strip http(s):// and www. from a URL */
+export function stripUrl(url: string | undefined): string {
+  if (!url) return '';
+  return url.replace(/^https?:\/\/(?:www\.)?/, '');
+}

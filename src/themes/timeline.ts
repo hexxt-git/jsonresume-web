@@ -1,6 +1,6 @@
 import type { ResumeSchema } from '../types/resume';
 import type { ThemeDefinition } from './types';
-import { esc, md, dateRange, section, link, safeSrc } from './helpers';
+import { esc, md, dateRange, section, link, safeSrc, stripUrl } from './helpers';
 
 function timelineEntries(
   items: {
@@ -71,7 +71,7 @@ ${b?.email ? `<span>${esc(b.email)}</span>` : ''}
 ${b?.phone ? `<span>${esc(b.phone)}</span>` : ''}
 ${b?.location?.city ? `<span>${esc(b.location.city)}${b.location.region ? ', ' + esc(b.location.region) : ''}</span>` : ''}
 ${b?.url ? `<span>${link(b.url, b.url.replace(/^https?:\/\//, ''))}</span>` : ''}
-${(b?.profiles || []).map((p) => `<span>${link(p.url, p.network || p.username || '')}</span>`).join('')}
+${(b?.profiles || []).map((p) => `<span>${link(p.url, p.url ? stripUrl(p.url) : p.network || p.username || '')}</span>`).join('')}
 </address>
 ${b?.summary ? `<p class="summary">${md(b.summary)}</p>` : ''}
 </header>
