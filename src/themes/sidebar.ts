@@ -45,18 +45,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#3
 .sb-tags{display:flex;flex-wrap:wrap;gap:4px}
 .sb-tag{background:#334155;color:#cbd5e1;padding:2px 8px;border-radius:3px;font-size:calc(11px * var(--fs-mult, 1))}
 .main{flex:1;padding:36px 40px;max-width:calc(100% - 280px)}
-h2{font-size:calc(14px * var(--fs-mult, 1));font-weight:700;color:#1e293b;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #e2e8f0}
+h2{font-size:calc(14px * var(--fs-mult, 1));font-weight:700;color:#1e293b;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #e2e8f0;break-after:avoid-page}
 h3{font-size:calc(15px * var(--fs-mult, 1));font-weight:600;color:#1e293b}
 a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}
 .summary{color:#6b7280;margin-bottom:24px}
-.section{margin-bottom:22px;break-inside:avoid}
+.section{margin-bottom:22px}
 .entry{margin-bottom:16px;break-inside:avoid}
 .entry-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap}
 .entry-meta{color:#9ca3af;font-size:calc(13px * var(--fs-mult, 1))}
 .entry-org{color:#6b7280;font-size:calc(13px * var(--fs-mult, 1))}
 ul{padding-left:18px;margin-top:6px}
 li{margin-bottom:3px;color:#4b5563}
-@media print{body{display:flex}.sidebar{width:240px;min-width:240px;background:#1e293b;-webkit-print-color-adjust:exact;print-color-adjust:exact}.main{padding:24px 28px}}
+@media print{body{display:flex}.sidebar{width:240px;min-width:240px;background:#1e293b;padding:20px 16px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.main{padding:0}}
+@page{size:A4;margin:16mm 14mm}
 ${customCss || ''}</style></head><body>
 <aside class="sidebar" aria-label="Contact and skills">
 ${b?.image ? `<img src="${safeSrc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid #334155;display:block;margin:0 auto 12px">` : ''}

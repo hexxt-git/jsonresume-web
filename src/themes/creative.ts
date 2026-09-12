@@ -9,7 +9,7 @@ function render(resume: ResumeSchema, customCss?: string): string {
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',Roboto,-apple-system,sans-serif;color:#3d3d3d;line-height:1.6;max-width:800px;margin:0 auto;padding:48px 40px;font-size:calc(14px * var(--fs-mult, 1));background:#fafaf8}
 h1{font-size:calc(28px * var(--fs-mult, 1));font-weight:700;color:#2d2d2d}
-h2{font-size:calc(13px * var(--fs-mult, 1));font-weight:600;text-transform:uppercase;letter-spacing:1.8px;color:#6b7c5e;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #6b7c5e}
+h2{font-size:calc(13px * var(--fs-mult, 1));font-weight:600;text-transform:uppercase;letter-spacing:1.8px;color:#6b7c5e;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #6b7c5e;break-after:avoid-page}
 h3{font-size:calc(15px * var(--fs-mult, 1));font-weight:600;color:#2d2d2d}
 a{color:#5a6e4e;text-decoration:none}a:hover{text-decoration:underline}
 .header{display:flex;align-items:center;gap:20px;margin-bottom:16px}
@@ -18,7 +18,7 @@ a{color:#5a6e4e;text-decoration:none}a:hover{text-decoration:underline}
 .contact{display:flex;flex-wrap:wrap;gap:14px;font-size:calc(13px * var(--fs-mult, 1));color:#888;margin-bottom:28px}
 .contact a{color:#5a6e4e}
 .summary{color:#555;margin-bottom:28px;padding:14px 18px;background:#f0efe8;border-radius:6px;line-height:1.7}
-.section{margin-bottom:26px;break-inside:avoid}
+.section{margin-bottom:26px}
 .entry{margin-bottom:18px;padding-left:14px;border-left:3px solid #d4d0c4;break-inside:avoid}
 .entry-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:4px}
 .entry-meta{color:#6b7c5e;font-size:calc(13px * var(--fs-mult, 1));font-weight:500}
@@ -33,7 +33,8 @@ li::marker{color:#6b7c5e}
 .tag{background:#e8e6dc;color:#4a4a4a;padding:3px 10px;border-radius:3px;font-size:calc(12px * var(--fs-mult, 1))}
 .langs{display:flex;flex-wrap:wrap;gap:8px}
 .lang{font-size:calc(13px * var(--fs-mult, 1));color:#555}
-@media print{body{background:#fff;padding:20px 24px}.summary{background:#f8f8f6}.entry{border-left-color:#ccc}.skill-card{background:#f8f8f6}.tag{background:#eee}}
+@media print{body{background:#fff;padding:0}.summary{background:#f8f8f6}.entry{border-left-color:#ccc}.skill-card{background:#f8f8f6}.tag{background:#eee}}
+@page{size:A4;margin:16mm 14mm}
 ${customCss || ''}</style></head><body>
 <header role="banner">
 <div class="header">

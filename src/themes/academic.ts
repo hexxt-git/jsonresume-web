@@ -9,14 +9,14 @@ function render(resume: ResumeSchema, customCss?: string): string {
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Computer Modern Serif','CMU Serif',Georgia,'Times New Roman',serif;color:#222;line-height:1.5;max-width:720px;margin:0 auto;padding:48px 56px;font-size:calc(13.5px * var(--fs-mult, 1));text-align:justify}
 h1{font-size:calc(24px * var(--fs-mult, 1));font-weight:400;text-align:center;margin-bottom:2px;letter-spacing:2px;text-transform:uppercase}
-h2{font-size:calc(13px * var(--fs-mult, 1));font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding-bottom:2px;border-bottom:1px solid #222}
+h2{font-size:calc(13px * var(--fs-mult, 1));font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding-bottom:2px;border-bottom:1px solid #222;break-after:avoid-page}
 h3{font-size:calc(13.5px * var(--fs-mult, 1));font-weight:700;color:#222}
 a{color:#222;text-decoration:none;border-bottom:0.5px solid #999}a:hover{border-bottom-color:#222}
 .header{text-align:center;margin-bottom:24px}
 .label{font-style:italic;color:#555;font-size:calc(14px * var(--fs-mult, 1));margin-bottom:8px}
 .contact{font-size:calc(12px * var(--fs-mult, 1));color:#555}
 .contact span+span::before{content:" \\00b7 "}
-.section{margin-bottom:18px;break-inside:avoid}
+.section{margin-bottom:18px}
 .entry{margin-bottom:12px;break-inside:avoid}
 .entry-header{display:flex;justify-content:space-between;align-items:baseline}
 .entry-meta{font-style:italic;color:#555;font-size:calc(12.5px * var(--fs-mult, 1));white-space:nowrap}
@@ -27,7 +27,8 @@ li{margin-bottom:2px}
 .skills-list dt{font-weight:700;font-size:calc(13px * var(--fs-mult, 1));float:left;clear:left;width:100px;margin-bottom:4px}
 .skills-list dd{margin-left:108px;margin-bottom:4px;color:#444}
 .publications .entry{padding-left:24px;text-indent:-24px}
-@media print{body{padding:24px 40px;font-size:calc(12px * var(--fs-mult, 1))}}
+@media print{body{padding:0;font-size:calc(12px * var(--fs-mult, 1))}}
+@page{size:A4;margin:16mm 14mm}
 ${customCss || ''}</style></head><body>
 <header role="banner">
 <div class="header">

@@ -9,13 +9,12 @@ function render(resume: ResumeSchema, customCss?: string): string {
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#222;line-height:1.55;max-width:720px;margin:0 auto;padding:48px 40px;font-size:calc(14px * var(--fs-mult, 1))}
 h1{font-size:calc(24px * var(--fs-mult, 1));font-weight:700;margin-bottom:2px}
-h2{font-size:calc(12px * var(--fs-mult, 1));font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#222;margin:24px 0 10px}
+h2{font-size:calc(12px * var(--fs-mult, 1));font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#222;margin:24px 0 10px;break-after:avoid-page}
 h3{font-size:calc(14px * var(--fs-mult, 1));font-weight:600}
 a{color:inherit;text-decoration:underline;text-decoration-color:#ccc;text-underline-offset:2px}a:hover{text-decoration-color:#222}
 .meta{color:#777;font-size:calc(13px * var(--fs-mult, 1))}
 .contact{color:#777;font-size:calc(13px * var(--fs-mult, 1));margin-bottom:4px}
 .summary{color:#555;margin:16px 0 0}
-.section{break-inside:avoid}
 .entry{margin-bottom:14px;break-inside:avoid}
 .entry-row{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap}
 .sub{color:#555;font-size:calc(13px * var(--fs-mult, 1))}
@@ -23,7 +22,8 @@ ul{padding-left:18px;margin-top:4px}
 li{margin-bottom:2px;color:#444}
 .skills-inline{color:#555;break-inside:avoid}
 .skills-inline strong{color:#222;font-weight:600}
-@media print{body{padding:20px 24px;font-size:calc(12.5px * var(--fs-mult, 1))}h2{margin:16px 0 8px}}
+@media print{body{padding:0;font-size:calc(12.5px * var(--fs-mult, 1))}h2{margin:16px 0 8px}}
+@page{size:A4;margin:16mm 14mm}
 ${customCss || ''}</style></head><body>
 <header role="banner">
 ${b?.image ? `<img src="${safeSrc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px">` : ''}

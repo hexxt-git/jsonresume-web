@@ -9,14 +9,14 @@ function render(resume: ResumeSchema, customCss?: string): string {
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#333;line-height:1.6;max-width:800px;margin:0 auto;padding:48px 40px;font-size:calc(14px * var(--fs-mult, 1))}
 h1{font-size:calc(28px * var(--fs-mult, 1));font-weight:600;color:#111;margin-bottom:4px}
-h2{font-size:calc(14px * var(--fs-mult, 1));font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:#999;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #eee}
+h2{font-size:calc(14px * var(--fs-mult, 1));font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:#999;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #eee;break-after:avoid-page}
 h3{font-size:calc(15px * var(--fs-mult, 1));font-weight:600;color:#111}
 a{color:#333;text-decoration:none}a:hover{text-decoration:underline}
 .label{color:#666;font-size:calc(16px * var(--fs-mult, 1));margin-bottom:16px}
 .contact{display:flex;flex-wrap:wrap;gap:16px;color:#666;font-size:calc(13px * var(--fs-mult, 1));margin-bottom:32px}
 .contact a{color:#666}
 .summary{color:#555;margin-bottom:32px;line-height:1.7}
-.section{margin-bottom:28px;break-inside:avoid}
+.section{margin-bottom:28px}
 .entry{margin-bottom:20px;break-inside:avoid}
 .entry-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:4px}
 .entry-meta{color:#999;font-size:calc(13px * var(--fs-mult, 1));white-space:nowrap}
@@ -30,7 +30,8 @@ li{margin-bottom:4px;color:#555}
 .skill-tag{background:#f5f5f5;padding:3px 10px;border-radius:3px;font-size:calc(12px * var(--fs-mult, 1));color:#555}
 .languages{display:flex;flex-wrap:wrap;gap:16px}
 .lang{font-size:calc(13px * var(--fs-mult, 1));color:#555}
-@media print{body{padding:20px 24px;font-size:calc(12px * var(--fs-mult, 1))}h1{font-size:calc(22px * var(--fs-mult, 1))}.section{margin-bottom:16px}.entry{margin-bottom:12px}}
+@media print{body{padding:0;font-size:calc(12px * var(--fs-mult, 1))}h1{font-size:calc(22px * var(--fs-mult, 1))}.section{margin-bottom:16px}.entry{margin-bottom:12px}}
+@page{size:A4;margin:16mm 14mm}
 ${customCss || ''}</style></head><body>
 <header role="banner">
 ${b?.image ? `<img src="${safeSrc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px">` : ''}

@@ -36,13 +36,13 @@ function render(resume: ResumeSchema, customCss?: string): string {
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#374151;line-height:1.6;max-width:800px;margin:0 auto;padding:48px 40px;font-size:calc(14px * var(--fs-mult, 1))}
 h1{font-size:calc(28px * var(--fs-mult, 1));font-weight:700;color:#111827}
-h2{font-size:calc(14px * var(--fs-mult, 1));font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#6b7280;margin-bottom:16px}
+h2{font-size:calc(14px * var(--fs-mult, 1));font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#6b7280;margin-bottom:16px;break-after:avoid-page}
 h3{font-size:calc(15px * var(--fs-mult, 1));font-weight:600;color:#111827}
 a{color:#4f46e5;text-decoration:none}a:hover{text-decoration:underline}
 .label{color:#6b7280;font-size:calc(16px * var(--fs-mult, 1));margin-bottom:12px}
 .contact{display:flex;flex-wrap:wrap;gap:14px;color:#9ca3af;font-size:calc(13px * var(--fs-mult, 1));margin-bottom:28px}
 .summary{color:#6b7280;margin-bottom:32px}
-.section{margin-bottom:28px;break-inside:avoid}
+.section{margin-bottom:28px}
 .timeline{position:relative;padding-left:28px}
 .timeline::before{content:"";position:absolute;left:5px;top:8px;bottom:8px;width:2px;background:#e5e7eb}
 .tl-entry{position:relative;margin-bottom:20px;break-inside:avoid}
@@ -60,7 +60,8 @@ li{margin-bottom:3px;color:#6b7280}
 .tag{background:#eef2ff;color:#4f46e5;padding:3px 10px;border-radius:4px;font-size:calc(12px * var(--fs-mult, 1))}
 .langs{display:flex;gap:12px;flex-wrap:wrap}
 .lang{color:#6b7280;font-size:calc(13px * var(--fs-mult, 1))}
-@media print{body{padding:20px 24px}.timeline::before{background:#ccc}.tl-dot{background:#4f46e5;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+@media print{body{padding:0}.timeline::before{background:#ccc}.tl-dot{background:#4f46e5;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+@page{size:A4;margin:16mm 14mm}
 ${customCss || ''}</style></head><body>
 <header role="banner">
 ${b?.image ? `<img src="${safeSrc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px">` : ''}
