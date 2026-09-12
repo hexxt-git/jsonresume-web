@@ -144,7 +144,9 @@ export default {
   'export.pdf': 'PDF',
   'export.jsonDesc': '.json',
   'export.yamlDesc': '.yaml',
-  'export.pdfDesc': 'Print dialog',
+  'export.pdfDesc': 'Clean PDF, no browser header/footer',
+  'export.pdfGenerating': 'Generating...',
+  'export.pdfError': 'Failed - try again',
 
   // Slots
   'slots.resumes': 'Resumes',

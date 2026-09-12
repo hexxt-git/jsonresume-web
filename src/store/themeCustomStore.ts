@@ -18,7 +18,7 @@ export const defaultCustomization: ThemeCustomization = {
   rtl: false,
 };
 
-const BASE_PAGE_MARGIN_MM = { topBottom: 16, leftRight: 14 };
+const BASE_PDF_MARGIN_MM = { topBottom: 16, leftRight: 14 };
 
 /** Generate a CSS override block from customization values. Injected into theme HTML. */
 export function buildCustomCss(c: ThemeCustomization): string {
@@ -29,16 +29,17 @@ export function buildCustomCss(c: ThemeCustomization): string {
   if (c.fontFamily) bodyRules.push(`font-family:${c.fontFamily}`);
   if (bodyRules.length) parts.push(`body{${bodyRules.join(';')} !important}`);
 
-  // Padding scales on-screen/preview layout via body padding (screen-only —
-  // an element's own padding only applies to its first/last fragment when
-  // content spans multiple printed pages, not every page). The real per-page
-  // print/PDF margin comes from @page instead, which the browser repeats
-  // identically on every page.
+  // Padding affects on-screen/preview layout (body padding, screen-only —
+  // print/PDF margins can't reliably come from an element's own padding,
+  // since that only applies to a box's first/last fragment when its content
+  // spans multiple printed pages, not every page). The matching real-margin
+  // paths are @page (native browser print, below) and pdfMargin() (the
+  // headless-Chromium export, which passes margin directly to page.pdf()).
   if (c.paddingMultiplier !== 1) {
     const m = c.paddingMultiplier;
     parts.push(`@media screen{body{padding:calc(40px * ${m}) !important}}`);
     parts.push(
-      `@page{margin:${BASE_PAGE_MARGIN_MM.topBottom * m}mm ${BASE_PAGE_MARGIN_MM.leftRight * m}mm}`,
+      `@page{margin:${BASE_PDF_MARGIN_MM.topBottom * m}mm ${BASE_PDF_MARGIN_MM.leftRight * m}mm}`,
     );
   }
 
@@ -82,4 +83,28 @@ export function buildCustomCss(c: ThemeCustomization): string {
 
   if (!parts.length) return '';
   return parts.join('');
+}
+
+export interface PdfMargin {
+  top: string;
+  right: string;
+  bottom: string;
+  left: string;
+}
+
+/**
+ * Real per-page PDF margin (in mm) driven by the same "Page Padding" slider
+ * used for the on-screen preview, so one control governs both — but applied
+ * via the PDF renderer's own page-margin option rather than CSS, since a
+ * page's own padding only affects its first/last fragment when content
+ * spans multiple printed pages, not every page.
+ */
+export function pdfMargin(c: ThemeCustomization): PdfMargin {
+  const m = c.paddingMultiplier;
+  return {
+    top: `${BASE_PDF_MARGIN_MM.topBottom * m}mm`,
+    bottom: `${BASE_PDF_MARGIN_MM.topBottom * m}mm`,
+    left: `${BASE_PDF_MARGIN_MM.leftRight * m}mm`,
+    right: `${BASE_PDF_MARGIN_MM.leftRight * m}mm`,
+  };
 }
