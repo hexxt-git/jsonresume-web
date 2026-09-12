@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { useResumeStore, activeSlot } from '@/store/resumeStore';
-import { buildCustomCss } from '@/store/themeCustomStore';
+import { buildCustomCss, pdfMargin } from '@/store/themeCustomStore';
 import { useT } from '@/i18n';
 import { getThemeById } from '@/themes';
 import { saveAs } from 'file-saver';
@@ -23,6 +24,7 @@ export function ExportDialog({ open, onClose }: ExportDialogProps) {
   const resume = useResumeStore((s) => activeSlot(s).resume);
   const themeId = useResumeStore((s) => activeSlot(s).themeId);
   const custom = useResumeStore((s) => activeSlot(s).customization);
+  const [pdfState, setPdfState] = useState<'idle' | 'generating' | 'error'>('idle');
 
   if (!open) return null;
 
@@ -31,10 +33,22 @@ export function ExportDialog({ open, onClose }: ExportDialogProps) {
   const renderHtml = () =>
     getThemeById(themeId).render(filterVisible(resume), buildCustomCss(custom));
 
-  const handlePrint = () => {
-    const iframe = document.querySelector<HTMLIFrameElement>('iframe[title="Resume Preview"]');
-    iframe?.contentWindow?.print();
-    onClose();
+  const handleExportPdf = async () => {
+    setPdfState('generating');
+    try {
+      const res = await fetch('/api/export-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ html: renderHtml(), margin: pdfMargin(custom) }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      saveAs(await res.blob(), `${fname}.pdf`);
+      setPdfState('idle');
+      onClose();
+    } catch (err) {
+      console.error('PDF export failed:', err);
+      setPdfState('error');
+    }
   };
 
   const options = [
@@ -71,8 +85,14 @@ export function ExportDialog({ open, onClose }: ExportDialogProps) {
     {
       ext: 'PDF',
       label: t('export.pdf'),
-      sub: t('export.pdfDesc'),
-      action: handlePrint,
+      sub:
+        pdfState === 'generating'
+          ? t('export.pdfGenerating')
+          : pdfState === 'error'
+            ? t('export.pdfError')
+            : t('export.pdfDesc'),
+      action: handleExportPdf,
+      disabled: pdfState === 'generating',
     },
   ];
 
@@ -84,7 +104,8 @@ export function ExportDialog({ open, onClose }: ExportDialogProps) {
           <button
             key={opt.ext}
             onClick={opt.action}
-            className="hover:bg-bg-hover group flex w-full cursor-pointer items-center gap-4 rounded-xl px-3 py-3 text-left transition-all"
+            disabled={opt.disabled}
+            className="hover:bg-bg-hover group flex w-full cursor-pointer items-center gap-4 rounded-xl px-3 py-3 text-left transition-all disabled:cursor-not-allowed disabled:opacity-60"
           >
             <span className="bg-bg-secondary text-text-tertiary group-hover:bg-accent flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[10px] font-bold transition-all group-hover:text-white">
               {EXT_ICONS[opt.ext]}
