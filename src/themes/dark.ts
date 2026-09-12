@@ -9,7 +9,7 @@ function render(resume: ResumeSchema, customCss?: string): string {
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#1a1a1a;color:#b3b3b3;line-height:1.65;max-width:780px;margin:0 auto;padding:48px 40px;font-size:calc(14px * var(--fs-mult, 1))}
 h1{font-size:calc(30px * var(--fs-mult, 1));font-weight:700;color:#e5e5e5;text-align:center;margin-bottom:4px}
-h2{font-size:calc(16px * var(--fs-mult, 1));font-weight:700;color:#e5e5e5;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #404040}
+h2{font-size:calc(16px * var(--fs-mult, 1));font-weight:700;color:#e5e5e5;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #404040;break-after:avoid-page}
 h3{font-size:calc(14px * var(--fs-mult, 1));font-weight:700;color:#d4d4d4}
 a{color:#d4d4d4;text-decoration:none;border-bottom:1px solid #555}a:hover{border-bottom-color:#d4d4d4}
 .label{text-align:center;color:#999;font-size:calc(15px * var(--fs-mult, 1));margin-bottom:12px}
@@ -18,7 +18,7 @@ a{color:#d4d4d4;text-decoration:none;border-bottom:1px solid #555}a:hover{border
 .contact a{color:#b3b3b3;border-bottom:none}
 .divider{border:none;border-top:1px solid #333;margin:20px 0}
 .summary{text-align:justify;color:#999;margin-bottom:28px}
-.section{margin-bottom:24px;break-inside:avoid}
+.section{margin-bottom:24px}
 .entry{margin-bottom:16px;break-inside:avoid}
 .entry-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap}
 .entry-meta{color:#808080;font-size:calc(13px * var(--fs-mult, 1));font-style:italic}
@@ -32,7 +32,8 @@ li::marker{color:#666}
 .skill-item span{color:#999;font-size:calc(13px * var(--fs-mult, 1))}
 .languages span+span::before{content:" | "}
 .languages{color:#999;font-size:calc(13px * var(--fs-mult, 1))}
-@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+@media print{body{padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+@page{size:A4;margin:16mm 14mm}
 ${customCss || ''}</style></head><body>
 ${b?.image ? `<img src="${safeSrc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 12px;border:2px solid #404040">` : ''}
 ${b?.name ? `<h1>${esc(b.name)}</h1>` : ''}

@@ -9,7 +9,7 @@ function render(resume: ResumeSchema, customCss?: string): string {
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#374151;line-height:1.6;max-width:800px;margin:0 auto;padding:40px;font-size:calc(14px * var(--fs-mult, 1))}
 h1{font-size:calc(28px * var(--fs-mult, 1));font-weight:700;color:#1e3a5f}
-h2{font-size:calc(15px * var(--fs-mult, 1));font-weight:700;color:#1e3a5f;margin-bottom:12px;padding-bottom:6px;border-bottom:3px solid #2563eb}
+h2{font-size:calc(15px * var(--fs-mult, 1));font-weight:700;color:#1e3a5f;margin-bottom:12px;padding-bottom:6px;border-bottom:3px solid #2563eb;break-after:avoid-page}
 h3{font-size:calc(15px * var(--fs-mult, 1));font-weight:600;color:#1e3a5f}
 a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}
 .header{border-left:4px solid #2563eb;padding-left:16px;margin-bottom:28px}
@@ -17,7 +17,7 @@ a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}
 .contact{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:calc(13px * var(--fs-mult, 1));color:#6b7280}
 .contact a{color:#2563eb}
 .summary{color:#4b5563;margin-bottom:28px;padding:12px 16px;background:#f0f4ff;border-radius:6px;border-left:3px solid #2563eb}
-.section{margin-bottom:24px;break-inside:avoid}
+.section{margin-bottom:24px}
 .entry{margin-bottom:18px;break-inside:avoid}
 .entry-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap}
 .entry-meta{color:#2563eb;font-size:calc(13px * var(--fs-mult, 1));font-weight:500}
@@ -30,7 +30,8 @@ li::marker{color:#2563eb}
 .skill-group h3{font-size:calc(13px * var(--fs-mult, 1));color:#2563eb;margin-bottom:6px}
 .skill-keywords{display:flex;flex-wrap:wrap;gap:4px}
 .tag{background:#dbeafe;color:#1e3a5f;padding:2px 8px;border-radius:3px;font-size:calc(11.5px * var(--fs-mult, 1))}
-@media print{body{padding:20px 24px}.summary{background:none;border:none;padding:0}.skill-group{border:1px solid #ddd}}
+@media print{body{padding:0}.summary{background:none;border:none;padding:0}.skill-group{border:1px solid #ddd}}
+@page{size:A4;margin:16mm 14mm}
 ${customCss || ''}</style></head><body>
 <header role="banner">
 <div class="header">

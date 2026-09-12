@@ -9,7 +9,7 @@ function render(resume: ResumeSchema, customCss?: string): string {
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Georgia,'Times New Roman',serif;color:#333;line-height:1.65;max-width:780px;margin:0 auto;padding:48px 40px;font-size:calc(14px * var(--fs-mult, 1))}
 h1{font-size:calc(30px * var(--fs-mult, 1));font-weight:700;color:#1a1a1a;text-align:center;margin-bottom:4px}
-h2{font-size:calc(16px * var(--fs-mult, 1));font-weight:700;color:#1a1a1a;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #1a1a1a}
+h2{font-size:calc(16px * var(--fs-mult, 1));font-weight:700;color:#1a1a1a;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #1a1a1a;break-after:avoid-page}
 h3{font-size:calc(14px * var(--fs-mult, 1));font-weight:700;color:#1a1a1a}
 a{color:#2c5282;text-decoration:none}a:hover{text-decoration:underline}
 .label{text-align:center;color:#555;font-size:calc(15px * var(--fs-mult, 1));font-style:italic;margin-bottom:12px}
@@ -17,7 +17,7 @@ a{color:#2c5282;text-decoration:none}a:hover{text-decoration:underline}
 .contact span+span::before{content:" | "}
 .divider{border:none;border-top:1px solid #ccc;margin:20px 0}
 .summary{text-align:justify;color:#444;margin-bottom:28px}
-.section{margin-bottom:24px;break-inside:avoid}
+.section{margin-bottom:24px}
 .entry{margin-bottom:16px;break-inside:avoid}
 .entry-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap}
 .entry-meta{color:#666;font-size:calc(13px * var(--fs-mult, 1));font-style:italic}
@@ -30,7 +30,8 @@ li{margin-bottom:3px;color:#444}
 .skill-item span{color:#555;font-size:calc(13px * var(--fs-mult, 1))}
 .languages span+span::before{content:" | "}
 .languages{color:#555;font-size:calc(13px * var(--fs-mult, 1))}
-@media print{body{padding:16px 20px;font-size:calc(12px * var(--fs-mult, 1))}.section{margin-bottom:14px}.entry{margin-bottom:10px}}
+@media print{body{padding:0;font-size:calc(12px * var(--fs-mult, 1))}.section{margin-bottom:14px}.entry{margin-bottom:10px}}
+@page{size:A4;margin:16mm 14mm}
 ${customCss || ''}</style></head><body>
 <header role="banner">
 ${b?.image ? `<img src="${safeSrc(b.image)}" alt="${esc(b.name)}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 12px">` : ''}

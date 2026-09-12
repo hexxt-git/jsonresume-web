@@ -9,7 +9,7 @@ function render(resume: ResumeSchema, customCss?: string): string {
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#333;line-height:1.4;max-width:780px;margin:0 auto;padding:24px 28px;font-size:calc(11.5px * var(--fs-mult, 1))}
 h1{font-size:calc(20px * var(--fs-mult, 1));font-weight:700;color:#111;display:inline}
-h2{font-size:calc(11px * var(--fs-mult, 1));font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#111;margin-bottom:6px;padding-bottom:3px;border-bottom:1.5px solid #111}
+h2{font-size:calc(11px * var(--fs-mult, 1));font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#111;margin-bottom:6px;padding-bottom:3px;border-bottom:1.5px solid #111;break-after:avoid-page}
 h3{font-size:calc(12px * var(--fs-mult, 1));font-weight:600;color:#111}
 a{color:#333;text-decoration:none}a:hover{text-decoration:underline}
 .header{margin-bottom:12px}
@@ -18,7 +18,7 @@ a{color:#333;text-decoration:none}a:hover{text-decoration:underline}
 .contact{color:#666;font-size:calc(10.5px * var(--fs-mult, 1));margin-top:4px}
 .contact span+span::before{content:" | "}
 .summary{color:#444;margin-bottom:14px;font-size:calc(11.5px * var(--fs-mult, 1))}
-.section{margin-bottom:12px;break-inside:avoid}
+.section{margin-bottom:12px}
 .entry{margin-bottom:8px;break-inside:avoid}
 .entry-header{display:flex;justify-content:space-between;align-items:baseline}
 .entry-meta{color:#888;font-size:calc(10.5px * var(--fs-mult, 1));white-space:nowrap}
@@ -31,7 +31,8 @@ li{margin-bottom:1px;color:#444}
 .skills-row span{color:#555}
 .tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}
 .tag{background:#eee;padding:1px 6px;border-radius:2px;font-size:calc(10px * var(--fs-mult, 1));color:#555}
-@media print{body{padding:12px 16px;font-size:calc(10.5px * var(--fs-mult, 1))}.section{margin-bottom:8px}.entry{margin-bottom:5px}}
+@media print{body{padding:0;font-size:calc(10.5px * var(--fs-mult, 1))}.section{margin-bottom:8px}.entry{margin-bottom:5px}}
+@page{size:A4;margin:16mm 14mm}
 ${customCss || ''}</style></head><body>
 <header role="banner">
 <div class="header">

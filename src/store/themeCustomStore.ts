@@ -18,6 +18,8 @@ export const defaultCustomization: ThemeCustomization = {
   rtl: false,
 };
 
+const BASE_PAGE_MARGIN_MM = { topBottom: 16, leftRight: 14 };
+
 /** Generate a CSS override block from customization values. Injected into theme HTML. */
 export function buildCustomCss(c: ThemeCustomization): string {
   const parts: string[] = [];
@@ -25,8 +27,20 @@ export function buildCustomCss(c: ThemeCustomization): string {
   // Body-level overrides
   const bodyRules: string[] = [];
   if (c.fontFamily) bodyRules.push(`font-family:${c.fontFamily}`);
-  if (c.paddingMultiplier !== 1) bodyRules.push(`padding:calc(40px * ${c.paddingMultiplier})`);
   if (bodyRules.length) parts.push(`body{${bodyRules.join(';')} !important}`);
+
+  // Padding scales on-screen/preview layout via body padding (screen-only —
+  // an element's own padding only applies to its first/last fragment when
+  // content spans multiple printed pages, not every page). The real per-page
+  // print/PDF margin comes from @page instead, which the browser repeats
+  // identically on every page.
+  if (c.paddingMultiplier !== 1) {
+    const m = c.paddingMultiplier;
+    parts.push(`@media screen{body{padding:calc(40px * ${m}) !important}}`);
+    parts.push(
+      `@page{margin:${BASE_PAGE_MARGIN_MM.topBottom * m}mm ${BASE_PAGE_MARGIN_MM.leftRight * m}mm}`,
+    );
+  }
 
   // Font size — set CSS custom property that all theme font-size declarations reference
   if (c.fontSizeMultiplier !== 1) {
